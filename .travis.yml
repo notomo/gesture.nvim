@@ -1,0 +1,14 @@
+language:
+    node_js
+node_js:
+    - 'node'
+sudo: false
+install:
+    - npm ci
+    - npm install -g codecov
+script:
+    - npm run build
+    - npm run test && codecov
+cache:
+    directories:
+        - "$HOME/.npm"

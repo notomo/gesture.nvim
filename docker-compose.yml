@@ -1,0 +1,14 @@
+
+version: '3'
+
+services:
+
+    app:
+        restart: always
+        build:
+            context: .
+        command: npm run watch
+        environment:
+            NODE_ENV: development
+        volumes:
+            - ".:/src"

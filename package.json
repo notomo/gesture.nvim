@@ -1,0 +1,46 @@
+{
+    "private": true,
+    "name": "gesture.nvim",
+    "version": "0.0.1",
+    "description": "A mouse gesture plugin for neovim",
+    "main": "lib/index.js",
+    "dependencies": {
+        "log4js": "^3.0.6",
+        "neovim": "^4.2.1",
+        "tslib": "^1.9.3"
+    },
+    "devDependencies": {
+        "@types/jest": "^23.3.7",
+        "@types/node": "^10.12.0",
+        "jest": "^23.6.0",
+        "ts-jest": "^23.10.4",
+        "typescript": "^3.1.3"
+    },
+    "scripts": {
+        "test": "jest --coverage",
+        "build": "tsc -p tsconfig.json",
+        "watch": "tsc -p tsconfig.json --watch true",
+        "setup": "npm install && npm run build"
+    },
+    "jest": {
+        "moduleFileExtensions": [
+            "ts",
+            "tsx",
+            "js",
+            "jsx",
+            "json"
+        ],
+        "transform": {
+            "\\.ts$": "ts-jest"
+        },
+        "testMatch": [
+            "**/src/**/*\\.test\\.ts"
+        ],
+        "verbose": true,
+        "collectCoverageFrom": [
+            "**/src/**/*.ts",
+            "!**/src/**/*.test.ts"
+        ],
+        "coverageDirectory": "./coverage/"
+    }
+}
