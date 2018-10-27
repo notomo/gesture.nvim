@@ -1,6 +1,7 @@
 
 function! gesture#execute() abort
     call _gesture_initialize()
+    execute "normal! \<LeftMouse>"
     return _gesture_execute()
 endfunction
 
