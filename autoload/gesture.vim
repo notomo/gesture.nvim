@@ -1,5 +1,6 @@
 
 function! gesture#execute() abort
+    call _gesture_initialize()
     return _gesture_execute()
 endfunction
 
