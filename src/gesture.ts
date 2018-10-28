@@ -1,6 +1,7 @@
 import { Neovim, Buffer } from "neovim";
 import { Logger, getLogger } from "./logger";
 import { DirectionRecognizer } from "./recognizer";
+import { GestureMapper } from "./mapper";
 
 export class Gesture {
   protected readonly savedOptions = {
@@ -26,7 +27,8 @@ export class Gesture {
 
   constructor(
     protected readonly vim: Neovim,
-    protected readonly recognizer: DirectionRecognizer
+    protected readonly recognizer: DirectionRecognizer,
+    protected readonly mapper: GestureMapper
   ) {
     this.logger = getLogger("gesture");
   }
@@ -67,7 +69,8 @@ export class Gesture {
 
     // remove lines
 
-    // execute a gesture command
+    const directions = this.recognizer.getDirections();
+    await this.mapper.execute(directions);
   }
 
   public async initialize() {

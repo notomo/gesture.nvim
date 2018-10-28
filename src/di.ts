@@ -3,12 +3,14 @@ import { Reporter } from "./reporter";
 import { getLogger } from "./logger";
 import { Neovim } from "neovim";
 import { DirectionRecognizer } from "./recognizer";
+import { GestureMapper } from "./mapper";
 
 export class Di {
   protected static readonly deps: Deps = {
     Gesture: (vim: Neovim) => {
       const recognizer = new DirectionRecognizer();
-      return new Gesture(vim, recognizer);
+      const mapper = new GestureMapper(vim);
+      return new Gesture(vim, recognizer, mapper);
     },
     Reporter: (vim: Neovim) => {
       const logger = getLogger("index");
