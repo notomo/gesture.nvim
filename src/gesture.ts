@@ -1,5 +1,6 @@
 import { Neovim, Buffer } from "neovim";
 import { Logger, getLogger } from "./logger";
+import { DirectionRecognizer } from "./recognizer";
 
 export class Gesture {
   protected readonly savedOptions = {
@@ -23,14 +24,19 @@ export class Gesture {
 
   protected readonly logger: Logger;
 
-  constructor(protected readonly vim: Neovim) {
+  constructor(
+    protected readonly vim: Neovim,
+    protected readonly recognizer: DirectionRecognizer
+  ) {
     this.logger = getLogger("gesture");
   }
 
   public async execute(): Promise<void> {
     await this.initialize();
 
-    // recognize a gesture command
+    const x = (await this.vim.call("virtcol", ".")) as number;
+    const y = (await this.vim.window.cursor)[0];
+    this.recognizer.add(x, y);
 
     // show lines
   }
@@ -68,6 +74,8 @@ export class Gesture {
     if (this.started) {
       return;
     }
+
+    this.recognizer.clear();
 
     this.savedOptions["virtualedit"] = (await this.vim.getOption(
       "virtualedit"
