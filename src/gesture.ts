@@ -1,4 +1,4 @@
-import { Neovim, Buffer } from "neovim";
+import { Neovim, Buffer, Window } from "neovim";
 import { Logger, getLogger } from "./logger";
 import { DirectionRecognizer } from "./recognizer";
 import { GestureMapper } from "./mapper";
@@ -23,6 +23,8 @@ export class Gesture {
     end: number;
   } | null = null;
 
+  protected currentWindow: Window | null = null;
+
   protected readonly logger: Logger;
 
   constructor(
@@ -36,8 +38,14 @@ export class Gesture {
   public async execute(): Promise<void> {
     await this.initialize();
 
+    const win = await this.vim.window;
+    if (this.currentWindow !== null && this.currentWindow.id !== win.id) {
+      await this.finish();
+      return;
+    }
+
     const x = (await this.vim.call("virtcol", ".")) as number;
-    const y = (await this.vim.window.cursor)[0];
+    const y = (await win.cursor)[0];
     this.recognizer.add(x, y);
 
     // show lines
@@ -48,21 +56,22 @@ export class Gesture {
       return;
     }
 
-    const buffer = await this.vim.window.buffer;
-
     if (this.changedInfo !== null) {
       const buffer = this.changedInfo.buffer;
       await buffer.remove(this.changedInfo.start, this.changedInfo.end, false);
       this.changedInfo = null;
+
+      await Promise.all([
+        buffer.setOption("modified", this.savedBufferOptions["modified"]),
+        buffer.setOption("modifiable", this.savedBufferOptions["modifiable"]),
+        buffer.setOption("readonly", this.savedBufferOptions["readonly"]),
+      ]);
     }
 
     await Promise.all([
       this.vim.setOption("virtualedit", this.savedOptions["virtualedit"]),
       this.vim.setOption("scrolloff", this.savedOptions["scrolloff"]),
       this.vim.setOption("sidescrolloff", this.savedOptions["sidescrolloff"]),
-      buffer.setOption("modified", this.savedBufferOptions["modified"]),
-      buffer.setOption("modifiable", this.savedBufferOptions["modifiable"]),
-      buffer.setOption("readonly", this.savedBufferOptions["readonly"]),
     ]);
 
     this.started = false;
@@ -90,18 +99,8 @@ export class Gesture {
       "sidescrolloff"
     )) as number;
 
-    const currentWindow = await this.vim.window;
-    const buffer = await currentWindow.buffer;
-
-    this.savedBufferOptions["modified"] = (await buffer.getOption(
-      "modified"
-    )) as boolean;
-    this.savedBufferOptions["modifiable"] = (await buffer.getOption(
-      "modifiable"
-    )) as boolean;
-    this.savedBufferOptions["readonly"] = (await buffer.getOption(
-      "readonly"
-    )) as boolean;
+    this.currentWindow = await this.vim.window;
+    const buffer = await this.currentWindow.buffer;
 
     this.started = true;
 
@@ -109,12 +108,10 @@ export class Gesture {
       this.vim.setOption("virtualedit", "all"),
       this.vim.setOption("scrolloff", 0),
       this.vim.setOption("sidescrolloff", 0),
-      buffer.setOption("modifiable", true),
-      buffer.setOption("readonly", false),
     ]);
 
-    const windowHeight = await currentWindow.height;
-    const cursorLineNumber = (await currentWindow.cursor)[0];
+    const windowHeight = await this.currentWindow.height;
+    const cursorLineNumber = (await this.currentWindow.cursor)[0];
     const topLineNumberInWindow =
       cursorLineNumber - ((await this.vim.call("winline")) as number) + 1;
     const bufferLineCount = await buffer.length;
@@ -130,6 +127,21 @@ export class Gesture {
         start: bufferLineCount,
         end: bufferLineCount + emptyLineCount,
       };
+
+      this.savedBufferOptions["modified"] = (await buffer.getOption(
+        "modified"
+      )) as boolean;
+      this.savedBufferOptions["modifiable"] = (await buffer.getOption(
+        "modifiable"
+      )) as boolean;
+      this.savedBufferOptions["readonly"] = (await buffer.getOption(
+        "readonly"
+      )) as boolean;
+
+      await Promise.all([
+        buffer.setOption("modifiable", true),
+        buffer.setOption("readonly", false),
+      ]);
 
       await buffer.append(Array(emptyLineCount).fill(""));
     }
