@@ -4,11 +4,13 @@ import { getLogger } from "./logger";
 import { Neovim } from "neovim";
 import { DirectionRecognizer } from "./recognizer";
 import { GestureMapper } from "./mapper";
+import { PointFactory } from "./point";
 
 export class Di {
   protected static readonly deps: Deps = {
     Gesture: (vim: Neovim) => {
-      const recognizer = new DirectionRecognizer();
+      const pointFactory = new PointFactory();
+      const recognizer = new DirectionRecognizer(pointFactory);
       const mapper = new GestureMapper(vim);
       return new Gesture(vim, recognizer, mapper);
     },
