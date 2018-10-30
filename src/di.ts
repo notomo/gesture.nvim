@@ -5,6 +5,8 @@ import { Neovim } from "neovim";
 import { DirectionRecognizer } from "./recognizer";
 import { GestureMapper } from "./mapper";
 import { PointFactory } from "./point";
+import { GestureBuffer } from "./buffer";
+import { OptionStore, BufferOptionStoreFactory } from "./option";
 
 export class Di {
   protected static readonly deps: Deps = {
@@ -12,7 +14,14 @@ export class Di {
       const pointFactory = new PointFactory();
       const recognizer = new DirectionRecognizer(pointFactory);
       const mapper = new GestureMapper(vim);
-      return new Gesture(vim, recognizer, mapper);
+      const optionStore = new OptionStore(vim);
+      const bufferOptionStoreFactory = new BufferOptionStoreFactory();
+      const gestureBuffer = new GestureBuffer(
+        vim,
+        optionStore,
+        bufferOptionStoreFactory
+      );
+      return new Gesture(vim, recognizer, mapper, gestureBuffer);
     },
     Reporter: (vim: Neovim) => {
       const logger = getLogger("index");
