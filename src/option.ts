@@ -28,9 +28,11 @@ export class OptionStore {
   }
 
   public async set() {
-    this.virtualEdit = (await this.vim.getOption("virtualedit")) as string;
-    this.scrollOff = (await this.vim.getOption("scrolloff")) as number;
-    this.sideScrollOff = (await this.vim.getOption("sidescrolloff")) as number;
+    [this.virtualEdit, this.scrollOff, this.sideScrollOff] = await Promise.all([
+      this.vim.getOption("virtualedit") as Promise<string>,
+      this.vim.getOption("scrolloff") as Promise<number>,
+      this.vim.getOption("sidescrolloff") as Promise<number>,
+    ]);
 
     await Promise.all([
       this.vim.setOption("virtualedit", "all"),
@@ -68,9 +70,11 @@ export class BufferOptionStore {
   }
 
   public async set() {
-    this.modified = (await this.buffer.getOption("modified")) as boolean;
-    this.modifiable = (await this.buffer.getOption("modifiable")) as boolean;
-    this.readonly = (await this.buffer.getOption("readonly")) as boolean;
+    [this.modified, this.modifiable, this.readonly] = await Promise.all([
+      this.buffer.getOption("modified") as Promise<boolean>,
+      this.buffer.getOption("modifiable") as Promise<boolean>,
+      this.buffer.getOption("readonly") as Promise<boolean>,
+    ]);
 
     await Promise.all([
       this.buffer.setOption("modifiable", true),
