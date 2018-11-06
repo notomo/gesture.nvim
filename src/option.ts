@@ -1,4 +1,5 @@
 import { Neovim, Buffer } from "neovim";
+import { UndoStore } from "./undo";
 
 export class OptionStore {
   protected virtualEdit: string | null = null;
@@ -47,9 +48,14 @@ export class BufferOptionStore {
   protected modifiable: boolean | null = null;
   protected readonly: boolean | null = null;
 
-  constructor(protected readonly buffer: Buffer) {}
+  constructor(
+    protected readonly buffer: Buffer,
+    protected readonly undoStore: UndoStore
+  ) {}
 
   public async restore() {
+    await this.undoStore.restore();
+
     if (
       this.modified === null ||
       this.modifiable === null ||
@@ -80,11 +86,16 @@ export class BufferOptionStore {
       this.buffer.setOption("modifiable", true),
       this.buffer.setOption("readonly", false),
     ]);
+
+    await this.undoStore.save();
   }
 }
 
 export class BufferOptionStoreFactory {
+  constructor(protected readonly vim: Neovim) {}
+
   public create(buffer: Buffer): BufferOptionStore {
-    return new BufferOptionStore(buffer);
+    const undoStore = new UndoStore(this.vim, buffer);
+    return new BufferOptionStore(buffer, undoStore);
   }
 }

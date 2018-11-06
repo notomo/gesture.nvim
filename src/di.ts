@@ -15,7 +15,7 @@ export class Di {
       const recognizer = new DirectionRecognizer(pointFactory);
       const mapper = new GestureMapper(vim);
       const optionStore = new OptionStore(vim);
-      const bufferOptionStoreFactory = new BufferOptionStoreFactory();
+      const bufferOptionStoreFactory = new BufferOptionStoreFactory(vim);
       const gestureBuffer = new GestureBuffer(
         vim,
         optionStore,
