@@ -44,6 +44,7 @@ export class UndoStore {
     }
 
     const currentWindow = await this.vim.window;
+    const currentCursor = await currentWindow.cursor;
 
     await this.vim.setWindow(targetWindow);
 
@@ -56,6 +57,7 @@ export class UndoStore {
     }
 
     await this.vim.setWindow(currentWindow);
+    await (this.vim.window.cursor = currentCursor);
   }
 
   protected async restoreFromUndoFile(undoFile: string) {
