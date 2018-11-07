@@ -1,4 +1,4 @@
-import { Neovim, Buffer, Window } from "neovim";
+import { Neovim, Window } from "neovim";
 import {
   OptionStore,
   BufferOptionStore,
@@ -7,12 +7,6 @@ import {
 
 export class GestureBuffer {
   protected started = false;
-
-  protected changedInfo: {
-    buffer: Buffer;
-    start: number;
-    end: number;
-  } | null = null;
 
   protected startPointWindow: Window | null = null;
 
@@ -44,12 +38,6 @@ export class GestureBuffer {
       const lineCountInWindow = bufferLineCount - topLineNumberInWindow + 1;
       const emptyLineCount = windowHeight - lineCountInWindow;
 
-      this.changedInfo = {
-        buffer: buffer,
-        start: bufferLineCount,
-        end: bufferLineCount + emptyLineCount,
-      };
-
       this.bufferOptionStore = this.bufferOptionStoreFactory.create(buffer);
       await this.bufferOptionStore.set();
 
@@ -62,14 +50,9 @@ export class GestureBuffer {
       return;
     }
 
-    if (this.changedInfo !== null) {
-      const buffer = this.changedInfo.buffer;
-      await buffer.remove(this.changedInfo.start, this.changedInfo.end, false);
-      this.changedInfo = null;
-
-      if (this.bufferOptionStore !== null) {
-        await this.bufferOptionStore.restore();
-      }
+    if (this.bufferOptionStore !== null) {
+      await this.bufferOptionStore.restore();
+      this.bufferOptionStore = null;
     }
 
     await this.optionStore.restore();

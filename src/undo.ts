@@ -47,6 +47,10 @@ export class UndoStore {
 
     await this.vim.setWindow(targetWindow);
 
+    const modifiable = (await this.buffer.getOption("modifiable")) as boolean;
+    if (modifiable) {
+      await this.vim.command("silent undo");
+    }
     if (this.undoFile !== null) {
       await this.restoreFromUndoFile(this.undoFile);
     }
