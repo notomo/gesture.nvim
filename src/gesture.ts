@@ -17,8 +17,6 @@ export class Gesture {
   }
 
   public async execute(): Promise<void> {
-    await this.initialize();
-
     const isValid = await this.gestureBuffer.validate();
     if (!isValid) {
       await this.gestureBuffer.restore();
