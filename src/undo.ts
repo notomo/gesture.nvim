@@ -57,7 +57,7 @@ export class UndoStore {
     }
 
     await this.vim.setWindow(currentWindow);
-    await (this.vim.window.cursor = currentCursor);
+    await (currentWindow.cursor = currentCursor);
   }
 
   protected async restoreFromUndoFile(undoFile: string) {
@@ -71,6 +71,10 @@ export class UndoStore {
   }
 
   protected async clearUndo() {
+    const modifiable = (await this.buffer.getOption("modifiable")) as boolean;
+    if (!modifiable) {
+      return;
+    }
     const undolevels = (await this.buffer.getOption("undolevels")) as number;
     await this.buffer.setOption("undolevels", -1);
     await this.vim.command('noautocmd execute "normal! I \\<BS>\\<Esc>"');
