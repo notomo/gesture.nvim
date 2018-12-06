@@ -1,17 +1,54 @@
 import { Neovim } from "neovim";
-import { Direction } from "./direction";
+import { Action } from "./command";
+import { GestureLine } from "./line";
+import { Logger, getLogger } from "./logger";
 
 export class GestureMapper {
-  constructor(protected readonly vim: Neovim) {}
+  protected actions: Action[] = [];
 
-  public async execute(directions: Direction[]) {
-    const serialized = directions.join(",");
-    const action = await this.vim.call("gesture#get_action", serialized);
+  protected readonly logger: Logger;
 
-    if (action === null) {
-      return;
+  constructor(protected readonly vim: Neovim) {
+    this.logger = getLogger("mapper");
+  }
+
+  public async initialize() {
+    this.actions = (await this.vim.call("gesture#get")) as Action[];
+  }
+
+  public async getAction(
+    gestureLines: ReadonlyArray<GestureLine>
+  ): Promise<Action | null> {
+    const gesturedDirections = gestureLines
+      .map(gestureLine => gestureLine.direction)
+      .join("");
+
+    const candidates = this.actions.filter(action => {
+      return action.directions.join("") === gesturedDirections;
+    });
+
+    if (candidates.length === 0) {
+      return null;
     }
 
-    await this.vim.command(`execute "normal ${action}"`);
+    return candidates[0];
+  }
+
+  public async getNoWaitAction(
+    gestureLines: ReadonlyArray<GestureLine>
+  ): Promise<Action | null> {
+    const gesturedDirections = gestureLines
+      .map(gestureLine => gestureLine.direction)
+      .join("");
+
+    const candidates = this.actions.filter(action => {
+      return action.nowait && action.directions.join("") === gesturedDirections;
+    });
+
+    if (candidates.length === 0) {
+      return null;
+    }
+
+    return candidates[0];
   }
 }

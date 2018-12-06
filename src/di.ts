@@ -7,6 +7,7 @@ import { GestureMapper } from "./mapper";
 import { PointFactory } from "./point";
 import { GestureBuffer } from "./buffer";
 import { OptionStore, BufferOptionStoreFactory } from "./option";
+import { CommandFactory } from "./command";
 
 export class Di {
   protected static readonly deps: Deps = {
@@ -16,12 +17,19 @@ export class Di {
       const mapper = new GestureMapper(vim);
       const optionStore = new OptionStore(vim);
       const bufferOptionStoreFactory = new BufferOptionStoreFactory(vim);
+      const commandFactory = new CommandFactory();
       const gestureBuffer = new GestureBuffer(
         vim,
         optionStore,
         bufferOptionStoreFactory
       );
-      return new Gesture(vim, recognizer, mapper, gestureBuffer);
+      return new Gesture(
+        vim,
+        recognizer,
+        mapper,
+        gestureBuffer,
+        commandFactory
+      );
     },
     Reporter: (vim: Neovim) => {
       const logger = getLogger("index");

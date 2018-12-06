@@ -2,6 +2,7 @@ import { NvimPlugin } from "neovim";
 import { Gesture } from "./gesture";
 import { Reporter } from "./reporter";
 import { Di } from "./di";
+import { Command } from "./command";
 
 export class GesturePlugin {
   protected readonly gesture: Gesture;
@@ -27,16 +28,22 @@ export class GesturePlugin {
     });
   }
 
-  public async initialize(args: string[]): Promise<void> {
+  public async initialize(args: []): Promise<void> {
     await this.gesture.initialize().catch(e => this.reporter.error(e));
   }
 
-  public async execute(args: string[]): Promise<void> {
-    await this.gesture.execute().catch(e => this.reporter.error(e));
+  public async execute(args: []): Promise<Command | null> {
+    return await this.gesture.execute().catch(e => {
+      this.reporter.error(e);
+      return null;
+    });
   }
 
-  public async finish(args: string[]): Promise<void> {
-    await this.gesture.finish().catch(e => this.reporter.error(e));
+  public async finish(args: []): Promise<Command | null> {
+    return await this.gesture.finish().catch(e => {
+      this.reporter.error(e);
+      return null;
+    });
   }
 }
 

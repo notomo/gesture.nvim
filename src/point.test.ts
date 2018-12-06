@@ -8,42 +8,42 @@ describe("Point", () => {
       y: 1,
       targetX: 1,
       targetY: 1,
-      expected: { direction: Direction.NONE, distance: 0 },
+      expected: { direction: Direction.NONE, length: 0 },
     },
     {
       x: 1,
       y: 1,
       targetX: 2,
       targetY: 1,
-      expected: { direction: Direction.RIGHT, distance: 1 },
+      expected: { direction: Direction.RIGHT, length: 1 },
     },
     {
       x: 1,
       y: 1,
       targetX: 1,
       targetY: 2,
-      expected: { direction: Direction.DOWN, distance: 1 },
+      expected: { direction: Direction.DOWN, length: 1 },
     },
     {
       x: 4,
       y: 2,
       targetX: 2,
       targetY: 2,
-      expected: { direction: Direction.LEFT, distance: 2 },
+      expected: { direction: Direction.LEFT, length: 2 },
     },
     {
       x: 2,
       y: 4,
       targetX: 2,
       targetY: 2,
-      expected: { direction: Direction.UP, distance: 2 },
+      expected: { direction: Direction.UP, length: 2 },
     },
     {
       x: 4,
       y: 4,
       targetX: 2,
       targetY: 2,
-      expected: { direction: Direction.UP, distance: Math.sqrt(8) },
+      expected: { direction: Direction.UP, length: 2 },
     },
   ].forEach(data => {
     const constructorArgs = [data.x, data.y];
@@ -51,9 +51,7 @@ describe("Point", () => {
     let expected = data.expected;
     it(`calc "${constructorArgs}" to "${calcArgs}"`, () => {
       const point = new Point(data.x, data.y);
-      const result = point.calcDistanceInfo(
-        new Point(data.targetX, data.targetY)
-      );
+      const result = point.calculate(new Point(data.targetX, data.targetY));
       expect(result).toEqual(expected);
     });
   });

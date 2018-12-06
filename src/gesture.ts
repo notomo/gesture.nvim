@@ -3,6 +3,7 @@ import { Logger, getLogger } from "./logger";
 import { DirectionRecognizer } from "./recognizer";
 import { GestureMapper } from "./mapper";
 import { GestureBuffer } from "./buffer";
+import { Command, CommandFactory } from "./command";
 
 export class Gesture {
   protected readonly logger: Logger;
@@ -11,31 +12,48 @@ export class Gesture {
     protected readonly vim: Neovim,
     protected readonly recognizer: DirectionRecognizer,
     protected readonly mapper: GestureMapper,
-    protected readonly gestureBuffer: GestureBuffer
+    protected readonly gestureBuffer: GestureBuffer,
+    protected readonly commandFactory: CommandFactory
   ) {
     this.logger = getLogger("gesture");
   }
 
-  public async execute(): Promise<void> {
+  public async execute(): Promise<Command | null> {
     const isValid = await this.gestureBuffer.validate();
     if (!isValid) {
-      await this.gestureBuffer.restore();
-      return;
+      await this.clear();
+      return null;
     }
 
     const cursor = await this.gestureBuffer.getCursor();
     this.recognizer.add(cursor.x, cursor.y);
-  }
 
-  public async finish(): Promise<void> {
-    if (!this.gestureBuffer.isStarted) {
-      return;
+    const gestureLines = this.recognizer.getGestureLines();
+
+    const action = await this.mapper.getNoWaitAction(gestureLines);
+    if (action !== null) {
+      await this.clear();
+      return this.commandFactory.create(action);
     }
 
-    await this.gestureBuffer.restore();
+    return null;
+  }
 
-    const directions = this.recognizer.getDirections();
-    await this.mapper.execute(directions);
+  public async finish(): Promise<Command | null> {
+    if (!this.gestureBuffer.isStarted) {
+      return null;
+    }
+
+    const gestureLines = this.recognizer.getGestureLines();
+
+    await this.clear();
+
+    const action = await this.mapper.getAction(gestureLines);
+    if (action !== null) {
+      return this.commandFactory.create(action);
+    }
+
+    return null;
   }
 
   public async initialize() {
@@ -44,7 +62,13 @@ export class Gesture {
     }
 
     this.recognizer.clear();
+    await this.mapper.initialize();
 
     await this.gestureBuffer.setup();
+  }
+
+  protected async clear() {
+    await this.gestureBuffer.restore();
+    this.recognizer.clear();
   }
 }

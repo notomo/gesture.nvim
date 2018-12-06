@@ -2,14 +2,26 @@
 function! gesture#execute() abort
     call _gesture_initialize()
     execute "normal! \<LeftMouse>"
-    return _gesture_execute()
+    let command_info = _gesture_execute()
+
+    if empty(command_info)
+        return
+    endif
+
+    execute command_info.command
 endfunction
 
 function! gesture#finish() abort
-    return _gesture_finish()
+    let command_info = _gesture_finish()
+
+    if empty(command_info)
+        return
+    endif
+
+    execute command_info.command
 endfunction
 
-let s:mapper = {}
+let s:gestures = []
 function! gesture#register() abort
 
     let register = {}
@@ -35,59 +47,50 @@ function! gesture#register() abort
         return self
     endfunction
 
-    function! register.noremap(action, ...) abort
+    function! register.noremap(rhs, ...) abort
         let attributes = call('s:get_map_attributes', a:000)
-        let nowait = attributes['nowait']
+        let attributes['noremap'] = v:true
 
-        call s:add(a:action, v:true, nowait, s:directions)
+        call s:add(s:directions, a:rhs, attributes)
         let s:directions = []
     endfunction
 
-    function! register.map(action, ...) abort
+    function! register.map(rhs, ...) abort
         let attributes = call('s:get_map_attributes', a:000)
-        let nowait = attributes['nowait']
+        let attributes['noremap'] = v:false
 
-        call s:add(a:action, v:false, nowait, s:directions)
+        call s:add(s:directions, a:rhs, attributes)
         let s:directions = []
     endfunction
 
     return register
 endfunction
 
-function! gesture#get_action(serialized_directions) abort
-    if type(a:serialized_directions) != v:t_string
-        throw 'serialized_directions must be a string'
-    endif
-    if !has_key(s:mapper, a:serialized_directions)
-        return v:null
-    endif
-    return s:mapper[a:serialized_directions]['action']
+function! gesture#get() abort
+    return s:gestures
 endfunction
 
-function! s:serialize_directions(directions) abort
-    if type(a:directions) != v:t_list
-        throw 'directions must be a list'
-    endif
-
-    let valid_directions = filter(map(copy(a:directions), {_, d -> v:t_string == type(d)}), {_, d -> d == 1})
-    if len(valid_directions) != len(a:directions)
-        throw 'directions must be a string list'
-    endif
-
-    return join(a:directions, ',')
+function! gesture#clear() abort
+    let s:gestures = []
 endfunction
 
-function! s:add(action, noremap, nowait, directions) abort
-    if type(a:action) != v:t_string
-        throw 'action must be a string'
+function! s:add(directions, rhs, attributes) abort
+    if type(a:rhs) != v:t_string
+        throw 'rhs must be a string'
     endif
 
-    let serialized = s:serialize_directions(a:directions)
-    let s:mapper[serialized] = {'action' : a:action, 'noremap' : a:noremap, 'nowait': a:nowait}
+    let gesture = a:attributes
+    let gesture['directions'] = a:directions
+    let gesture['rhs'] = a:rhs
+
+    call add(s:gestures, gesture)
 endfunction
 
 function! s:get_map_attributes(...) abort
     let attributes = get(a:, 1, {})
+
     let nowait = get(attributes, 'nowait', v:false)
-    return {'nowait' : nowait}
+    let silent = get(attributes, 'silent', v:false)
+
+    return {'nowait' : nowait, 'silent' : silent}
 endfunction

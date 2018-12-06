@@ -3,34 +3,32 @@ import { Direction } from "./direction";
 export class Point {
   constructor(public readonly x: number, public readonly y: number) {}
 
-  public calcDistanceInfo(
-    point: Point
-  ): { distance: number; direction: Direction } {
+  public calculate(point: Point): { length: number; direction: Direction } {
     const x1 = this.x;
     const x2 = point.x;
     const diffX = x2 - x1;
-    const squareDiffX = diffX * diffX;
     const lengthX = Math.abs(diffX);
 
     const y1 = this.y;
     const y2 = point.y;
     const diffY = y2 - y1;
-    const squareDiffY = diffY * diffY;
     const lengthY = Math.abs(diffY);
 
-    const distance = Math.sqrt(squareDiffX + squareDiffY);
-
     let direction: Direction;
+    let length: number;
     if (lengthX > lengthY) {
       direction = diffX > 0 ? Direction.RIGHT : Direction.LEFT;
+      length = lengthX;
     } else if (lengthY >= lengthX && lengthY > 0) {
       direction = diffY > 0 ? Direction.DOWN : Direction.UP;
+      length = lengthY;
     } else {
       direction = Direction.NONE;
+      length = 0;
     }
 
     return {
-      distance: distance,
+      length: length,
       direction: direction,
     };
   }

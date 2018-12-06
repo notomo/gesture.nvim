@@ -1,10 +1,11 @@
 import { Direction } from "./direction";
+import { GestureLine } from "./line";
 import { Logger, getLogger } from "./logger";
 import { Point, PointFactory } from "./point";
 
 export class DirectionRecognizer {
   protected readonly points: Point[] = [];
-  protected readonly directions: Direction[] = [];
+  protected readonly gestureLines: GestureLine[] = [];
 
   protected lastEdge: Point;
   protected lastDirection: Direction | null = null;
@@ -29,25 +30,25 @@ export class DirectionRecognizer {
 
     this.points.push(point);
 
-    const info = this.lastEdge.calcDistanceInfo(point);
-    if (info.distance >= this.lengthThreshold) {
+    const info = this.lastEdge.calculate(point);
+    if (info.length >= this.lengthThreshold) {
       this.lastEdge = point;
 
       const direction = info.direction;
       if (this.lastDirection !== direction) {
         this.lastDirection = direction;
-        this.directions.push(direction);
+        this.gestureLines.push(info);
       }
     }
   }
 
-  public getDirections(): Direction[] {
-    return this.directions;
+  public getGestureLines(): ReadonlyArray<GestureLine> {
+    return this.gestureLines.slice();
   }
 
   public clear() {
     this.points.length = 0;
-    this.directions.length = 0;
+    this.gestureLines.length = 0;
     this.started = false;
     this.lastDirection = null;
     this.lastEdge = this.pointFactory.createForInitialize();
