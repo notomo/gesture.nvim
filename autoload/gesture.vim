@@ -1,7 +1,10 @@
 
 function! gesture#execute() abort
     call _gesture_initialize()
-    execute "normal! \<LeftMouse>"
+    let cursor_setter = gesture#get_custom('cursor_setter')
+    if !empty(cursor_setter)
+        execute cursor_setter
+    endif
     let command_info = _gesture_execute()
 
     if empty(command_info)
@@ -73,6 +76,26 @@ endfunction
 function! gesture#clear() abort
     let s:gestures = []
 endfunction
+
+let s:default_custom = {
+    \ 'cursor_setter': "normal! \<LeftMouse>",
+\ }
+let s:custom = s:default_custom
+
+function! gesture#custom(key, value) abort
+    if !has_key(s:custom, a:key)
+        throw a:key . ' does not exist in custom options.'
+    endif
+    let s:custom[a:key] = a:value
+endfunction
+
+function! gesture#get_custom(key) abort
+    if !has_key(s:custom, a:key)
+        throw a:key . ' does not exist in custom options.'
+    endif
+    return s:custom[a:key]
+endfunction
+
 
 function! s:add(directions, rhs, attributes) abort
     if type(a:rhs) != v:t_string

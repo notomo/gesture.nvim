@@ -1,0 +1,17 @@
+call themis#option('recursive', 1)
+
+runtime! plugin/rplugin.vim
+
+function! GestureTestBefore() abort
+    " NOTICE: Disable <LeftMouse>
+    call gesture#custom('cursor_setter', '')
+
+    let s:root = getcwd()
+    return s:root
+endfunction
+
+function! GestureTestAfterEach() abort
+    call gesture#clear()
+    %bwipeout!
+    execute 'cd ' . s:root
+endfunction

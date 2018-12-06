@@ -2,13 +2,30 @@ language:
     node_js
 node_js:
     - 'node'
-sudo: false
+
 install:
+    - sudo modprobe fuse
+    - user="$(whoami)"
+    - sudo usermod -a -G fuse $user
+    - wget -nv https://github.com/neovim/neovim/releases/download/nightly/nvim.appimage
+    - mkdir -p ~/neovim/bin
+    - cp nvim.appimage ~/neovim/bin/nvim
+    - chmod u+x ~/neovim/bin/nvim
     - npm ci
     - npm install -g codecov
+    - npm install -g neovim
+    - git clone --depth 1 https://github.com/thinca/vim-themis vim-themis
+
+env:
+    global:
+        - THEMIS_VIM=nvim
+        - THEMIS_ARGS="-e -s --headless"
+
 script:
     - npm run build
-    - npm run test && codecov
+    - PATH="./vim-themis/bin:$HOME/neovim/bin:$PATH" THEMIS_HOME=./vim-themis make test
+    - codecov
+
 cache:
     directories:
         - "$HOME/.npm"
