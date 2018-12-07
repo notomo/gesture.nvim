@@ -6,25 +6,16 @@ function! gesture#execute() abort
         execute cursor_setter
     endif
     let command_info = _gesture_execute()
-
-    if empty(command_info)
-        return
-    endif
-
-    execute command_info.command
+    call s:execute(command_info)
 endfunction
 
 function! gesture#finish() abort
     let command_info = _gesture_finish()
-
-    if empty(command_info)
-        return
-    endif
-
-    execute command_info.command
+    call s:execute(command_info)
 endfunction
 
 let s:gestures = []
+let s:funcs = {}
 function! gesture#register() abort
 
     let register = {}
@@ -66,6 +57,13 @@ function! gesture#register() abort
         let s:directions = []
     endfunction
 
+    function! register.func(f, ...) abort
+        let attributes = call('s:get_map_attributes', a:000)
+
+        call s:add_func(s:directions, a:f, attributes)
+        let s:directions = []
+    endfunction
+
     return register
 endfunction
 
@@ -75,6 +73,7 @@ endfunction
 
 function! gesture#clear() abort
     let s:gestures = []
+    let s:funcs = {}
 endfunction
 
 let s:default_custom = {
@@ -106,7 +105,44 @@ function! s:add(directions, rhs, attributes) abort
     let gesture['directions'] = a:directions
     let gesture['rhs'] = a:rhs
 
+    let id = len(s:gestures) + 1
+    let gesture['id'] = id
+
     call add(s:gestures, gesture)
+endfunction
+
+function! s:add_func(directions, f, attributes) abort
+    if type(a:f) != v:t_func
+        throw 'f must be a function'
+    endif
+
+    let gesture = a:attributes
+    let gesture['directions'] = a:directions
+    let gesture['is_func'] = v:true
+
+    let id = len(s:gestures) + 1
+    let gesture['id'] = id
+
+    call add(s:gestures, gesture)
+    let s:funcs[id] = a:f
+endfunction
+
+function! s:execute(command_info) abort
+    if empty(a:command_info)
+        return
+    endif
+
+    let action = a:command_info.action
+    if action.is_func == v:false
+        execute a:command_info.command
+        return
+    endif
+
+    if !has_key(s:funcs, action.id)
+        return
+    endif
+
+    call s:funcs[action.id](a:command_info.context)
 endfunction
 
 function! s:get_map_attributes(...) abort
@@ -115,5 +151,5 @@ function! s:get_map_attributes(...) abort
     let nowait = get(attributes, 'nowait', v:false)
     let silent = get(attributes, 'silent', v:false)
 
-    return {'nowait' : nowait, 'silent' : silent}
+    return {'rhs' : '', 'nowait' : nowait, 'silent' : silent, 'is_func' : v:false}
 endfunction

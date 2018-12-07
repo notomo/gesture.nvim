@@ -1,4 +1,4 @@
-import { CommandFactory } from "./command";
+import { CommandFactory, Context } from "./command";
 
 describe("CommandFactory", () => {
   let commandFactory: CommandFactory;
@@ -9,16 +9,20 @@ describe("CommandFactory", () => {
 
   [
     {
-      action: { rhs: "gg", noremap: true, silent: false },
+      action: { rhs: "gg", noremap: true, silent: false, is_func: false },
       expected: "normal! gg",
     },
     {
-      action: { rhs: "gg", noremap: false, silent: false },
+      action: { rhs: "gg", noremap: false, silent: false, is_func: false },
       expected: "normal gg",
     },
     {
-      action: { rhs: "gg", noremap: false, silent: true },
+      action: { rhs: "gg", noremap: false, silent: true, is_func: false },
       expected: "silent normal gg",
+    },
+    {
+      action: { rhs: "", noremap: false, silent: false, is_func: true },
+      expected: "",
     },
   ].forEach(data => {
     const info = data.action;
@@ -31,9 +35,14 @@ describe("CommandFactory", () => {
         nowait: false,
         noremap: info.noremap,
         silent: info.silent,
+        is_func: info.is_func,
         rhs: info.rhs,
       };
-      const result = commandFactory.create(action);
+
+      const ContextClass = jest.fn<Context>(() => ({}));
+      const context = new ContextClass();
+
+      const result = commandFactory.create(action, context);
 
       expect(result.command).toEqual(expected);
     });

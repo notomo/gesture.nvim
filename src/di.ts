@@ -13,7 +13,7 @@ export class Di {
   protected static readonly deps: Deps = {
     Gesture: (vim: Neovim) => {
       const pointFactory = new PointFactory();
-      const recognizer = new DirectionRecognizer(pointFactory);
+      const recognizer = new DirectionRecognizer(vim, pointFactory);
       const mapper = new GestureMapper(vim);
       const optionStore = new OptionStore(vim);
       const bufferOptionStoreFactory = new BufferOptionStoreFactory(vim);

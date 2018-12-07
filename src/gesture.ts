@@ -26,14 +26,15 @@ export class Gesture {
     }
 
     const cursor = await this.gestureBuffer.getCursor();
-    this.recognizer.add(cursor.x, cursor.y);
+    await this.recognizer.add(cursor.x, cursor.y);
 
     const gestureLines = this.recognizer.getGestureLines();
 
     const action = await this.mapper.getNoWaitAction(gestureLines);
     if (action !== null) {
+      const context = await this.recognizer.getContext();
       await this.clear();
-      return this.commandFactory.create(action);
+      return this.commandFactory.create(action, context);
     }
 
     return null;
@@ -46,12 +47,14 @@ export class Gesture {
 
     const gestureLines = this.recognizer.getGestureLines();
 
-    await this.clear();
-
     const action = await this.mapper.getAction(gestureLines);
     if (action !== null) {
-      return this.commandFactory.create(action);
+      const context = await this.recognizer.getContext();
+      await this.clear();
+      return this.commandFactory.create(action, context);
     }
+
+    await this.clear();
 
     return null;
   }

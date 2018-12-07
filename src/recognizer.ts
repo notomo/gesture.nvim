@@ -1,5 +1,7 @@
+import { Neovim, Window, Buffer } from "neovim";
 import { Direction } from "./direction";
 import { GestureLine } from "./line";
+import { Context } from "./command";
 import { Logger, getLogger } from "./logger";
 import { Point, PointFactory } from "./point";
 
@@ -15,12 +17,18 @@ export class DirectionRecognizer {
 
   protected readonly logger: Logger;
 
-  constructor(protected readonly pointFactory: PointFactory) {
+  protected windowId: number | null = null;
+  protected readonly windowAndBuffers: [Window, Buffer][] = [];
+
+  constructor(
+    protected readonly vim: Neovim,
+    protected readonly pointFactory: PointFactory
+  ) {
     this.logger = getLogger("recognizer");
     this.lastEdge = this.pointFactory.createForInitialize();
   }
 
-  public add(x: number, y: number) {
+  public async add(x: number, y: number) {
     const point = this.pointFactory.create(x, y);
 
     if (!this.started) {
@@ -28,22 +36,46 @@ export class DirectionRecognizer {
       this.started = true;
     }
 
+    const currentWindow = await this.vim.window;
+    const currentWindowId = currentWindow.id;
+    if (this.windowId === null || this.windowId !== currentWindowId) {
+      this.windowId = currentWindowId;
+      const buffer = await currentWindow.buffer;
+      this.windowAndBuffers.push([currentWindow, buffer]);
+    }
+
     this.points.push(point);
 
     const info = this.lastEdge.calculate(point);
-    if (info.length >= this.lengthThreshold) {
-      this.lastEdge = point;
+    if (info.length < this.lengthThreshold) {
+      return;
+    }
 
-      const direction = info.direction;
-      if (this.lastDirection !== direction) {
-        this.lastDirection = direction;
-        this.gestureLines.push(info);
-      }
+    this.lastEdge = point;
+
+    const direction = info.direction;
+    if (this.lastDirection !== direction) {
+      this.lastDirection = direction;
+      this.gestureLines.push({
+        direction: info.direction,
+        length: info.length,
+      });
     }
   }
 
   public getGestureLines(): ReadonlyArray<GestureLine> {
     return this.gestureLines.slice();
+  }
+
+  public async getContext(): Promise<Context> {
+    const windows = this.windowAndBuffers.map(windowAndBuffer => {
+      return {
+        id: windowAndBuffer[0].id,
+        bufferId: windowAndBuffer[1].id,
+      };
+    });
+
+    return { windows: windows };
   }
 
   public clear() {
@@ -52,5 +84,8 @@ export class DirectionRecognizer {
     this.started = false;
     this.lastDirection = null;
     this.lastEdge = this.pointFactory.createForInitialize();
+
+    this.windowId = null;
+    this.windowAndBuffers.length = 0;
   }
 }
