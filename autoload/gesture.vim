@@ -127,12 +127,19 @@ function! s:add_gesture(directions, gesture) abort
     let serialized = join(a:directions, ',')
     if !has_key(s:gestures, serialized)
         let s:gestures[serialized] = {}
+        let s:gestures[serialized]['global'] = v:null
+        let s:gestures[serialized]['buffer'] = {}
     endif
 
     let id = s:id + 1
     let a:gesture['id'] = id
 
-    let s:gestures[serialized]['global'] = a:gesture
+    let buffer_id = bufnr('%')
+    if a:gesture.buffer && buffer_id != -1
+        let s:gestures[serialized]['buffer'][buffer_id] = a:gesture
+    else
+        let s:gestures[serialized]['global'] = a:gesture
+    endif
 
     return id
 endfunction
@@ -160,6 +167,7 @@ function! s:get_map_attributes(...) abort
 
     let nowait = get(attributes, 'nowait', v:false)
     let silent = get(attributes, 'silent', v:false)
+    let buffer = get(attributes, 'buffer', v:false)
 
-    return {'rhs' : '', 'nowait' : nowait, 'silent' : silent, 'is_func' : v:false}
+    return {'rhs' : '', 'nowait' : nowait, 'silent' : silent, 'buffer' : buffer, 'is_func' : v:false}
 endfunction

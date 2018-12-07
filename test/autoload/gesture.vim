@@ -94,3 +94,51 @@ function! s:suite.func()
 
     call gesture#finish()
 endfunction
+
+function! s:suite.buffer()
+    call gesture#register().down().noremap(":qa\<CR>")
+    call gesture#register().down().noremap(":tabnew\<CR>", { 'buffer' : v:true })
+    call gesture#register().down().noremap(":qa\<CR>")
+
+    call gesture#execute()
+
+    normal! G
+
+    call gesture#execute()
+
+    call gesture#finish()
+
+    call s:assert.equals(tabpagenr('$'), 2)
+endfunction
+
+function! s:suite.other_buffer()
+    call gesture#register().down().noremap(":tabnew\<CR>")
+
+    tabnew
+    call gesture#register().down().noremap(":qa\<CR>", { 'buffer' : v:true })
+    tabclose
+
+    call gesture#execute()
+
+    normal! G
+
+    call gesture#execute()
+
+    call gesture#finish()
+
+    call s:assert.equals(tabpagenr('$'), 2)
+endfunction
+
+function! s:suite.no_global()
+    call gesture#register().down().noremap(":tabnew\<CR>", { 'buffer' : v:true })
+
+    call gesture#execute()
+
+    normal! G
+
+    call gesture#execute()
+
+    call gesture#finish()
+
+    call s:assert.equals(tabpagenr('$'), 2)
+endfunction

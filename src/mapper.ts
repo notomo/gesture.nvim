@@ -3,7 +3,12 @@ import { Action } from "./command";
 import { GestureLine } from "./line";
 import { Logger, getLogger } from "./logger";
 
-type Actions = { [index: string]: { global: Action } };
+type Actions = {
+  [index: string]: {
+    global: Action | null;
+    buffer: { [index: number]: Action };
+  };
+};
 
 export class GestureMapper {
   protected actions: Actions = {};
@@ -29,6 +34,11 @@ export class GestureMapper {
       return null;
     }
 
+    const bufferId = (await this.vim.buffer).id;
+    if (bufferId in this.actions[gesturedDirections].buffer) {
+      return this.actions[gesturedDirections].buffer[bufferId];
+    }
+
     return this.actions[gesturedDirections].global;
   }
 
@@ -43,9 +53,17 @@ export class GestureMapper {
       return null;
     }
 
+    const bufferId = (await this.vim.buffer).id;
+    if (
+      bufferId in this.actions[gesturedDirections].buffer &&
+      this.actions[gesturedDirections].buffer[bufferId].nowait
+    ) {
+      return this.actions[gesturedDirections].buffer[bufferId];
+    }
+
     const action = this.actions[gesturedDirections].global;
 
-    if (!action.nowait) {
+    if (action !== null && !action.nowait) {
       return null;
     }
 
