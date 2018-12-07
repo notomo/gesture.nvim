@@ -14,7 +14,8 @@ function! gesture#finish() abort
     call s:execute(command_info)
 endfunction
 
-let s:gestures = []
+let s:id = 0
+let s:gestures = {}
 let s:funcs = {}
 function! gesture#register() abort
 
@@ -72,7 +73,8 @@ function! gesture#get() abort
 endfunction
 
 function! gesture#clear() abort
-    let s:gestures = []
+    let s:id = 0
+    let s:gestures = {}
     let s:funcs = {}
 endfunction
 
@@ -105,10 +107,7 @@ function! s:add(directions, rhs, attributes) abort
     let gesture['directions'] = a:directions
     let gesture['rhs'] = a:rhs
 
-    let id = len(s:gestures) + 1
-    let gesture['id'] = id
-
-    call add(s:gestures, gesture)
+    call s:add_gesture(a:directions, gesture)
 endfunction
 
 function! s:add_func(directions, f, attributes) abort
@@ -120,11 +119,22 @@ function! s:add_func(directions, f, attributes) abort
     let gesture['directions'] = a:directions
     let gesture['is_func'] = v:true
 
-    let id = len(s:gestures) + 1
-    let gesture['id'] = id
-
-    call add(s:gestures, gesture)
+    let id = s:add_gesture(a:directions, gesture)
     let s:funcs[id] = a:f
+endfunction
+
+function! s:add_gesture(directions, gesture) abort
+    let serialized = join(a:directions, ',')
+    if !has_key(s:gestures, serialized)
+        let s:gestures[serialized] = {}
+    endif
+
+    let id = s:id + 1
+    let a:gesture['id'] = id
+
+    let s:gestures[serialized]['global'] = a:gesture
+
+    return id
 endfunction
 
 function! s:execute(command_info) abort

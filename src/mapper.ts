@@ -3,8 +3,10 @@ import { Action } from "./command";
 import { GestureLine } from "./line";
 import { Logger, getLogger } from "./logger";
 
+type Actions = { [index: string]: { global: Action } };
+
 export class GestureMapper {
-  protected actions: Action[] = [];
+  protected actions: Actions = {};
 
   protected readonly logger: Logger;
 
@@ -13,7 +15,7 @@ export class GestureMapper {
   }
 
   public async initialize() {
-    this.actions = (await this.vim.call("gesture#get")) as Action[];
+    this.actions = (await this.vim.call("gesture#get")) as Actions;
   }
 
   public async getAction(
@@ -21,17 +23,13 @@ export class GestureMapper {
   ): Promise<Action | null> {
     const gesturedDirections = gestureLines
       .map(gestureLine => gestureLine.direction)
-      .join("");
+      .join(",");
 
-    const candidates = this.actions.filter(action => {
-      return action.directions.join("") === gesturedDirections;
-    });
-
-    if (candidates.length === 0) {
+    if (!(gesturedDirections in this.actions)) {
       return null;
     }
 
-    return candidates[0];
+    return this.actions[gesturedDirections].global;
   }
 
   public async getNoWaitAction(
@@ -39,16 +37,18 @@ export class GestureMapper {
   ): Promise<Action | null> {
     const gesturedDirections = gestureLines
       .map(gestureLine => gestureLine.direction)
-      .join("");
+      .join(",");
 
-    const candidates = this.actions.filter(action => {
-      return action.nowait && action.directions.join("") === gesturedDirections;
-    });
-
-    if (candidates.length === 0) {
+    if (!(gesturedDirections in this.actions)) {
       return null;
     }
 
-    return candidates[0];
+    const action = this.actions[gesturedDirections].global;
+
+    if (!action.nowait) {
+      return null;
+    }
+
+    return action;
   }
 }

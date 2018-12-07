@@ -8,12 +8,20 @@ describe("GestureMapper", () => {
   let call: jest.Mock;
 
   beforeEach(() => {
-    call = jest
-      .fn()
-      .mockReturnValue([
-        { nowait: false, directions: [Direction.LEFT, Direction.RIGHT] },
-        { nowait: true, directions: [Direction.LEFT] },
-      ]);
+    call = jest.fn().mockReturnValue({
+      "LEFT,RIGHT": {
+        global: {
+          nowait: false,
+          directions: [Direction.LEFT, Direction.RIGHT],
+        },
+      },
+      LEFT: {
+        global: { nowait: true, directions: [Direction.LEFT] },
+      },
+      RIGHT: {
+        global: { nowait: false, directions: [Direction.RIGHT] },
+      },
+    });
     const NeovimClass = jest.fn<Neovim>(() => ({
       call: call,
     }));
@@ -68,6 +76,16 @@ describe("GestureMapper", () => {
   it("getNoWaitAction returns null when the gesture does not matched", async () => {
     const result = await mapper.getNoWaitAction([
       { direction: Direction.LEFT, length: 10 },
+    ]);
+
+    expect(result).toBeNull();
+  });
+
+  it("getNoWaitAction returns null when the gesture does not matched nowait", async () => {
+    await mapper.initialize();
+
+    const result = await mapper.getNoWaitAction([
+      { direction: Direction.RIGHT, length: 10 },
     ]);
 
     expect(result).toBeNull();
