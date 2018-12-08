@@ -97,6 +97,10 @@ function! gesture#get_custom(key) abort
     return s:custom[a:key]
 endfunction
 
+" NOTICE: for windows workaround
+function! gesture#get_undolevels(buffer_id) abort
+    return getbufvar(a:buffer_id, '&undolevels')
+endfunction
 
 function! s:add(directions, rhs, attributes) abort
     if type(a:rhs) != v:t_string

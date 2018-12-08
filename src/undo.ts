@@ -75,7 +75,10 @@ export class UndoStore {
     if (!modifiable) {
       return;
     }
-    const undolevels = (await this.buffer.getOption("undolevels")) as number;
+    const undolevels = (await this.vim.call(
+      "gesture#get_undolevels",
+      this.buffer.id
+    )) as number;
     await this.buffer.setOption("undolevels", -1);
     await this.vim.command('noautocmd execute "normal! I \\<BS>\\<Esc>"');
     await this.buffer.setOption("undolevels", undolevels);
