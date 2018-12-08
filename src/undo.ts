@@ -30,7 +30,7 @@ export class UndoStore {
     await this.vim.setWindow(targetWindow);
 
     this.undoFile = (await this.vim.call("tempname")) as string;
-    await this.vim.command("wundo" + this.undoFile);
+    await this.vim.command("wundo " + this.undoFile);
 
     await this.clearUndo();
 
@@ -67,7 +67,7 @@ export class UndoStore {
       return;
     }
 
-    await this.vim.command("silent rundo" + this.undoFile);
+    await this.vim.command("silent rundo " + this.undoFile);
   }
 
   protected async clearUndo() {
