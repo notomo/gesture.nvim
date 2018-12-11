@@ -16,6 +16,8 @@ function! s:suite.execute()
 
     call gesture#execute()
 
+    call s:assert.equals(&modified, v:true)
+
     normal! G
 
     call gesture#execute()
@@ -27,6 +29,31 @@ function! s:suite.execute()
     call gesture#finish()
 
     call s:assert.equals(tabpagenr('$'), 2)
+    tabclose
+    call s:assert.equals(&modified, v:false)
+endfunction
+
+function! s:suite.save_modified()
+    call gesture#register().down().noremap(":tabnew\<CR>")
+
+    call append(1, 'modify')
+
+    call gesture#execute()
+
+    normal! G
+
+    call gesture#execute()
+
+    call gesture#finish()
+
+    call s:assert.equals(tabpagenr('$'), 2)
+    tabclose
+
+    call s:assert.equals(&modified, v:true)
+
+    undo
+    let lines = getbufline('%', 1, '$')
+    call s:assert.equals(lines, [''])
 endfunction
 
 function! s:suite.nowait()
@@ -35,11 +62,15 @@ function! s:suite.nowait()
 
     call gesture#execute()
 
+    call s:assert.equals(&modified, v:true)
+
     normal! G
 
     call gesture#execute()
 
     call s:assert.equals(tabpagenr('$'), 2)
+    tabclose
+    call s:assert.equals(&modified, v:false)
 endfunction
 
 function! s:suite.map()

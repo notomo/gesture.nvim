@@ -80,7 +80,7 @@ export class UndoStore {
       this.buffer.id
     )) as number;
     await this.buffer.setOption("undolevels", -1);
-    await this.vim.command('noautocmd execute "normal! I \\<BS>\\<Esc>"');
+    await this.vim.command('noautocmd execute "normal! A \\<BS>\\<Esc>"');
     await this.buffer.setOption("undolevels", undolevels);
   }
 }
