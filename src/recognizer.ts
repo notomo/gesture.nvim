@@ -4,6 +4,7 @@ import { GestureLine } from "./line";
 import { Context } from "./command";
 import { Logger, getLogger } from "./logger";
 import { Point, PointFactory } from "./point";
+import { ConfigRepository } from "./repository/config";
 
 export class DirectionRecognizer {
   protected readonly points: Point[] = [];
@@ -13,8 +14,6 @@ export class DirectionRecognizer {
   protected lastDirection: Direction | null = null;
   protected started: boolean = false;
 
-  protected readonly lengthThreshold = 10;
-
   protected readonly logger: Logger;
 
   protected windowId: number | null = null;
@@ -22,7 +21,8 @@ export class DirectionRecognizer {
 
   constructor(
     protected readonly vim: Neovim,
-    protected readonly pointFactory: PointFactory
+    protected readonly pointFactory: PointFactory,
+    protected readonly configRepository: ConfigRepository
   ) {
     this.logger = getLogger("recognizer");
     this.lastEdge = this.pointFactory.createForInitialize();
@@ -47,7 +47,11 @@ export class DirectionRecognizer {
     this.points.push(point);
 
     const info = this.lastEdge.calculate(point);
-    if (info.length < this.lengthThreshold) {
+    if (
+      info.direction === null ||
+      info.length <
+        (await this.configRepository.getMinLengthByDirection(info.direction))
+    ) {
       return;
     }
 

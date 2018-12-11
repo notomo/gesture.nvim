@@ -76,10 +76,13 @@ function! gesture#clear() abort
     let s:id = 0
     let s:gestures = {}
     let s:funcs = {}
+    let s:custom = s:default_custom
 endfunction
 
 let s:default_custom = {
     \ 'cursor_setter': "normal! \<LeftMouse>",
+    \ 'x_length_threshold': 5,
+    \ 'y_length_threshold': 5,
 \ }
 let s:custom = s:default_custom
 

@@ -8,7 +8,7 @@ describe("Point", () => {
       y: 1,
       targetX: 1,
       targetY: 1,
-      expected: { direction: Direction.NONE, length: 0 },
+      expected: { direction: null, length: 0 },
     },
     {
       x: 1,

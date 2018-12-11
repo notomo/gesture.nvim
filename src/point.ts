@@ -3,7 +3,9 @@ import { Direction } from "./direction";
 export class Point {
   constructor(public readonly x: number, public readonly y: number) {}
 
-  public calculate(point: Point): { length: number; direction: Direction } {
+  public calculate(
+    point: Point
+  ): { length: number; direction: Direction | null } {
     const x1 = this.x;
     const x2 = point.x;
     const diffX = x2 - x1;
@@ -14,7 +16,7 @@ export class Point {
     const diffY = y2 - y1;
     const lengthY = Math.abs(diffY);
 
-    let direction: Direction;
+    let direction: Direction | null;
     let length: number;
     if (lengthX > lengthY) {
       direction = diffX > 0 ? Direction.RIGHT : Direction.LEFT;
@@ -23,7 +25,7 @@ export class Point {
       direction = diffY > 0 ? Direction.DOWN : Direction.UP;
       length = lengthY;
     } else {
-      direction = Direction.NONE;
+      direction = null;
       length = 0;
     }
 

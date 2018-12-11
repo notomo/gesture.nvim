@@ -142,3 +142,47 @@ function! s:suite.no_global()
 
     call s:assert.equals(tabpagenr('$'), 2)
 endfunction
+
+function! s:suite.set_large_length_threshold()
+    call gesture#custom('x_length_threshold', 1000)
+    call gesture#custom('y_length_threshold', 1000)
+    call gesture#register().down().noremap(":tabnew\<CR>", { 'nowait' : v:true })
+    call gesture#register().right().noremap(":tabnew\<CR>", { 'nowait' : v:true })
+
+    call gesture#execute()
+
+    normal! G
+
+    call gesture#execute()
+
+    normal! 30l
+
+    call gesture#execute()
+
+    call gesture#finish()
+
+    call s:assert.equals(tabpagenr('$'), 1)
+endfunction
+
+function! s:suite.set_small_length_threshold()
+    call gesture#custom('x_length_threshold', 1)
+    call gesture#custom('y_length_threshold', 1)
+    call gesture#register().down().noremap(":tabnew\<CR>", { 'nowait' : v:true })
+    call gesture#register().right().noremap(":tabnew\<CR>", { 'nowait' : v:true })
+
+    call gesture#execute()
+
+    normal! j
+
+    call gesture#execute()
+
+    call s:assert.equals(tabpagenr('$'), 2)
+
+    call gesture#execute()
+
+    normal! l
+
+    call gesture#execute()
+
+    call s:assert.equals(tabpagenr('$'), 3)
+endfunction

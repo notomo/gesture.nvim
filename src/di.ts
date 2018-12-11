@@ -8,12 +8,18 @@ import { PointFactory } from "./point";
 import { GestureBuffer } from "./buffer";
 import { OptionStore, BufferOptionStoreFactory } from "./option";
 import { CommandFactory } from "./command";
+import { ConfigRepository } from "./repository/config";
 
 export class Di {
   protected static readonly deps: Deps = {
     Gesture: (vim: Neovim) => {
       const pointFactory = new PointFactory();
-      const recognizer = new DirectionRecognizer(vim, pointFactory);
+      const configRepository = Di.get("ConfigRepository", vim);
+      const recognizer = new DirectionRecognizer(
+        vim,
+        pointFactory,
+        configRepository
+      );
       const mapper = new GestureMapper(vim);
       const optionStore = new OptionStore(vim);
       const bufferOptionStoreFactory = new BufferOptionStoreFactory(vim);
@@ -35,13 +41,18 @@ export class Di {
       const logger = getLogger("index");
       return new Reporter(vim, logger);
     },
+    ConfigRepository: (vim: Neovim) => {
+      return new ConfigRepository(vim);
+    },
   };
 
   protected static readonly cache: DepsCache = {
     Gesture: null,
     Reporter: null,
+    ConfigRepository: null,
   };
 
+  public static get(cls: "ConfigRepository", vim: Neovim): ConfigRepository;
   public static get(cls: "Reporter", vim: Neovim): Reporter;
   public static get(cls: "Gesture", vim: Neovim): Gesture;
   public static get(
@@ -77,6 +88,7 @@ export class Di {
 interface Deps {
   Gesture: { (vim: Neovim): Gesture };
   Reporter: { (vim: Neovim): Reporter };
+  ConfigRepository: { (vim: Neovim): ConfigRepository };
 }
 
 type DepsCache = { [P in keyof Deps]: ReturnType<Deps[P]> | null };
