@@ -61,8 +61,11 @@ export class GestureBuffer {
       bufferLineCount < topLineNumberInWindow + windowHeight - 1;
 
     // FIXME: add module for edit buffer only when the buffer is modifiable
-    const modifiable = (await buffer.getOption("modifiable")) as boolean;
-    if (hasEmptyLine && modifiable) {
+    const [modifiable, readonlyOption] = await Promise.all([
+      (await buffer.getOption("modifiable")) as Promise<boolean>,
+      (await buffer.getOption("readonly")) as Promise<boolean>,
+    ]);
+    if (hasEmptyLine && modifiable && !readonlyOption) {
       const bufferOptionStore = this.bufferOptionStoreFactory.create(buffer);
       await bufferOptionStore.set();
 

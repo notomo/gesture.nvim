@@ -45,8 +45,6 @@ export class OptionStore {
 
 export class BufferOptionStore {
   protected modified: boolean | null = null;
-  protected modifiable: boolean | null = null;
-  protected readonly: boolean | null = null;
 
   constructor(
     protected readonly buffer: Buffer,
@@ -56,36 +54,17 @@ export class BufferOptionStore {
   public async restore() {
     await this.undoStore.restore();
 
-    if (
-      this.modified === null ||
-      this.modifiable === null ||
-      this.readonly === null
-    ) {
+    if (this.modified === null) {
       return;
     }
 
-    await Promise.all([
-      this.buffer.setOption("modified", this.modified),
-      this.buffer.setOption("modifiable", this.modifiable),
-      this.buffer.setOption("readonly", this.readonly),
-    ]);
+    await this.buffer.setOption("modified", this.modified);
 
     this.modified = null;
-    this.modifiable = null;
-    this.readonly = null;
   }
 
   public async set() {
-    [this.modified, this.modifiable, this.readonly] = await Promise.all([
-      this.buffer.getOption("modified") as Promise<boolean>,
-      this.buffer.getOption("modifiable") as Promise<boolean>,
-      this.buffer.getOption("readonly") as Promise<boolean>,
-    ]);
-
-    await Promise.all([
-      this.buffer.setOption("modifiable", true),
-      this.buffer.setOption("readonly", false),
-    ]);
+    this.modified = (await this.buffer.getOption("modified")) as boolean;
 
     await this.undoStore.save();
   }
