@@ -21,7 +21,7 @@ export class Gesture {
   public async execute(): Promise<Command | null> {
     const isValid = await this.gestureBuffer.validate();
     if (!isValid) {
-      await this.clear();
+      await this.gestureBuffer.restore();
       return null;
     }
 
@@ -32,8 +32,9 @@ export class Gesture {
 
     const action = await this.mapper.getNoWaitAction(gestureLines);
     if (action !== null) {
+      await this.gestureBuffer.restore();
+
       const context = await this.recognizer.getContext();
-      await this.clear();
       return this.commandFactory.create(action, context);
     }
 
@@ -41,37 +42,33 @@ export class Gesture {
   }
 
   public async finish(): Promise<Command | null> {
-    if (!this.gestureBuffer.isStarted) {
+    if (!this.gestureBuffer.isStarted()) {
       return null;
     }
 
     const gestureLines = this.recognizer.getGestureLines();
 
     const action = await this.mapper.getAction(gestureLines);
+    let command: Command | null = null;
     if (action !== null) {
       const context = await this.recognizer.getContext();
-      await this.clear();
-      return this.commandFactory.create(action, context);
+      command = this.commandFactory.create(action, context);
     }
 
-    await this.clear();
+    await this.gestureBuffer.restore();
 
-    return null;
+    return command;
   }
 
   public async initialize() {
-    if (this.gestureBuffer.isStarted) {
+    if (this.gestureBuffer.isStarted()) {
       return;
     }
 
-    this.recognizer.clear();
-    await this.mapper.initialize();
-
-    await this.gestureBuffer.setup();
-  }
-
-  protected async clear() {
-    await this.gestureBuffer.restore();
-    this.recognizer.clear();
+    await Promise.all([
+      this.recognizer.clear(),
+      this.mapper.initialize(),
+      this.gestureBuffer.setup(),
+    ]);
   }
 }

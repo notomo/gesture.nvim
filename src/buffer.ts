@@ -122,7 +122,7 @@ export class GestureBuffer {
     return { x: xInWindow + offsets[1] - 1, y: yInWindow + offsets[0] - 1 };
   }
 
-  public get isStarted(): boolean {
+  public isStarted(): boolean {
     return this.started;
   }
 }
