@@ -65,31 +65,24 @@ export class GestureMapper {
     if (bufferId in this.actions[gesturedDirections].buffer) {
       const bufferLocalActions = this.actions[gesturedDirections].buffer[
         bufferId
-      ].filter(action => this.filterAction(action, gestureLines));
-      if (bufferLocalActions.length !== 0 && bufferLocalActions[0].nowait) {
+      ].filter(
+        action => this.filterAction(action, gestureLines) && action.nowait
+      );
+      if (bufferLocalActions.length !== 0) {
         return bufferLocalActions[0];
       }
     }
 
-    const actions = this.actions[gesturedDirections].global.filter(action =>
-      this.filterAction(action, gestureLines)
+    const actions = this.actions[gesturedDirections].global.filter(
+      action => this.filterAction(action, gestureLines) && action.nowait
     );
-    if (actions.length === 0) {
-      return null;
-    }
-
-    const action = actions[0];
-    if (!action.nowait) {
-      return null;
-    }
-
-    return action;
+    return actions.length === 0 ? null : actions[0];
   }
 
   protected filterAction(
     action: Action,
     gestureLines: ReadonlyArray<GestureLine>
-  ): Action | null {
+  ): boolean {
     let i = 0;
     for (const line of action.lines) {
       const gestureLine = gestureLines[i];
@@ -97,11 +90,11 @@ export class GestureMapper {
         (line.max_length !== null && line.max_length < gestureLine.length) ||
         (line.min_length !== null && line.min_length > gestureLine.length)
       ) {
-        return null;
+        return false;
       }
       i++;
     }
 
-    return action;
+    return true;
   }
 }
