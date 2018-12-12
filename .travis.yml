@@ -19,7 +19,7 @@ install:
 env:
     global:
         - THEMIS_VIM=nvim
-        - THEMIS_ARGS="-e -s --headless"
+        - THEMIS_ARGS="-e --headless"
 
 script:
     - npm run build

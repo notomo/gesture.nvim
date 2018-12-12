@@ -31,55 +31,70 @@ export class GestureBuffer {
 
     this.startPointTabpage = await this.vim.tabpage;
     this.startPointWindow = await this.vim.window;
-    const bufferIds: number[] = [];
+    const cursor = await this.startPointWindow.cursor;
+
+    const bufferMaxEmptyLineCounts: Map<
+      number,
+      { emptyLineCount: number; buffer: Buffer }
+    > = new Map();
     for (const window of await this.startPointTabpage.windows) {
       const buffer = await window.buffer;
-      if (bufferIds.indexOf(buffer.id) >= 0) {
-        continue;
-      }
-      bufferIds.push(buffer.id);
 
-      const bufferOptionStore = await this.fillBuffer(window, buffer);
-      if (bufferOptionStore !== null) {
-        this.bufferOptionStores.push(bufferOptionStore);
+      const emptyLineCount = await this.getEmptyLineCount(window, buffer);
+      const info = bufferMaxEmptyLineCounts.get(buffer.id);
+      if (
+        (info === undefined || emptyLineCount > info.emptyLineCount) &&
+        emptyLineCount !== 0
+      ) {
+        bufferMaxEmptyLineCounts.set(buffer.id, {
+          emptyLineCount: emptyLineCount,
+          buffer: buffer,
+        });
       }
     }
+
+    for (const info of bufferMaxEmptyLineCounts.values()) {
+      const buffer = info.buffer;
+      const bufferOptionStore = this.bufferOptionStoreFactory.create(buffer);
+      await bufferOptionStore.set();
+
+      await buffer.append(Array(info.emptyLineCount).fill(""));
+      this.bufferOptionStores.push(bufferOptionStore);
+    }
+
+    await (this.startPointWindow.cursor = cursor);
+    await this.vim.setWindow(this.startPointWindow);
   }
 
-  protected async fillBuffer(
+  protected async getEmptyLineCount(
     window: Window,
     buffer: Buffer
-  ): Promise<BufferOptionStore | null> {
-    const currentWindow = await this.vim.window;
-
-    const windowHeight = await window.height;
-    const cursorLineNumber = (await window.cursor)[0];
-    const topLineNumberInWindow =
-      cursorLineNumber - ((await this.vim.call("winline")) as number) + 1;
-    const bufferLineCount = await buffer.length;
-    const hasEmptyLine =
-      bufferLineCount < topLineNumberInWindow + windowHeight - 1;
-
-    // FIXME: add module for edit buffer only when the buffer is modifiable
+  ): Promise<number> {
     const [modifiable, readonlyOption] = await Promise.all([
       (await buffer.getOption("modifiable")) as Promise<boolean>,
       (await buffer.getOption("readonly")) as Promise<boolean>,
     ]);
-    if (hasEmptyLine && modifiable && !readonlyOption) {
-      const bufferOptionStore = this.bufferOptionStoreFactory.create(buffer);
-      await bufferOptionStore.set();
-
-      const lineCountInWindow = bufferLineCount - topLineNumberInWindow + 1;
-      const emptyLineCount = windowHeight - lineCountInWindow;
-      await buffer.append(Array(emptyLineCount).fill(""));
-
-      await this.vim.setWindow(currentWindow);
-      return bufferOptionStore;
+    if (!modifiable || readonlyOption) {
+      return 0;
     }
 
-    await this.vim.setWindow(currentWindow);
+    const windowHeight = await window.height;
+    const cursorLineNumber = (await window.cursor)[0];
 
-    return null;
+    await this.vim.setWindow(window);
+    const topLineNumberInWindow =
+      cursorLineNumber - ((await this.vim.call("winline")) as number) + 1;
+
+    const bufferLineCount = await buffer.length;
+    const hasEmptyLine =
+      bufferLineCount < topLineNumberInWindow + windowHeight - 1;
+
+    if (!hasEmptyLine) {
+      return 0;
+    }
+
+    const lineCountInWindow = bufferLineCount - topLineNumberInWindow + 1;
+    return windowHeight - lineCountInWindow;
   }
 
   public async restore() {
@@ -109,17 +124,17 @@ export class GestureBuffer {
 
   public async getCursor(): Promise<{ x: number; y: number }> {
     const window = await this.vim.window;
-
     const offsets = (await this.vim.call("win_screenpos", window.id)) as [
       number,
       number
     ];
 
-    // FIXME: remove tabline and ruler offsets
+    const [xInWindow, yInWindow] = await Promise.all([
+      this.vim.call("wincol") as Promise<number>,
+      this.vim.call("winline") as Promise<number>,
+    ]);
 
-    const xInWindow = (await this.vim.call("virtcol", ".")) as number;
-    const yInWindow = (await window.cursor)[0];
-    return { x: xInWindow + offsets[1] - 1, y: yInWindow + offsets[0] - 1 };
+    return { x: xInWindow + offsets[1], y: yInWindow + offsets[0] };
   }
 
   public isStarted(): boolean {

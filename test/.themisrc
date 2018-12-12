@@ -1,3 +1,6 @@
+" NOTICE: This plugin does not work in silent mode. ex. winline()
+" NOTE: :help -s-ex
+
 call themis#option('recursive', 1)
 
 runtime! plugin/rplugin.vim
@@ -12,6 +15,6 @@ endfunction
 
 function! GestureTestAfterEach() abort
     call gesture#clear()
-    %bwipeout!
+    silent! %bwipeout!
     execute 'cd ' . s:root
 endfunction
