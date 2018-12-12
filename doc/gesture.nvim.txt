@@ -1,0 +1,155 @@
+*gesture.nvim.txt*  Mouse gesture plugin for neovim
+
+Author: notomo
+License: MIT License (See LICENSE)
+
+==============================================================================
+INTRODUCTION                                        *gesture.nvim-introduction*
+
+*gesture.nvim* is a mouse gesture plugin for neovim.
+
+==============================================================================
+FUNCTIONS                                              *gesture.nvim-functions*
+
+gesture#execute()                                           *gesture#execute()*
+    Input gesture from the current cursor position.
+    If the current gesture match registered nowait gestures,
+    the registered action is executed.
+
+gesture#finish()                                             *gesture#finish()*
+    Finish inputting gestures.
+    If the current gesture match registered gestures,
+    the registered action is executed.
+
+gesture#clear()                                               *gesture#clear()*
+    Clear registered gesture settings.
+
+gesture#register()                                 *gesture#register()*
+gesture#register().left()                          *gesture#register().left()*
+gesture#register().right()                         *gesture#register().right()*
+gesture#register().down()                          *gesture#register().down()*
+gesture#register().up()                            *gesture#register().up()*
+    Define inputs of the gesture.
+
+gesture#register().map({key}, [{attrs}])         *gesture#register().map()*
+gesture#register().noremap({key}, [{attrs}])     *gesture#register().noremap()*
+    Define an output mapping of the gesture.
+
+    Arguments:
+      {key}: string
+      {attrs}: |gesture.nvim-attributes| dictionary
+
+gesture#register().func({f}, [{attrs}])             *gesture#register().func()*
+    Define an output function of the gesture.
+
+    Arguments:
+      {f}: {(context: Context): any}
+
+        Context = {
+          'windows': {
+            'id': int, " window id
+            'buffer': int, " buffer id
+          }[]
+        }
+
+      {attrs}: |gesture.nvim-attributes| dictionary
+
+gesture#get_lines()                                       *gesture#get_lines()*
+    Get current gesture lines information.
+
+    Return type:
+      {
+        'direction': "LEFT" | "RIGHT" | "UP" | "DOWN",
+        'length': int,
+      }[]
+
+gesture#custom#set({name}, {value})                      *gesture#custom#set()*
+    Set custom settings.
+
+    Arguments:
+      {name}: string (|gesture.nvim-custom| key)
+      {attrs}: any (|gesture.nvim-custom| value)
+
+gesture#custom#clear()                                 *gesture#custom#clear()*
+    Restore default custom settings.
+
+==============================================================================
+ATTRIBUTES                                            *gesture.nvim-attributes*
+
+'nowait'
+    The gesture is executed even if |gesture#finish()| is not called.
+    This is similar to |map-<nowait>|.
+    Default: v:false
+
+'buffer'
+    The gesture is defined as the current buffer local mapping.
+    This is similar to |map-<buffer>|.
+    Default: v:false
+
+'silent'
+    The gesture's action command is executed with |silent|.
+    This is similar to |map-<silent>|.
+    Default: v:false
+
+==============================================================================
+CUSTOM                                                    *gesture.nvim-custom*
+
+cursor_setter                               *gesture.nvim-custom-cursor_setter*
+    gesture#execute() uses this command to set the cursor position.
+    Default: "normal! \<LeftMouse>"
+
+x_length_threshold                     *gesture.nvim-custom-x_length_threshold*
+    The gesture input is recognized if its x-axis length is longer than this
+    value.
+    Default: 5
+
+y_length_threshold                     *gesture.nvim-custom-y_length_threshold*
+    The gesture input is recognized if its y-axis length is longer than this
+    value.
+    Default: 5
+
+==============================================================================
+EXAMPLES                                                *gesture.nvim-examples*
+>
+        " -- Basic settings ----------------------------------------------
+
+        " Ensure to enable the mouse support
+        " `mouse` must include `n` or `a`
+        set mouse=n " or set mouse=a
+
+        nnoremap <silent> <LeftDrag> :<C-u>call gesture#execute()<CR>
+        nnoremap <silent> <LeftRelease> :<C-u>call gesture#finish()<CR>
+
+        " If you use the right mouse button,
+        " you need to disable the right click. you use the right mouse button.
+
+        nnoremap <RightMouse> <Nop>
+        nnoremap <silent> <RightDrag> :<C-u>call gesture#execute()<CR>
+        nnoremap <silent> <RightRelease> :<C-u>call gesture#finish()<CR>
+
+
+        " -- Gesture settings ----------------------------------------------
+
+        call gesture#register().up().down().noremap('G')
+        call gesture#register().right().noremap(":\<C-u>tabnext\<CR>")
+
+        nnoremap S :<C-u>AwesomeCommand<CR>
+        call gesture#register().down().left().map('S')
+
+        let s:F = {context -> awesome#function(context) }
+        call gesture#register().left().func(s:F)
+
+        " <nowait> mapping
+        call gesture#register().down().up().noremap('gg', {'nowait':v:true})
+
+        " buffer local mapping
+        call gesture#register().down().up().noremap('G', {'buffer':v:true})
+
+
+        " -- Custom settings ----------------------------------------------
+
+        call gesture#custom#set('x_length_threshold', 16)
+        call gesture#custom#set('y_length_threshold', 9)
+
+==============================================================================
+vim:tw=78:ts=8:sw=2:ft=help:et:norl:fen:fdl=0:
