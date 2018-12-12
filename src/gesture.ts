@@ -4,6 +4,7 @@ import { DirectionRecognizer } from "./recognizer";
 import { GestureMapper } from "./mapper";
 import { GestureBuffer } from "./buffer";
 import { Command, CommandFactory } from "./command";
+import { GestureLine } from "./line";
 
 export class Gesture {
   protected readonly logger: Logger;
@@ -70,5 +71,12 @@ export class Gesture {
       this.mapper.initialize(),
       this.gestureBuffer.setup(),
     ]);
+  }
+
+  public getGestureLines(): ReadonlyArray<GestureLine> {
+    if (!this.gestureBuffer.isStarted()) {
+      return [];
+    }
+    return this.recognizer.getGestureLines();
   }
 }

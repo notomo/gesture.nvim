@@ -15,6 +15,7 @@ describe("GesturePlugin", () => {
   let initialize: jest.Mock;
   let execute: jest.Mock;
   let finish: jest.Mock;
+  let getGestureLines: jest.Mock;
 
   let error: jest.Mock;
 
@@ -40,10 +41,12 @@ describe("GesturePlugin", () => {
     finish = jest.fn().mockImplementation(async () => {
       return null;
     });
+    getGestureLines = jest.fn().mockReturnValue([]);
     const GestureClass = jest.fn<Gesture>(() => ({
       initialize: initialize,
       execute: execute,
       finish: finish,
+      getGestureLines: getGestureLines,
     }));
     const gesture = new GestureClass();
     Di.set("Gesture", gesture);
@@ -130,6 +133,12 @@ describe("GesturePlugin", () => {
 
     expect(error).toHaveBeenCalled();
     expect(result).toBeNull();
+  });
+
+  it("getGestureLines", () => {
+    const result = gesturePlugin.getGestureLines([]);
+
+    expect(result).toEqual([]);
   });
 
   it("newPlugin", () => {

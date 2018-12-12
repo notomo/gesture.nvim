@@ -12,6 +12,7 @@ describe("Gesture", () => {
   let directionRecognizer: DirectionRecognizer;
   let clear: jest.Mock;
   let getGestureLines: jest.Mock;
+  let gestureLines: GestureLine[];
   let context: Context;
   let getContext: jest.Mock;
   let add: jest.Mock;
@@ -41,7 +42,7 @@ describe("Gesture", () => {
 
     const GestureLineClass = jest.fn<GestureLine>(() => ({}));
     const gestureLine = new GestureLineClass();
-    const gestureLines = [gestureLine];
+    gestureLines = [gestureLine];
 
     const ContextClass = jest.fn<Context>(() => ({}));
     context = new ContextClass();
@@ -209,5 +210,19 @@ describe("Gesture", () => {
     expect(result).toEqual(command);
     expect(restore).toHaveBeenCalledTimes(1);
     expect(create).toHaveBeenCalledWith(action, context);
+  });
+
+  it("getGestureLines returns empty when the gesture is not started", async () => {
+    const result = await gesture.getGestureLines();
+
+    expect(result).toEqual([]);
+  });
+
+  it("getGestureLines", async () => {
+    await gesture.initialize();
+
+    const result = await gesture.getGestureLines();
+
+    expect(result).toEqual(gestureLines);
   });
 });

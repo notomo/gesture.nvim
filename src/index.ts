@@ -3,6 +3,7 @@ import { Gesture } from "./gesture";
 import { Reporter } from "./reporter";
 import { Di } from "./di";
 import { Command } from "./command";
+import { GestureLine } from "./line";
 
 export class GesturePlugin {
   protected readonly gesture: Gesture;
@@ -26,6 +27,10 @@ export class GesturePlugin {
     plugin.registerFunction("_gesture_finish", [this, this.finish], {
       sync: true,
     });
+
+    plugin.registerFunction("_gesture_lines", [this, this.getGestureLines], {
+      sync: true,
+    });
   }
 
   public async initialize(args: []): Promise<void> {
@@ -44,6 +49,10 @@ export class GesturePlugin {
       this.reporter.error(e);
       return null;
     });
+  }
+
+  public getGestureLines(args: []): ReadonlyArray<GestureLine> {
+    return this.gesture.getGestureLines();
   }
 }
 

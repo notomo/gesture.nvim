@@ -68,6 +68,10 @@ function! gesture#register() abort
     return register
 endfunction
 
+function! gesture#get_lines() abort
+    return _gesture_lines()
+endfunction
+
 function! gesture#get() abort
     return s:gestures
 endfunction
