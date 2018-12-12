@@ -176,8 +176,8 @@ function! s:suite.no_global()
 endfunction
 
 function! s:suite.set_large_length_threshold()
-    call gesture#custom('x_length_threshold', 1000)
-    call gesture#custom('y_length_threshold', 1000)
+    call gesture#custom#set('x_length_threshold', 1000)
+    call gesture#custom#set('y_length_threshold', 1000)
     call gesture#register().down().noremap(":tabnew \<CR>", { 'nowait' : v:true })
     call gesture#register().right().noremap(":tabnew \<CR>", { 'nowait' : v:true })
 
@@ -197,8 +197,8 @@ function! s:suite.set_large_length_threshold()
 endfunction
 
 function! s:suite.set_small_length_threshold()
-    call gesture#custom('x_length_threshold', 1)
-    call gesture#custom('y_length_threshold', 1)
+    call gesture#custom#set('x_length_threshold', 1)
+    call gesture#custom#set('y_length_threshold', 1)
     call gesture#register().down().noremap(":tabnew \<CR>", { 'nowait' : v:true })
     call gesture#register().right().noremap(":tabnew \<CR>", { 'nowait' : v:true })
 

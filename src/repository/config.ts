@@ -9,13 +9,13 @@ export class ConfigRepository {
       case Direction.UP:
       case Direction.DOWN:
         return (await this.vim.call(
-          "gesture#get_custom",
+          "gesture#custom#get",
           "y_length_threshold"
         )) as number;
       case Direction.LEFT:
       case Direction.RIGHT:
         return (await this.vim.call(
-          "gesture#get_custom",
+          "gesture#custom#get",
           "x_length_threshold"
         )) as number;
     }

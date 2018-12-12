@@ -76,7 +76,7 @@ export class UndoStore {
       return;
     }
     const undolevels = (await this.vim.call(
-      "gesture#get_undolevels",
+      "gesture#impl#get_undolevels",
       this.buffer.id
     )) as number;
     await this.buffer.setOption("undolevels", -1);

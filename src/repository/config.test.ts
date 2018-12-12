@@ -21,7 +21,7 @@ describe("ConfigRepository", () => {
 
       await configRepository.getMinLengthByDirection(data.direction);
 
-      expect(call).toHaveBeenCalledWith("gesture#get_custom", data.expected);
+      expect(call).toHaveBeenCalledWith("gesture#custom#get", data.expected);
     });
   });
 });

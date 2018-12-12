@@ -1,10 +1,16 @@
 
+if exists('*gesture#execute')
+    finish
+endif
+
 function! gesture#execute() abort
     call _gesture_initialize()
-    let cursor_setter = gesture#get_custom('cursor_setter')
+
+    let cursor_setter = gesture#custom#get('cursor_setter')
     if !empty(cursor_setter)
         execute cursor_setter
     endif
+
     let command_info = _gesture_execute()
     call s:execute(command_info)
 endfunction
@@ -80,33 +86,6 @@ function! gesture#clear() abort
     let s:id = 0
     let s:gestures = {}
     let s:funcs = {}
-    let s:custom = s:default_custom
-endfunction
-
-let s:default_custom = {
-    \ 'cursor_setter': "normal! \<LeftMouse>",
-    \ 'x_length_threshold': 5,
-    \ 'y_length_threshold': 5,
-\ }
-let s:custom = s:default_custom
-
-function! gesture#custom(key, value) abort
-    if !has_key(s:custom, a:key)
-        throw a:key . ' does not exist in custom options.'
-    endif
-    let s:custom[a:key] = a:value
-endfunction
-
-function! gesture#get_custom(key) abort
-    if !has_key(s:custom, a:key)
-        throw a:key . ' does not exist in custom options.'
-    endif
-    return s:custom[a:key]
-endfunction
-
-" NOTICE: for windows workaround
-function! gesture#get_undolevels(buffer_id) abort
-    return getbufvar(a:buffer_id, '&undolevels')
 endfunction
 
 function! s:add(directions, rhs, attributes) abort

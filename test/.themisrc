@@ -7,7 +7,7 @@ runtime! plugin/rplugin.vim
 
 function! GestureTestBefore() abort
     " NOTICE: Disable <LeftMouse>
-    call gesture#custom('cursor_setter', '')
+    call gesture#custom#set('cursor_setter', '')
 
     let s:root = getcwd()
     return s:root
@@ -15,6 +15,7 @@ endfunction
 
 function! GestureTestAfterEach() abort
     call gesture#clear()
+    call gesture#custom#clear()
     silent! %bwipeout!
     execute 'cd ' . s:root
 endfunction
