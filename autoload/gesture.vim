@@ -132,7 +132,7 @@ function! s:add_gesture(gesture) abort
     let serialized = join(directions, ',')
     if !has_key(s:gestures, serialized)
         let s:gestures[serialized] = {}
-        let s:gestures[serialized]['global'] = v:null
+        let s:gestures[serialized]['global'] = []
         let s:gestures[serialized]['buffer'] = {}
     endif
 
@@ -141,9 +141,12 @@ function! s:add_gesture(gesture) abort
 
     let buffer_id = bufnr('%')
     if a:gesture.buffer && buffer_id != -1
-        let s:gestures[serialized]['buffer'][buffer_id] = a:gesture
+        if !has_key(s:gestures[serialized]['buffer'], buffer_id)
+            let s:gestures[serialized]['buffer'][buffer_id] = []
+        endif
+        call add(s:gestures[serialized]['buffer'][buffer_id], a:gesture)
     else
-        let s:gestures[serialized]['global'] = a:gesture
+        call add(s:gestures[serialized]['global'], a:gesture)
     endif
 
     return id

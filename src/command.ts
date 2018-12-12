@@ -1,7 +1,11 @@
 import { Direction } from "./direction";
 
 export interface Action {
-  directions: Direction[];
+  lines: {
+    direction: Direction;
+    max_length: number | null;
+    min_length: number | null;
+  }[];
   nowait: boolean;
   silent: boolean;
   noremap: boolean;
