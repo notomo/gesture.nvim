@@ -26,25 +26,37 @@ let s:funcs = {}
 function! gesture#register() abort
 
     let register = {}
-    let s:directions = []
+    let s:lines = []
 
-    function! register.left() abort
-        call add(s:directions, 'LEFT')
+    function! register.left(...) abort
+        let attributes = call('s:get_line_attributes', a:000)
+        let attributes['direction'] = 'LEFT'
+
+        call add(s:lines, attributes)
         return self
     endfunction
 
     function! register.right() abort
-        call add(s:directions, 'RIGHT')
+        let attributes = call('s:get_line_attributes', a:000)
+        let attributes['direction'] = 'RIGHT'
+
+        call add(s:lines, attributes)
         return self
     endfunction
 
     function! register.down() abort
-        call add(s:directions, 'DOWN')
+        let attributes = call('s:get_line_attributes', a:000)
+        let attributes['direction'] = 'DOWN'
+
+        call add(s:lines, attributes)
         return self
     endfunction
 
     function! register.up() abort
-        call add(s:directions, 'UP')
+        let attributes = call('s:get_line_attributes', a:000)
+        let attributes['direction'] = 'UP'
+
+        call add(s:lines, 'UP')
         return self
     endfunction
 
@@ -52,23 +64,23 @@ function! gesture#register() abort
         let attributes = call('s:get_map_attributes', a:000)
         let attributes['noremap'] = v:true
 
-        call s:add(s:directions, a:rhs, attributes)
-        let s:directions = []
+        call s:add(s:lines, a:rhs, attributes)
+        let s:lines = []
     endfunction
 
     function! register.map(rhs, ...) abort
         let attributes = call('s:get_map_attributes', a:000)
         let attributes['noremap'] = v:false
 
-        call s:add(s:directions, a:rhs, attributes)
-        let s:directions = []
+        call s:add(s:lines, a:rhs, attributes)
+        let s:lines = []
     endfunction
 
     function! register.func(f, ...) abort
         let attributes = call('s:get_map_attributes', a:000)
 
-        call s:add_func(s:directions, a:f, attributes)
-        let s:directions = []
+        call s:add_func(s:lines, a:f, attributes)
+        let s:lines = []
     endfunction
 
     return register
@@ -88,33 +100,36 @@ function! gesture#clear() abort
     let s:funcs = {}
 endfunction
 
-function! s:add(directions, rhs, attributes) abort
+function! s:add(lines, rhs, attributes) abort
     if type(a:rhs) != v:t_string
         throw 'rhs must be a string'
     endif
 
     let gesture = a:attributes
-    let gesture['directions'] = a:directions
+    let gesture['lines'] = a:lines
     let gesture['rhs'] = a:rhs
 
-    call s:add_gesture(a:directions, gesture)
+    call s:add_gesture(gesture)
 endfunction
 
-function! s:add_func(directions, f, attributes) abort
+function! s:add_func(lines, f, attributes) abort
     if type(a:f) != v:t_func
         throw 'f must be a function'
     endif
 
     let gesture = a:attributes
-    let gesture['directions'] = a:directions
+    let gesture['lines'] = a:lines
     let gesture['is_func'] = v:true
 
-    let id = s:add_gesture(a:directions, gesture)
+    let id = s:add_gesture(gesture)
     let s:funcs[id] = a:f
 endfunction
 
-function! s:add_gesture(directions, gesture) abort
-    let serialized = join(a:directions, ',')
+function! s:add_gesture(gesture) abort
+    let lines = a:gesture['lines']
+    let directions = map(lines[:], {_, v -> v['direction']})
+
+    let serialized = join(directions, ',')
     if !has_key(s:gestures, serialized)
         let s:gestures[serialized] = {}
         let s:gestures[serialized]['global'] = v:null
@@ -160,4 +175,13 @@ function! s:get_map_attributes(...) abort
     let buffer = get(attributes, 'buffer', v:false)
 
     return {'rhs' : '', 'nowait' : nowait, 'silent' : silent, 'buffer' : buffer, 'is_func' : v:false}
+endfunction
+
+function! s:get_line_attributes(...) abort
+    let attributes = get(a:, 1, {})
+
+    let max_length = get(attributes, 'max_length', v:null)
+    let min_length = get(attributes, 'min_length', v:null)
+
+    return {'max_length' : max_length, 'min_length' : min_length}
 endfunction
