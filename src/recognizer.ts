@@ -58,13 +58,23 @@ export class DirectionRecognizer {
     this.lastEdge = point;
 
     const direction = info.direction;
-    if (this.lastDirection !== direction) {
+    const gestureLine = this.gestureLines.pop();
+    if (gestureLine === undefined || this.lastDirection !== direction) {
       this.lastDirection = direction;
+      if (gestureLine !== undefined) {
+        this.gestureLines.push(gestureLine);
+      }
       this.gestureLines.push({
         direction: info.direction,
         length: info.length,
       });
+      return;
     }
+
+    this.gestureLines.push({
+      direction: info.direction,
+      length: info.length + gestureLine.length,
+    });
   }
 
   public getGestureLines(): ReadonlyArray<GestureLine> {
