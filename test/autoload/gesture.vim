@@ -288,3 +288,57 @@ function! s:suite.execute_down_across_windows()
 
     set startofline
 endfunction
+
+function! s:suite.gesture_length_config()
+    call gesture#register().right({'min_length':20}).noremap(":tabclose \<CR>")
+    call gesture#register().right({'max_length':20}).noremap(":tabnew \<CR>")
+
+    call gesture#execute()
+
+    normal! 10l
+
+    call gesture#execute()
+    call gesture#finish()
+
+    call s:assert.equals(tabpagenr('$'), 2)
+
+    call gesture#execute()
+
+    normal! 30l
+
+    call gesture#execute()
+    call gesture#finish()
+
+    call s:assert.equals(tabpagenr('$'), 1)
+endfunction
+
+function! s:suite.gesture_length_config_with_range()
+    call gesture#register().right({'max_length': 40, 'min_length':20}).noremap(":tabnew \<CR>")
+
+    call gesture#execute()
+
+    normal! 10l
+
+    call gesture#execute()
+    call gesture#finish()
+
+    call s:assert.equals(tabpagenr('$'), 1)
+
+    call gesture#execute()
+
+    normal! 50l
+
+    call gesture#execute()
+    call gesture#finish()
+
+    call s:assert.equals(tabpagenr('$'), 1)
+
+    call gesture#execute()
+
+    normal! 40l
+
+    call gesture#execute()
+    call gesture#finish()
+
+    call s:assert.equals(tabpagenr('$'), 2)
+endfunction
