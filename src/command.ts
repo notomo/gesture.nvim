@@ -3,8 +3,8 @@ import { Direction } from "./direction";
 export interface Action {
   lines: {
     direction: Direction;
-    max_length: number | null;
-    min_length: number | null;
+    max_length?: number;
+    min_length?: number;
   }[];
   nowait: boolean;
   silent: boolean;

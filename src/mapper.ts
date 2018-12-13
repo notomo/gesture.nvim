@@ -66,7 +66,7 @@ export class GestureMapper {
       const bufferLocalActions = this.actions[gesturedDirections].buffer[
         bufferId
       ].filter(
-        action => this.filterAction(action, gestureLines) && action.nowait
+        action => action.nowait && this.filterAction(action, gestureLines)
       );
       if (bufferLocalActions.length !== 0) {
         return bufferLocalActions[0];
@@ -74,7 +74,7 @@ export class GestureMapper {
     }
 
     const actions = this.actions[gesturedDirections].global.filter(
-      action => this.filterAction(action, gestureLines) && action.nowait
+      action => action.nowait && this.filterAction(action, gestureLines)
     );
     return actions.length === 0 ? null : actions[0];
   }
@@ -87,8 +87,10 @@ export class GestureMapper {
     for (const line of action.lines) {
       const gestureLine = gestureLines[i];
       if (
-        (line.max_length !== null && line.max_length < gestureLine.length) ||
-        (line.min_length !== null && line.min_length > gestureLine.length)
+        (typeof line.max_length === "number" &&
+          line.max_length < gestureLine.length) ||
+        (typeof line.min_length === "number" &&
+          line.min_length > gestureLine.length)
       ) {
         return false;
       }

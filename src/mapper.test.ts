@@ -31,28 +31,69 @@ describe("GestureMapper", () => {
 
     call = jest.fn().mockReturnValue({
       "LEFT,RIGHT": {
-        global: {
-          nowait: false,
-          directions: [Direction.LEFT, Direction.RIGHT],
-        },
-        buffer: {
-          2: {
+        global: [
+          {
             nowait: false,
-            directions: [Direction.LEFT, Direction.RIGHT],
-            buffer: true,
+            lines: [
+              { direction: Direction.LEFT },
+              { direction: Direction.RIGHT },
+            ],
           },
+        ],
+        buffer: {
+          2: [
+            {
+              nowait: false,
+              lines: [
+                { direction: Direction.LEFT },
+                { direction: Direction.RIGHT },
+              ],
+              buffer: true,
+            },
+          ],
         },
       },
       LEFT: {
-        global: { nowait: true, directions: [Direction.LEFT] },
+        global: [
+          {
+            nowait: true,
+            lines: [{ direction: Direction.LEFT, min_length: 8 }],
+          },
+        ],
         buffer: {
-          2: { nowait: true, directions: [Direction.LEFT], buffer: true },
+          2: [
+            {
+              nowait: true,
+              lines: [{ direction: Direction.LEFT }],
+              buffer: true,
+            },
+          ],
         },
       },
       RIGHT: {
-        global: { nowait: false, directions: [Direction.RIGHT] },
+        global: [{ nowait: false, lines: [{ direction: Direction.RIGHT }] }],
         buffer: {
-          2: { nowait: false, directions: [Direction.RIGHT] },
+          2: [{ nowait: false, lines: [{ direction: Direction.RIGHT }] }],
+        },
+      },
+      DOWN: {
+        global: [
+          {
+            nowait: false,
+            lines: [{ direction: Direction.DOWN, max_length: 20 }],
+          },
+        ],
+        buffer: {},
+      },
+      UP: {
+        global: [],
+        buffer: {
+          2: [
+            {
+              nowait: false,
+              lines: [{ direction: Direction.UP, min_length: 10 }],
+            },
+          ],
         },
       },
     });
@@ -81,7 +122,7 @@ describe("GestureMapper", () => {
 
     const expected = {
       nowait: false,
-      directions: [Direction.LEFT, Direction.RIGHT],
+      lines: [{ direction: Direction.LEFT }, { direction: Direction.RIGHT }],
     };
     expect(result).toEqual(expected);
   });
@@ -104,15 +145,53 @@ describe("GestureMapper", () => {
 
     const expected = {
       nowait: false,
-      directions: [Direction.LEFT, Direction.RIGHT],
+      lines: [{ direction: Direction.LEFT }, { direction: Direction.RIGHT }],
       buffer: true,
     };
     expect(result).toEqual(expected);
   });
 
+  it("getAction returns null when the gesture is filtered buffer local action by min_length", async () => {
+    const NeovimClass = jest.fn<Neovim>(() => ({
+      call: call,
+      buffer: buffer2,
+    }));
+    const vim = new NeovimClass();
+
+    mapper = new GestureMapper(vim);
+
+    await mapper.initialize();
+
+    const result = await mapper.getAction([
+      { direction: Direction.UP, length: 7 },
+    ]);
+
+    expect(result).toBeNull();
+  });
+
   it("getAction returns null when the gesture does not matched", async () => {
     const result = await mapper.getAction([
       { direction: Direction.LEFT, length: 10 },
+    ]);
+
+    expect(result).toBeNull();
+  });
+
+  it("getAction returns null when the gesture is filtered by min_length", async () => {
+    await mapper.initialize();
+
+    const result = await mapper.getAction([
+      { direction: Direction.LEFT, length: 7 },
+    ]);
+
+    expect(result).toBeNull();
+  });
+
+  it("getAction returns null when the gesture is filtered by max_length", async () => {
+    await mapper.initialize();
+
+    const result = await mapper.getAction([
+      { direction: Direction.DOWN, length: 30 },
     ]);
 
     expect(result).toBeNull();
@@ -127,7 +206,7 @@ describe("GestureMapper", () => {
 
     const expected = {
       nowait: true,
-      directions: [Direction.LEFT],
+      lines: [{ direction: Direction.LEFT, min_length: 8 }],
     };
     expect(result).toEqual(expected);
   });
@@ -149,10 +228,28 @@ describe("GestureMapper", () => {
 
     const expected = {
       nowait: true,
-      directions: [Direction.LEFT],
+      lines: [{ direction: Direction.LEFT }],
       buffer: true,
     };
     expect(result).toEqual(expected);
+  });
+
+  it("getNoWaitAction returns null when the gesture is filtered buffer local action by min_length", async () => {
+    const NeovimClass = jest.fn<Neovim>(() => ({
+      call: call,
+      buffer: buffer2,
+    }));
+    const vim = new NeovimClass();
+
+    mapper = new GestureMapper(vim);
+
+    await mapper.initialize();
+
+    const result = await mapper.getNoWaitAction([
+      { direction: Direction.UP, length: 7 },
+    ]);
+
+    expect(result).toBeNull();
   });
 
   it("getNoWaitAction returns null when the gesture does not matched", async () => {
