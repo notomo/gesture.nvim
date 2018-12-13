@@ -36,7 +36,7 @@ function! gesture#register() abort
         return self
     endfunction
 
-    function! register.right() abort
+    function! register.right(...) abort
         let attributes = call('s:get_line_attributes', a:000)
         let attributes['direction'] = 'RIGHT'
 
@@ -44,7 +44,7 @@ function! gesture#register() abort
         return self
     endfunction
 
-    function! register.down() abort
+    function! register.down(...) abort
         let attributes = call('s:get_line_attributes', a:000)
         let attributes['direction'] = 'DOWN'
 
@@ -52,11 +52,11 @@ function! gesture#register() abort
         return self
     endfunction
 
-    function! register.up() abort
+    function! register.up(...) abort
         let attributes = call('s:get_line_attributes', a:000)
         let attributes['direction'] = 'UP'
 
-        call add(s:lines, 'UP')
+        call add(s:lines, attributes)
         return self
     endfunction
 
@@ -136,8 +136,8 @@ function! s:add_gesture(gesture) abort
         let s:gestures[serialized]['buffer'] = {}
     endif
 
-    let id = s:id + 1
-    let a:gesture['id'] = id
+    let s:id += 1
+    let a:gesture['id'] = s:id
 
     let buffer_id = bufnr('%')
     if a:gesture.buffer && buffer_id != -1
@@ -149,7 +149,7 @@ function! s:add_gesture(gesture) abort
         call add(s:gestures[serialized]['global'], a:gesture)
     endif
 
-    return id
+    return s:id
 endfunction
 
 function! s:execute(command_info) abort
