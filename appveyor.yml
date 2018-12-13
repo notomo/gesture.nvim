@@ -27,15 +27,18 @@ install:
     - git -c advice.detachedHead=false clone https://github.com/thinca/vim-themis --single-branch --depth 1 %TEMP%\vim-themis
     - set THEMIS_HOME=%TEMP%\vim-themis
     - set PATH=%THEMIS_HOME%\bin;%PATH%
-    - set PATH=%THEMIS_VIM%;%PATH%
 
 test_script:
     - node --version
     - npm --version
     - npm run build
     - npm run test -- --testMatch="**\src\**\*.test.ts"
-    - nvim.exe --version
-    - nvim.exe -u update_remote_plugins.vim -i NONE -n --headless +q
+    - echo %PATH%
+    - echo %THEMIS_HOME%
+    - echo %THEMIS_VIM%
+    - echo %THEMIS_ARGS%
+    - '%THEMIS_VIM% --version'
+    - '%THEMIS_VIM% -u update_remote_plugins.vim -i NONE -n --headless +q'
     - themis --version
     - themis
 
