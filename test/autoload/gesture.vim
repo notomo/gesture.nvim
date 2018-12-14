@@ -10,21 +10,21 @@ function! s:suite.after_each()
     call GestureTestAfterEach()
 endfunction
 
-function! s:suite.execute()
+function! s:suite.draw()
     call gesture#register().down().right().noremap(":tabnew \<CR>")
     call gesture#register().down().noremap(":qa\<CR>")
 
-    call gesture#execute()
+    call gesture#draw()
 
     call s:assert.equals(&modified, v:true)
 
     normal! G
 
-    call gesture#execute()
+    call gesture#draw()
 
     normal! 30l
 
-    call gesture#execute()
+    call gesture#draw()
 
     call gesture#finish()
 
@@ -38,11 +38,11 @@ function! s:suite.save_modified()
 
     call append(1, 'modify')
 
-    call gesture#execute()
+    call gesture#draw()
 
     normal! G
 
-    call gesture#execute()
+    call gesture#draw()
 
     call gesture#finish()
 
@@ -61,13 +61,13 @@ function! s:suite.nowait()
     call gesture#register().down().right().noremap(":qa\<CR>")
     call gesture#register().down().noremap(":tabnew \<CR>", {'nowait' : v:true })
 
-    call gesture#execute()
+    call gesture#draw()
 
     call s:assert.equals(&modified, v:true)
 
     normal! G
 
-    call gesture#execute()
+    call gesture#draw()
 
     call s:assert.equals(tabpagenr('$'), 2)
     tabclose
@@ -78,11 +78,11 @@ function! s:suite.map()
     nnoremap F :<C-u>silent! tabnew<CR>
     call gesture#register().down().map('F')
 
-    call gesture#execute()
+    call gesture#draw()
 
     normal! G
 
-    call gesture#execute()
+    call gesture#draw()
 
     call gesture#finish()
 
@@ -106,23 +106,23 @@ function! s:suite.func()
     let F = funcref('s:f')
     call gesture#register().right().left().down().up().func({ c -> F })
 
-    call gesture#execute()
+    call gesture#draw()
 
     normal! 30l
 
-    call gesture#execute()
+    call gesture#draw()
 
     normal! 30h
 
-    call gesture#execute()
+    call gesture#draw()
 
     normal! G
 
-    call gesture#execute()
+    call gesture#draw()
 
     normal! gg
 
-    call gesture#execute()
+    call gesture#draw()
 
     call gesture#finish()
 endfunction
@@ -132,11 +132,11 @@ function! s:suite.buffer()
     call gesture#register().down().noremap(":tabnew \<CR>", { 'buffer' : v:true })
     call gesture#register().down().noremap(":qa\<CR>")
 
-    call gesture#execute()
+    call gesture#draw()
 
     normal! G
 
-    call gesture#execute()
+    call gesture#draw()
 
     call gesture#finish()
 
@@ -150,11 +150,11 @@ function! s:suite.other_buffer()
     call gesture#register().down().noremap(":qa\<CR>", { 'buffer' : v:true })
     tabclose
 
-    call gesture#execute()
+    call gesture#draw()
 
     normal! G
 
-    call gesture#execute()
+    call gesture#draw()
 
     call gesture#finish()
 
@@ -164,11 +164,11 @@ endfunction
 function! s:suite.no_global()
     call gesture#register().down().noremap(":tabnew \<CR>", { 'buffer' : v:true })
 
-    call gesture#execute()
+    call gesture#draw()
 
     normal! G
 
-    call gesture#execute()
+    call gesture#draw()
 
     call gesture#finish()
 
@@ -181,15 +181,15 @@ function! s:suite.set_large_length_threshold()
     call gesture#register().down().noremap(":tabnew \<CR>", { 'nowait' : v:true })
     call gesture#register().right().noremap(":tabnew \<CR>", { 'nowait' : v:true })
 
-    call gesture#execute()
+    call gesture#draw()
 
     normal! G
 
-    call gesture#execute()
+    call gesture#draw()
 
     normal! 30l
 
-    call gesture#execute()
+    call gesture#draw()
 
     call gesture#finish()
 
@@ -202,57 +202,57 @@ function! s:suite.set_small_length_threshold()
     call gesture#register().down().noremap(":tabnew \<CR>", { 'nowait' : v:true })
     call gesture#register().right().noremap(":tabnew \<CR>", { 'nowait' : v:true })
 
-    call gesture#execute()
+    call gesture#draw()
 
     normal! j
 
-    call gesture#execute()
+    call gesture#draw()
 
     call s:assert.equals(tabpagenr('$'), 2)
 
-    call gesture#execute()
+    call gesture#draw()
 
     normal! l
 
-    call gesture#execute()
+    call gesture#draw()
 
     call s:assert.equals(tabpagenr('$'), 3)
 endfunction
 
 function! s:suite.get_inputs()
-    call gesture#execute()
+    call gesture#draw()
 
     normal! 5j
 
-    call gesture#execute()
+    call gesture#draw()
 
     normal! 5k
 
-    call gesture#execute()
+    call gesture#draw()
 
     call s:assert.equals(gesture#get_inputs(), [{'direction' : 'DOWN', 'length' : 5}, {'direction' : 'UP', 'length' : 5}])
 
     call gesture#finish()
 endfunction
 
-function! s:suite.execute_right_across_windows()
+function! s:suite.draw_right_across_windows()
     call gesture#register().right().noremap(":tabnew \<CR>")
 
     execute 'vsplit ' . s:root . '/test/autoload/_test_data/long_row.txt'
 
-    call gesture#execute()
+    call gesture#draw()
 
     normal! G
     normal! M
     normal! 30l
 
-    call gesture#execute()
+    call gesture#draw()
 
     wincmd l
     normal! M
     normal! 30l
 
-    call gesture#execute()
+    call gesture#draw()
 
     call gesture#finish()
 
@@ -260,7 +260,7 @@ function! s:suite.execute_right_across_windows()
     tabclose
 endfunction
 
-function! s:suite.execute_down_across_windows()
+function! s:suite.draw_down_across_windows()
     set nostartofline
 
     call gesture#register().down().noremap(":tabnew \<CR>")
@@ -269,17 +269,17 @@ function! s:suite.execute_down_across_windows()
 
     normal! 30l
 
-    call gesture#execute()
+    call gesture#draw()
 
     normal! G
 
-    call gesture#execute()
+    call gesture#draw()
 
     wincmd j
     normal! 30l
     normal! G
 
-    call gesture#execute()
+    call gesture#draw()
 
     call gesture#finish()
 
@@ -293,20 +293,20 @@ function! s:suite.gesture_length_config()
     call gesture#register().right({'min_length':20}).noremap(":tabclose \<CR>")
     call gesture#register().right({'max_length':20}).noremap(":tabnew \<CR>")
 
-    call gesture#execute()
+    call gesture#draw()
 
     normal! 10l
 
-    call gesture#execute()
+    call gesture#draw()
     call gesture#finish()
 
     call s:assert.equals(tabpagenr('$'), 2)
 
-    call gesture#execute()
+    call gesture#draw()
 
     normal! 30l
 
-    call gesture#execute()
+    call gesture#draw()
     call gesture#finish()
 
     call s:assert.equals(tabpagenr('$'), 1)
@@ -315,29 +315,29 @@ endfunction
 function! s:suite.gesture_length_config_with_range()
     call gesture#register().right({'max_length': 40, 'min_length':20}).noremap(":tabnew \<CR>")
 
-    call gesture#execute()
+    call gesture#draw()
 
     normal! 10l
 
-    call gesture#execute()
+    call gesture#draw()
     call gesture#finish()
 
     call s:assert.equals(tabpagenr('$'), 1)
 
-    call gesture#execute()
+    call gesture#draw()
 
     normal! 50l
 
-    call gesture#execute()
+    call gesture#draw()
     call gesture#finish()
 
     call s:assert.equals(tabpagenr('$'), 1)
 
-    call gesture#execute()
+    call gesture#draw()
 
     normal! 40l
 
-    call gesture#execute()
+    call gesture#draw()
     call gesture#finish()
 
     call s:assert.equals(tabpagenr('$'), 2)
@@ -346,11 +346,11 @@ endfunction
 function! s:suite.cancel()
     call gesture#register().right().noremap(":tabnew \<CR>")
 
-    call gesture#execute()
+    call gesture#draw()
 
     normal! 30l
 
-    call gesture#execute()
+    call gesture#draw()
 
     call gesture#cancel()
 

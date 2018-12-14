@@ -1,9 +1,9 @@
 
-if exists('*gesture#execute')
+if exists('*gesture#draw')
     finish
 endif
 
-function! gesture#execute() abort
+function! gesture#draw() abort
     call _gesture_initialize()
 
     let cursor_setter = gesture#custom#get('cursor_setter')

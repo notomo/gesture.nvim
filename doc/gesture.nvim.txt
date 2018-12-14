@@ -11,7 +11,7 @@ INTRODUCTION                                        *gesture.nvim-introduction*
 ==============================================================================
 FUNCTIONS                                              *gesture.nvim-functions*
 
-gesture#execute()                                           *gesture#execute()*
+gesture#draw()                                                 *gesture#draw()*
     Input gesture from the current cursor position.
     If the current gesture match registered nowait gestures,
     the registered action is executed.
@@ -95,7 +95,7 @@ ATTRIBUTES                                            *gesture.nvim-attributes*
 CUSTOM                                                    *gesture.nvim-custom*
 
 cursor_setter                               *gesture.nvim-custom-cursor_setter*
-    gesture#execute() uses this command to set the cursor position.
+    gesture#draw() uses this command to set the cursor position.
     Default: "normal! \<LeftMouse>"
 
 x_length_threshold                     *gesture.nvim-custom-x_length_threshold*
@@ -117,14 +117,14 @@ EXAMPLES                                                *gesture.nvim-examples*
         " `mouse` must include `n` or `a`
         set mouse=n " or set mouse=a
 
-        nnoremap <silent> <LeftDrag> :<C-u>call gesture#execute()<CR>
+        nnoremap <silent> <LeftDrag> :<C-u>call gesture#draw()<CR>
         nnoremap <silent> <LeftRelease> :<C-u>call gesture#finish()<CR>
 
         " If you use the right mouse button,
         " you need to disable the right click. you use the right mouse button.
 
         nnoremap <RightMouse> <Nop>
-        nnoremap <silent> <RightDrag> :<C-u>call gesture#execute()<CR>
+        nnoremap <silent> <RightDrag> :<C-u>call gesture#draw()<CR>
         nnoremap <silent> <RightRelease> :<C-u>call gesture#finish()<CR>
 
 
