@@ -357,3 +357,53 @@ function! s:suite.cancel()
     call s:assert.equals(tabpagenr('$'), 1)
     call s:assert.equals(gesture#get_inputs(), [])
 endfunction
+
+function! s:suite.send()
+    call gesture#register().text('inputText').right().noremap(":tabnew \<CR>")
+
+    call gesture#send('inputText')
+
+    call gesture#draw()
+
+    normal! 30l
+
+    call gesture#draw()
+
+    call s:assert.equals(gesture#get_inputs(), [{'kind' : 'text', 'value' : 'inputText', 'count' : 1}, {'kind' : 'direction', 'value' : 'RIGHT', 'length' : 30}])
+
+    call gesture#finish()
+
+    call s:assert.equals(tabpagenr('$'), 2)
+endfunction
+
+function! s:suite.send_the_same_text()
+    call gesture#register().right().text('inputText1', {'count' : 3}).text('inputText2').left().noremap(":tabnew \<CR>")
+
+    call gesture#draw()
+
+    normal! 30l
+
+    call gesture#draw()
+
+    call gesture#send('inputText1')
+    call gesture#send('inputText1')
+    call gesture#send('inputText1')
+    call gesture#send('inputText2')
+
+    call gesture#draw()
+
+    normal! 30h
+
+    call gesture#draw()
+
+    call s:assert.equals(gesture#get_inputs(), [
+        \ {'kind' : 'direction', 'value' : 'RIGHT', 'length' : 30},
+        \ {'kind' : 'text', 'value' : 'inputText1', 'count' : 3},
+        \ {'kind' : 'text', 'value' : 'inputText2', 'count' : 1},
+        \ {'kind' : 'direction', 'value' : 'LEFT', 'length' : 30},
+    \ ])
+
+    call gesture#finish()
+
+    call s:assert.equals(tabpagenr('$'), 2)
+endfunction

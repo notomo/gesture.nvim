@@ -20,6 +20,7 @@ function! gesture#send(value) abort
         throw 'value must be a string'
     endif
 
+    call _gesture_initialize()
     call _gesture_execute('text', a:value)
 endfunction
 

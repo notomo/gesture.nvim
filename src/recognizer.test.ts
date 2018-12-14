@@ -3,7 +3,7 @@ import { DirectionRecognizer } from "./recognizer";
 import { PointFactory, Point } from "./point";
 import { ConfigRepository } from "./repository/config";
 import { TabpageRepository } from "./repository/tabpage";
-import { InputKind, InputLineArgument } from "./input";
+import { InputKind, InputLineArgument, InputTextArgument } from "./input";
 import { Direction } from "./direction";
 
 describe("DirectionRecognizer", () => {
@@ -40,6 +40,11 @@ describe("DirectionRecognizer", () => {
   const inputLineArgument: InputLineArgument = {
     kind: InputKind.DIRECTION,
     value: null,
+  };
+
+  const inputTextArgument: InputTextArgument = {
+    kind: InputKind.TEXT,
+    value: "inputText",
   };
 
   beforeEach(() => {
@@ -101,7 +106,7 @@ describe("DirectionRecognizer", () => {
     );
   });
 
-  it("update the same direction", async () => {
+  it("update by the same direction", async () => {
     await recognizer.update(inputLineArgument);
 
     const gestureLines1 = recognizer.getInputs();
@@ -123,7 +128,7 @@ describe("DirectionRecognizer", () => {
     });
   });
 
-  it("update different direction", async () => {
+  it("update by different direction", async () => {
     calculate = jest
       .fn()
       .mockReturnValueOnce(infoLeft)
@@ -166,7 +171,7 @@ describe("DirectionRecognizer", () => {
     ]);
   });
 
-  it("update is filtered when the length is short", async () => {
+  it("update is filters line when the length is short", async () => {
     calculate = jest.fn().mockReturnValue(infoShortLength);
     const PointClass = jest.fn<Point>(() => ({
       calculate: calculate,
@@ -192,6 +197,45 @@ describe("DirectionRecognizer", () => {
     const gestureLines = recognizer.getInputs();
 
     expect(gestureLines).toEqual([]);
+  });
+
+  it("update by the same text", async () => {
+    await recognizer.update(inputTextArgument);
+
+    const input1 = recognizer.getInputs();
+
+    expect(input1[0]).toEqual({
+      kind: InputKind.TEXT,
+      value: inputTextArgument.value,
+      count: 1,
+    });
+
+    await recognizer.update(inputTextArgument);
+
+    const input2 = recognizer.getInputs();
+
+    expect(input2[0]).toEqual({
+      kind: InputKind.TEXT,
+      value: inputTextArgument.value,
+      count: 2,
+    });
+
+    await recognizer.update(inputLineArgument);
+
+    const input3 = recognizer.getInputs();
+
+    expect(input3).toEqual([
+      {
+        kind: InputKind.TEXT,
+        value: inputTextArgument.value,
+        count: 2,
+      },
+      {
+        kind: InputKind.DIRECTION,
+        length: infoLeft.length,
+        value: infoLeft.direction,
+      },
+    ]);
   });
 
   it("clear", async () => {

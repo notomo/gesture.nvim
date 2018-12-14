@@ -10,7 +10,7 @@ export class DirectionRecognizer {
   protected readonly inputs: Input[] = [];
 
   protected lastEdge: Point;
-  protected started: boolean = false;
+  protected lineStarted: boolean = false;
 
   protected readonly logger: Logger;
 
@@ -63,7 +63,7 @@ export class DirectionRecognizer {
 
   public clear() {
     this.inputs.length = 0;
-    this.started = false;
+    this.lineStarted = false;
     this.lastEdge = this.pointFactory.createForInitialize();
 
     this.windowId = null;
@@ -73,9 +73,9 @@ export class DirectionRecognizer {
   protected async updateByDirection() {
     const globalPosition = await this.tabpageRepository.getGlobalPosition();
     const point = this.pointFactory.create(globalPosition.x, globalPosition.y);
-    if (!this.started) {
+    if (!this.lineStarted) {
       this.lastEdge = point;
-      this.started = true;
+      this.lineStarted = true;
     }
 
     const info = this.lastEdge.calculate(point);
@@ -121,19 +121,22 @@ export class DirectionRecognizer {
   }
 
   protected async updateByText(value: string) {
-    if (!this.started) {
-      this.started = true;
-    }
-
     const lastInputs = this.inputs
       .slice(-1)
       .filter((input): input is InputText => input.kind === InputKind.TEXT);
-
     const newInput: InputText = {
       kind: InputKind.TEXT,
       value: value,
       count: 1,
     };
+
+    if (
+      lastInputs.length === 0 ||
+      (lastInputs.length === 1 && lastInputs[0].value !== value)
+    ) {
+      this.inputs.push(newInput);
+      return;
+    }
 
     const newCount = lastInputs.concat([newInput]).reduce((acc, input) => {
       acc += input.count;
