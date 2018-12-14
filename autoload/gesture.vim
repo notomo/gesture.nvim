@@ -20,6 +20,10 @@ function! gesture#finish() abort
     call s:execute(command_info)
 endfunction
 
+function! gesture#cancel() abort
+    call _gesture_finish()
+endfunction
+
 let s:id = 0
 let s:gestures = {}
 let s:funcs = {}

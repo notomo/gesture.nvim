@@ -342,3 +342,18 @@ function! s:suite.gesture_length_config_with_range()
 
     call s:assert.equals(tabpagenr('$'), 2)
 endfunction
+
+function! s:suite.cancel()
+    call gesture#register().right().noremap(":tabnew \<CR>")
+
+    call gesture#execute()
+
+    normal! 30l
+
+    call gesture#execute()
+
+    call gesture#cancel()
+
+    call s:assert.equals(tabpagenr('$'), 1)
+    call s:assert.equals(gesture#get_lines(), [])
+endfunction
