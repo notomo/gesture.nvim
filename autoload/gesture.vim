@@ -90,8 +90,8 @@ function! gesture#register() abort
     return register
 endfunction
 
-function! gesture#get_lines() abort
-    return _gesture_lines()
+function! gesture#get_inputs() abort
+    return _gesture_get_inputs()
 endfunction
 
 function! gesture#get() abort

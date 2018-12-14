@@ -54,8 +54,8 @@ gesture#register().func({f}, [{attrs}])             *gesture#register().func()*
 
       {attrs}: |gesture.nvim-attributes| dictionary
 
-gesture#get_lines()                                       *gesture#get_lines()*
-    Get current gesture lines information.
+gesture#get_inputs()                                     *gesture#get_inputs()*
+    Get current gesture inputs information.
 
     Return type:
       {

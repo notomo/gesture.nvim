@@ -28,9 +28,13 @@ export class GesturePlugin {
       sync: true,
     });
 
-    plugin.registerFunction("_gesture_lines", [this, this.getGestureLines], {
-      sync: true,
-    });
+    plugin.registerFunction(
+      "_gesture_get_inputs",
+      [this, this.getGestureLines],
+      {
+        sync: true,
+      }
+    );
   }
 
   public async initialize(args: []): Promise<void> {

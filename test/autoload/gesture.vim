@@ -219,7 +219,7 @@ function! s:suite.set_small_length_threshold()
     call s:assert.equals(tabpagenr('$'), 3)
 endfunction
 
-function! s:suite.get_lines()
+function! s:suite.get_inputs()
     call gesture#execute()
 
     normal! 5j
@@ -230,7 +230,7 @@ function! s:suite.get_lines()
 
     call gesture#execute()
 
-    call s:assert.equals(gesture#get_lines(), [{'direction' : 'DOWN', 'length' : 5}, {'direction' : 'UP', 'length' : 5}])
+    call s:assert.equals(gesture#get_inputs(), [{'direction' : 'DOWN', 'length' : 5}, {'direction' : 'UP', 'length' : 5}])
 
     call gesture#finish()
 endfunction
@@ -355,5 +355,5 @@ function! s:suite.cancel()
     call gesture#cancel()
 
     call s:assert.equals(tabpagenr('$'), 1)
-    call s:assert.equals(gesture#get_lines(), [])
+    call s:assert.equals(gesture#get_inputs(), [])
 endfunction
