@@ -377,7 +377,7 @@ function! s:suite.send()
 endfunction
 
 function! s:suite.send_the_same_text()
-    call gesture#register().right().text('inputText1', {'count' : 3}).text('inputText2').left().noremap(":tabnew \<CR>")
+    call gesture#register().right().text('inputText1', {'min_count' : 3, 'max_count': 3}).text('inputText2').left().noremap(":tabnew \<CR>")
 
     call gesture#draw()
 
@@ -406,4 +406,28 @@ function! s:suite.send_the_same_text()
     call gesture#finish()
 
     call s:assert.equals(tabpagenr('$'), 2)
+endfunction
+
+function! s:suite.send_more_than_max()
+    call gesture#register().text('inputText1', {'max_count': 3}).noremap(":tabnew \<CR>")
+
+    call gesture#send('inputText1')
+    call gesture#send('inputText1')
+    call gesture#send('inputText1')
+    call gesture#send('inputText1')
+
+    call gesture#finish()
+
+    call s:assert.equals(tabpagenr('$'), 1)
+endfunction
+
+function! s:suite.send_less_than_min()
+    call gesture#register().text('inputText1', {'min_count' : 3}).noremap(":tabnew \<CR>")
+
+    call gesture#send('inputText1')
+    call gesture#send('inputText1')
+
+    call gesture#finish()
+
+    call s:assert.equals(tabpagenr('$'), 1)
 endfunction
