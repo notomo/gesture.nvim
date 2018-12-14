@@ -16,20 +16,44 @@ gesture#draw()                                                 *gesture#draw()*
     If the current gesture match registered nowait gestures,
     the registered action is executed.
 
+gesture#send({value})                                          *gesture#send()*
+    Input gesture from the argument.
+    If the current gesture match registered nowait gestures,
+    the registered action is executed.
+
 gesture#finish()                                             *gesture#finish()*
     Finish inputting gestures.
     If the current gesture match registered gestures,
     the registered action is executed.
 
+gesture#cancel()                                             *gesture#cancel()*
+    Cancel the current gesture.
+
 gesture#clear()                                               *gesture#clear()*
     Clear registered gesture settings.
 
 gesture#register()                                 *gesture#register()*
-gesture#register().left()                          *gesture#register().left()*
-gesture#register().right()                         *gesture#register().right()*
-gesture#register().down()                          *gesture#register().down()*
-gesture#register().up()                            *gesture#register().up()*
-    Define inputs of the gesture.
+gesture#register().left([{attrs}])                 *gesture#register().left()*
+gesture#register().right([{attrs}])                *gesture#register().right()*
+gesture#register().down([{attrs}])                 *gesture#register().down()*
+gesture#register().up([{attrs}])                   *gesture#register().up()*
+    Define input direction of the gesture.
+
+    Arguments:
+      {attrs}: {
+        'max_length': int?
+        'min_length': int?
+      }
+
+gesture#register().text({value}, [{attrs}])         *gesture#register().text()*
+    Define input text of the gesture.
+
+    Arguments:
+      {value}: string
+      {attrs}: {
+        'max_count': int?
+        'min_count': int?
+      }
 
 gesture#register().map({key}, [{attrs}])         *gesture#register().map()*
 gesture#register().noremap({key}, [{attrs}])     *gesture#register().noremap()*
@@ -57,11 +81,18 @@ gesture#register().func({f}, [{attrs}])             *gesture#register().func()*
 gesture#get_inputs()                                     *gesture#get_inputs()*
     Get current gesture inputs information.
 
-    Return type:
+    Input =
       {
-        'direction': "LEFT" | "RIGHT" | "UP" | "DOWN",
+        'type': 'direction',
+        'value': 'LEFT' | 'RIGHT' | 'UP' | 'DOWN',
         'length': int,
-      }[]
+      } | {
+        'type': 'text',
+        'value': string
+        'count': int,
+      }
+
+    Return type: Input[]
 
 gesture#custom#set({name}, {value})                      *gesture#custom#set()*
     Set custom settings.
