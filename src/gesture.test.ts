@@ -4,18 +4,18 @@ import { GestureMapper } from "./mapper";
 import { GestureBuffer } from "./buffer";
 import { CommandFactory, Command, Context, Action } from "./command";
 import { Gesture } from "./gesture";
-import { GestureLine } from "./line";
+import { Input, InputArgument } from "./input";
 
 describe("Gesture", () => {
   let vim: Neovim;
 
   let directionRecognizer: DirectionRecognizer;
   let clear: jest.Mock;
-  let getGestureLines: jest.Mock;
-  let gestureLines: GestureLine[];
+  let getInputs: jest.Mock;
+  let inputs: Input[];
   let context: Context;
   let getContext: jest.Mock;
-  let add: jest.Mock;
+  let update: jest.Mock;
 
   let action: Action;
   let gestureMapper: GestureMapper;
@@ -34,28 +34,29 @@ describe("Gesture", () => {
   let isStarted: jest.Mock;
   let restore: jest.Mock;
   let validate: jest.Mock;
-  let getCursor: jest.Mock;
+
+  let inputArgument: InputArgument;
 
   beforeEach(() => {
     const NeovimClass = jest.fn<Neovim>(() => ({}));
     vim = new NeovimClass();
 
-    const GestureLineClass = jest.fn<GestureLine>(() => ({}));
+    const GestureLineClass = jest.fn<Input>(() => ({}));
     const gestureLine = new GestureLineClass();
-    gestureLines = [gestureLine];
+    inputs = [gestureLine];
 
     const ContextClass = jest.fn<Context>(() => ({}));
     context = new ContextClass();
 
     clear = jest.fn();
-    getGestureLines = jest.fn().mockReturnValue(gestureLines);
+    getInputs = jest.fn().mockReturnValue(inputs);
     getContext = jest.fn().mockReturnValue(context);
-    add = jest.fn();
+    update = jest.fn();
     const DirectionRecognizerClass = jest.fn<DirectionRecognizer>(() => ({
       clear: clear,
-      getGestureLines: getGestureLines,
+      getInputs: getInputs,
       getContext: getContext,
-      add: add,
+      update: update,
     }));
     directionRecognizer = new DirectionRecognizerClass();
 
@@ -79,13 +80,11 @@ describe("Gesture", () => {
       .mockReturnValueOnce(true);
     restore = jest.fn();
     validate = jest.fn().mockReturnValue(true);
-    getCursor = jest.fn().mockReturnValue({ x: 1, y: 1 });
     const GestureBufferClass = jest.fn<GestureBuffer>(() => ({
       setup: setup,
       isStarted: isStarted,
       restore: restore,
       validate: validate,
-      getCursor: getCursor,
     }));
     gestureBuffer = new GestureBufferClass();
 
@@ -105,6 +104,9 @@ describe("Gesture", () => {
       gestureBuffer,
       commandFactory
     );
+
+    const InputArgumentClass = jest.fn<InputArgument>(() => ({}));
+    inputArgument = new InputArgumentClass();
   });
 
   it("initialize", async () => {
@@ -133,7 +135,7 @@ describe("Gesture", () => {
       commandFactory
     );
 
-    const result = await gesture.execute();
+    const result = await gesture.execute(inputArgument);
 
     expect(result).toBeNull();
     expect(restore).toHaveBeenCalledTimes(1);
@@ -156,14 +158,14 @@ describe("Gesture", () => {
       commandFactory
     );
 
-    const result = await gesture.execute();
+    const result = await gesture.execute(inputArgument);
 
     expect(result).toBeNull();
     expect(restore).not.toHaveBeenCalled();
   });
 
   it("execute", async () => {
-    const result = await gesture.execute();
+    const result = await gesture.execute(inputArgument);
 
     expect(result).toEqual(command);
     expect(restore).toHaveBeenCalledTimes(1);
@@ -212,17 +214,17 @@ describe("Gesture", () => {
     expect(create).toHaveBeenCalledWith(action, context);
   });
 
-  it("getGestureLines returns empty when the gesture is not started", async () => {
-    const result = await gesture.getGestureLines();
+  it("getInputs returns empty when the gesture is not started", async () => {
+    const result = await gesture.getInputs();
 
     expect(result).toEqual([]);
   });
 
-  it("getGestureLines", async () => {
+  it("getInputs", async () => {
     await gesture.initialize();
 
-    const result = await gesture.getGestureLines();
+    const result = await gesture.getInputs();
 
-    expect(result).toEqual(gestureLines);
+    expect(result).toEqual(inputs);
   });
 });

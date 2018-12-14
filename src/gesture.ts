@@ -4,7 +4,7 @@ import { DirectionRecognizer } from "./recognizer";
 import { GestureMapper } from "./mapper";
 import { GestureBuffer } from "./buffer";
 import { Command, CommandFactory } from "./command";
-import { GestureLine } from "./line";
+import { Input, InputArgument } from "./input";
 
 export class Gesture {
   protected readonly logger: Logger;
@@ -19,19 +19,18 @@ export class Gesture {
     this.logger = getLogger("gesture");
   }
 
-  public async execute(): Promise<Command | null> {
+  public async execute(inputArgument: InputArgument): Promise<Command | null> {
     const isValid = await this.gestureBuffer.validate();
     if (!isValid) {
       await this.gestureBuffer.restore();
       return null;
     }
 
-    const cursor = await this.gestureBuffer.getCursor();
-    await this.recognizer.add(cursor.x, cursor.y);
+    await this.recognizer.update(inputArgument);
 
-    const gestureLines = this.recognizer.getGestureLines();
+    const inputs = this.recognizer.getInputs();
 
-    const action = await this.mapper.getNoWaitAction(gestureLines);
+    const action = await this.mapper.getNoWaitAction(inputs);
     if (action !== null) {
       await this.gestureBuffer.restore();
 
@@ -47,9 +46,9 @@ export class Gesture {
       return null;
     }
 
-    const gestureLines = this.recognizer.getGestureLines();
+    const inputs = this.recognizer.getInputs();
 
-    const action = await this.mapper.getAction(gestureLines);
+    const action = await this.mapper.getAction(inputs);
     let command: Command | null = null;
     if (action !== null) {
       const context = await this.recognizer.getContext();
@@ -73,10 +72,10 @@ export class Gesture {
     ]);
   }
 
-  public getGestureLines(): ReadonlyArray<GestureLine> {
+  public getInputs(): ReadonlyArray<Input> {
     if (!this.gestureBuffer.isStarted()) {
       return [];
     }
-    return this.recognizer.getGestureLines();
+    return this.recognizer.getInputs();
   }
 }

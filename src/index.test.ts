@@ -2,6 +2,7 @@ import { NvimPlugin, Neovim } from "neovim";
 import { GesturePlugin } from "./index";
 import { Gesture } from "./gesture";
 import { Reporter } from "./reporter";
+import { InputKind } from "./input";
 import { Di } from "./di";
 import newPlugin from "./index";
 
@@ -15,7 +16,7 @@ describe("GesturePlugin", () => {
   let initialize: jest.Mock;
   let execute: jest.Mock;
   let finish: jest.Mock;
-  let getGestureLines: jest.Mock;
+  let getInputs: jest.Mock;
 
   let error: jest.Mock;
 
@@ -41,12 +42,12 @@ describe("GesturePlugin", () => {
     finish = jest.fn().mockImplementation(async () => {
       return null;
     });
-    getGestureLines = jest.fn().mockReturnValue([]);
+    getInputs = jest.fn().mockReturnValue([]);
     const GestureClass = jest.fn<Gesture>(() => ({
       initialize: initialize,
       execute: execute,
       finish: finish,
-      getGestureLines: getGestureLines,
+      getInputs: getInputs,
     }));
     const gesture = new GestureClass();
     Di.set("Gesture", gesture);
@@ -86,7 +87,7 @@ describe("GesturePlugin", () => {
   });
 
   it("execute", async () => {
-    const result = await gesturePlugin.execute([]);
+    const result = await gesturePlugin.execute([InputKind.DIRECTION, null]);
 
     expect(result).toBeNull();
   });
@@ -104,7 +105,7 @@ describe("GesturePlugin", () => {
 
     gesturePlugin = new GesturePlugin(plugin);
 
-    const result = await gesturePlugin.execute([]);
+    const result = await gesturePlugin.execute([InputKind.DIRECTION, null]);
 
     expect(error).toHaveBeenCalled();
     expect(result).toBeNull();
@@ -135,8 +136,8 @@ describe("GesturePlugin", () => {
     expect(result).toBeNull();
   });
 
-  it("getGestureLines", () => {
-    const result = gesturePlugin.getGestureLines([]);
+  it("getInputs", () => {
+    const result = gesturePlugin.getInputs([]);
 
     expect(result).toEqual([]);
   });

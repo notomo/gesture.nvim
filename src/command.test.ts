@@ -31,7 +31,7 @@ describe("CommandFactory", () => {
     const json = JSON.stringify(info);
     it(`create ${json}`, () => {
       const action = {
-        lines: [],
+        inputs: [],
         nowait: false,
         noremap: info.noremap,
         silent: info.silent,

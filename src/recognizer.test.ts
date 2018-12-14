@@ -2,6 +2,8 @@ import { Neovim, Window } from "neovim";
 import { DirectionRecognizer } from "./recognizer";
 import { PointFactory, Point } from "./point";
 import { ConfigRepository } from "./repository/config";
+import { TabpageRepository } from "./repository/tabpage";
+import { InputKind, InputLineArgument } from "./input";
 import { Direction } from "./direction";
 
 describe("DirectionRecognizer", () => {
@@ -31,6 +33,14 @@ describe("DirectionRecognizer", () => {
 
   let configRepository: ConfigRepository;
   let getMinLengthByDirection: jest.Mock;
+
+  let tabpageRepository: TabpageRepository;
+  let getGlobalPosition: jest.Mock;
+
+  const inputLineArgument: InputLineArgument = {
+    kind: InputKind.DIRECTION,
+    value: null,
+  };
 
   beforeEach(() => {
     const BufferClass = jest.fn<Buffer>(() => ({
@@ -77,23 +87,43 @@ describe("DirectionRecognizer", () => {
     }));
     configRepository = new ConfigRepositoryClass();
 
-    recognizer = new DirectionRecognizer(vim, pointFactory, configRepository);
+    getGlobalPosition = jest.fn().mockReturnValue({ x: 1, y: 1 });
+    const TabpageRepositoryClass = jest.fn<TabpageRepository>(() => ({
+      getGlobalPosition: getGlobalPosition,
+    }));
+    tabpageRepository = new TabpageRepositoryClass();
+
+    recognizer = new DirectionRecognizer(
+      vim,
+      pointFactory,
+      tabpageRepository,
+      configRepository
+    );
   });
 
-  it("add the same direction", async () => {
-    await recognizer.add(1, 1);
+  it("update the same direction", async () => {
+    await recognizer.update(inputLineArgument);
 
-    const gestureLines1 = recognizer.getGestureLines();
+    const gestureLines1 = recognizer.getInputs();
 
-    await recognizer.add(1, 1);
+    expect(gestureLines1[0]).toEqual({
+      kind: InputKind.DIRECTION,
+      length: infoLeft.length,
+      value: infoLeft.direction,
+    });
 
-    const gestureLines2 = recognizer.getGestureLines();
+    await recognizer.update(inputLineArgument);
 
-    expect(gestureLines1).toEqual([infoLeft]);
-    expect(gestureLines2[0].length).toEqual(infoLeft.length * 2);
+    const gestureLines2 = recognizer.getInputs();
+
+    expect(gestureLines2[0]).toEqual({
+      kind: InputKind.DIRECTION,
+      length: infoLeft.length * 2,
+      value: infoLeft.direction,
+    });
   });
 
-  it("add different direction", async () => {
+  it("update different direction", async () => {
     calculate = jest
       .fn()
       .mockReturnValueOnce(infoLeft)
@@ -110,17 +140,33 @@ describe("DirectionRecognizer", () => {
     }));
     pointFactory = new PointFactoryClass();
 
-    recognizer = new DirectionRecognizer(vim, pointFactory, configRepository);
+    recognizer = new DirectionRecognizer(
+      vim,
+      pointFactory,
+      tabpageRepository,
+      configRepository
+    );
 
-    await recognizer.add(1, 1);
-    await recognizer.add(1, 1);
+    await recognizer.update(inputLineArgument);
+    await recognizer.update(inputLineArgument);
 
-    const gestureLines = recognizer.getGestureLines();
+    const gestureLines = recognizer.getInputs();
 
-    expect(gestureLines).toEqual([infoLeft, infoRight]);
+    expect(gestureLines).toEqual([
+      {
+        kind: InputKind.DIRECTION,
+        length: infoLeft.length,
+        value: infoLeft.direction,
+      },
+      {
+        kind: InputKind.DIRECTION,
+        length: infoRight.length,
+        value: infoRight.direction,
+      },
+    ]);
   });
 
-  it("add is filtered when the length is short", async () => {
+  it("update is filtered when the length is short", async () => {
     calculate = jest.fn().mockReturnValue(infoShortLength);
     const PointClass = jest.fn<Point>(() => ({
       calculate: calculate,
@@ -134,29 +180,40 @@ describe("DirectionRecognizer", () => {
     }));
     pointFactory = new PointFactoryClass();
 
-    recognizer = new DirectionRecognizer(vim, pointFactory, configRepository);
+    recognizer = new DirectionRecognizer(
+      vim,
+      pointFactory,
+      tabpageRepository,
+      configRepository
+    );
 
-    await recognizer.add(1, 1);
+    await recognizer.update(inputLineArgument);
 
-    const gestureLines = recognizer.getGestureLines();
+    const gestureLines = recognizer.getInputs();
 
     expect(gestureLines).toEqual([]);
   });
 
   it("clear", async () => {
-    await recognizer.add(1, 1);
+    await recognizer.update(inputLineArgument);
 
     const context = await recognizer.getContext();
     expect(context).toEqual({
       windows: [{ id: windowId, bufferId: bufferId }],
     });
 
-    const gestureLines = recognizer.getGestureLines();
+    const gestureLines = recognizer.getInputs();
 
     await recognizer.clear();
 
     expect(await recognizer.getContext()).toEqual({ windows: [] });
-    expect(recognizer.getGestureLines()).toEqual([]);
-    expect(gestureLines).toEqual([infoLeft]);
+    expect(recognizer.getInputs()).toEqual([]);
+    expect(gestureLines).toEqual([
+      {
+        kind: InputKind.DIRECTION,
+        length: infoLeft.length,
+        value: infoLeft.direction,
+      },
+    ]);
   });
 });

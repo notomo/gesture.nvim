@@ -1,6 +1,6 @@
 import { Neovim } from "neovim";
 import { Action } from "./command";
-import { GestureLine } from "./line";
+import { InputKind, Input, InputLine, InputText } from "./input";
 import { Logger, getLogger } from "./logger";
 
 type Actions = {
@@ -24,10 +24,10 @@ export class GestureMapper {
   }
 
   public async getAction(
-    gestureLines: ReadonlyArray<GestureLine>
+    gestureLines: ReadonlyArray<Input>
   ): Promise<Action | null> {
     const gesturedDirections = gestureLines
-      .map(gestureLine => gestureLine.direction)
+      .map(gestureLine => gestureLine.value)
       .join(",");
 
     if (!(gesturedDirections in this.actions)) {
@@ -51,10 +51,10 @@ export class GestureMapper {
   }
 
   public async getNoWaitAction(
-    gestureLines: ReadonlyArray<GestureLine>
+    gestureLines: ReadonlyArray<Input>
   ): Promise<Action | null> {
     const gesturedDirections = gestureLines
-      .map(gestureLine => gestureLine.direction)
+      .map(gestureLine => gestureLine.value)
       .join(",");
 
     if (!(gesturedDirections in this.actions)) {
@@ -81,18 +81,34 @@ export class GestureMapper {
 
   protected filterAction(
     action: Action,
-    gestureLines: ReadonlyArray<GestureLine>
+    inputs: ReadonlyArray<Input>
   ): boolean {
     let i = 0;
-    for (const line of action.lines) {
-      const gestureLine = gestureLines[i];
-      if (
-        (typeof line.max_length === "number" &&
-          line.max_length < gestureLine.length) ||
-        (typeof line.min_length === "number" &&
-          line.min_length > gestureLine.length)
-      ) {
-        return false;
+    for (const inputDefinition of action.inputs) {
+      const input = inputs[i];
+      switch (inputDefinition.kind) {
+        case InputKind.DIRECTION:
+          const inputLine = input as InputLine;
+          if (
+            (typeof inputDefinition.max_length === "number" &&
+              inputDefinition.max_length < inputLine.length) ||
+            (typeof inputDefinition.min_length === "number" &&
+              inputDefinition.min_length > inputLine.length)
+          ) {
+            return false;
+          }
+          break;
+        case InputKind.TEXT:
+          const inputText = input as InputText;
+          if (
+            (typeof inputDefinition.max_count === "number" &&
+              inputDefinition.max_count < inputText.count) ||
+            (typeof inputDefinition.min_count === "number" &&
+              inputDefinition.min_count > inputText.count)
+          ) {
+            return false;
+          }
+          break;
       }
       i++;
     }

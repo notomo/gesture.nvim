@@ -11,8 +11,16 @@ function! gesture#draw() abort
         execute cursor_setter
     endif
 
-    let command_info = _gesture_execute()
+    let command_info = _gesture_execute('direction', v:null)
     call s:execute(command_info)
+endfunction
+
+function! gesture#send(value) abort
+    if type(a:value) != v:t_string
+        throw 'value must be a string'
+    endif
+
+    call _gesture_execute('text', a:value)
 endfunction
 
 function! gesture#finish() abort
@@ -30,37 +38,54 @@ let s:funcs = {}
 function! gesture#register() abort
 
     let register = {}
-    let s:lines = []
+    let s:inputs = []
 
     function! register.left(...) abort
         let attributes = call('s:get_line_attributes', a:000)
-        let attributes['direction'] = 'LEFT'
+        let attributes['kind'] = 'direction'
+        let attributes['value'] = 'LEFT'
 
-        call add(s:lines, attributes)
+        call add(s:inputs, attributes)
         return self
     endfunction
 
     function! register.right(...) abort
         let attributes = call('s:get_line_attributes', a:000)
-        let attributes['direction'] = 'RIGHT'
+        let attributes['kind'] = 'direction'
+        let attributes['value'] = 'RIGHT'
 
-        call add(s:lines, attributes)
+        call add(s:inputs, attributes)
         return self
     endfunction
 
     function! register.down(...) abort
         let attributes = call('s:get_line_attributes', a:000)
-        let attributes['direction'] = 'DOWN'
+        let attributes['kind'] = 'direction'
+        let attributes['value'] = 'DOWN'
 
-        call add(s:lines, attributes)
+        call add(s:inputs, attributes)
         return self
     endfunction
 
     function! register.up(...) abort
         let attributes = call('s:get_line_attributes', a:000)
-        let attributes['direction'] = 'UP'
+        let attributes['kind'] = 'direction'
+        let attributes['value'] = 'UP'
 
-        call add(s:lines, attributes)
+        call add(s:inputs, attributes)
+        return self
+    endfunction
+
+    function! register.text(value, ...) abort
+        if type(a:value) != v:t_string
+            throw 'value must be a string'
+        endif
+
+        let attributes = call('s:get_text_attributes', a:000)
+        let attributes['kind'] = 'text'
+        let attributes['value'] = a:value
+
+        call add(s:inputs, attributes)
         return self
     endfunction
 
@@ -68,23 +93,23 @@ function! gesture#register() abort
         let attributes = call('s:get_map_attributes', a:000)
         let attributes['noremap'] = v:true
 
-        call s:add(s:lines, a:rhs, attributes)
-        let s:lines = []
+        call s:add(s:inputs, a:rhs, attributes)
+        let s:inputs = []
     endfunction
 
     function! register.map(rhs, ...) abort
         let attributes = call('s:get_map_attributes', a:000)
         let attributes['noremap'] = v:false
 
-        call s:add(s:lines, a:rhs, attributes)
-        let s:lines = []
+        call s:add(s:inputs, a:rhs, attributes)
+        let s:inputs = []
     endfunction
 
     function! register.func(f, ...) abort
         let attributes = call('s:get_map_attributes', a:000)
 
-        call s:add_func(s:lines, a:f, attributes)
-        let s:lines = []
+        call s:add_func(s:inputs, a:f, attributes)
+        let s:inputs = []
     endfunction
 
     return register
@@ -104,25 +129,25 @@ function! gesture#clear() abort
     let s:funcs = {}
 endfunction
 
-function! s:add(lines, rhs, attributes) abort
+function! s:add(inputs, rhs, attributes) abort
     if type(a:rhs) != v:t_string
         throw 'rhs must be a string'
     endif
 
     let gesture = a:attributes
-    let gesture['lines'] = a:lines
+    let gesture['inputs'] = a:inputs
     let gesture['rhs'] = a:rhs
 
     call s:add_gesture(gesture)
 endfunction
 
-function! s:add_func(lines, f, attributes) abort
+function! s:add_func(inputs, f, attributes) abort
     if type(a:f) != v:t_func
         throw 'f must be a function'
     endif
 
     let gesture = a:attributes
-    let gesture['lines'] = a:lines
+    let gesture['inputs'] = a:inputs
     let gesture['is_func'] = v:true
 
     let id = s:add_gesture(gesture)
@@ -130,10 +155,9 @@ function! s:add_func(lines, f, attributes) abort
 endfunction
 
 function! s:add_gesture(gesture) abort
-    let lines = a:gesture['lines']
-    let directions = map(lines[:], {_, v -> v['direction']})
+    let inputValues = map(a:gesture['inputs'][:], {_, v -> v['value']})
 
-    let serialized = join(directions, ',')
+    let serialized = join(inputValues, ',')
     if !has_key(s:gestures, serialized)
         let s:gestures[serialized] = {}
         let s:gestures[serialized]['global'] = []
@@ -191,4 +215,13 @@ function! s:get_line_attributes(...) abort
     let min_length = get(attributes, 'min_length', v:null)
 
     return {'max_length' : max_length, 'min_length' : min_length}
+endfunction
+
+function! s:get_text_attributes(...) abort
+    let attributes = get(a:, 1, {})
+
+    let max_count = get(attributes, 'max_count', v:null)
+    let min_count = get(attributes, 'min_count', v:null)
+
+    return {'max_count' : max_count, 'min_count' : min_count}
 endfunction

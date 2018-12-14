@@ -1,6 +1,7 @@
 import { Neovim } from "neovim";
 import { GestureMapper } from "./mapper";
 import { Direction } from "./direction";
+import { InputKind } from "./input";
 
 describe("GestureMapper", () => {
   let mapper: GestureMapper;
@@ -34,9 +35,9 @@ describe("GestureMapper", () => {
         global: [
           {
             nowait: false,
-            lines: [
-              { direction: Direction.LEFT },
-              { direction: Direction.RIGHT },
+            inputs: [
+              { kind: InputKind.DIRECTION, value: Direction.LEFT },
+              { kind: InputKind.DIRECTION, value: Direction.RIGHT },
             ],
           },
         ],
@@ -44,9 +45,9 @@ describe("GestureMapper", () => {
           2: [
             {
               nowait: false,
-              lines: [
-                { direction: Direction.LEFT },
-                { direction: Direction.RIGHT },
+              inputs: [
+                { kind: InputKind.DIRECTION, value: Direction.LEFT },
+                { kind: InputKind.DIRECTION, value: Direction.RIGHT },
               ],
               buffer: true,
             },
@@ -57,30 +58,52 @@ describe("GestureMapper", () => {
         global: [
           {
             nowait: true,
-            lines: [{ direction: Direction.LEFT, min_length: 8 }],
+            inputs: [
+              {
+                kind: InputKind.DIRECTION,
+                value: Direction.LEFT,
+                min_length: 8,
+              },
+            ],
           },
         ],
         buffer: {
           2: [
             {
               nowait: true,
-              lines: [{ direction: Direction.LEFT }],
+              inputs: [{ kind: InputKind.DIRECTION, value: Direction.LEFT }],
               buffer: true,
             },
           ],
         },
       },
       RIGHT: {
-        global: [{ nowait: false, lines: [{ direction: Direction.RIGHT }] }],
+        global: [
+          {
+            nowait: false,
+            inputs: [{ kind: InputKind.DIRECTION, value: Direction.RIGHT }],
+          },
+        ],
         buffer: {
-          2: [{ nowait: false, lines: [{ direction: Direction.RIGHT }] }],
+          2: [
+            {
+              nowait: false,
+              inputs: [{ kind: InputKind.DIRECTION, value: Direction.RIGHT }],
+            },
+          ],
         },
       },
       DOWN: {
         global: [
           {
             nowait: false,
-            lines: [{ direction: Direction.DOWN, max_length: 20 }],
+            inputs: [
+              {
+                kind: InputKind.DIRECTION,
+                value: Direction.DOWN,
+                max_length: 20,
+              },
+            ],
           },
         ],
         buffer: {},
@@ -91,10 +114,60 @@ describe("GestureMapper", () => {
           2: [
             {
               nowait: false,
-              lines: [{ direction: Direction.UP, min_length: 10 }],
+              inputs: [
+                {
+                  kind: InputKind.DIRECTION,
+                  value: Direction.UP,
+                  min_length: 10,
+                },
+              ],
             },
           ],
         },
+      },
+      inputText: {
+        global: [
+          {
+            nowait: false,
+            inputs: [
+              {
+                kind: InputKind.TEXT,
+                value: "inputText",
+              },
+            ],
+          },
+        ],
+        buffer: {},
+      },
+      inputText2: {
+        global: [
+          {
+            nowait: false,
+            inputs: [
+              {
+                kind: InputKind.TEXT,
+                value: "inputText2",
+                min_count: 3,
+              },
+            ],
+          },
+        ],
+        buffer: {},
+      },
+      inputText3: {
+        global: [
+          {
+            nowait: false,
+            inputs: [
+              {
+                kind: InputKind.TEXT,
+                value: "inputText3",
+                max_count: 5,
+              },
+            ],
+          },
+        ],
+        buffer: {},
       },
     });
     const NeovimClass = jest.fn<Neovim>(() => ({
@@ -116,15 +189,52 @@ describe("GestureMapper", () => {
     await mapper.initialize();
 
     const result = await mapper.getAction([
-      { direction: Direction.LEFT, length: 10 },
-      { direction: Direction.RIGHT, length: 10 },
+      { kind: InputKind.DIRECTION, value: Direction.LEFT, length: 10 },
+      { kind: InputKind.DIRECTION, value: Direction.RIGHT, length: 10 },
     ]);
 
     const expected = {
       nowait: false,
-      lines: [{ direction: Direction.LEFT }, { direction: Direction.RIGHT }],
+      inputs: [
+        { kind: InputKind.DIRECTION, value: Direction.LEFT },
+        { kind: InputKind.DIRECTION, value: Direction.RIGHT },
+      ],
     };
     expect(result).toEqual(expected);
+  });
+
+  it("getAction with inputText", async () => {
+    await mapper.initialize();
+
+    const result = await mapper.getAction([
+      { kind: InputKind.TEXT, value: "inputText", count: 1 },
+    ]);
+
+    const expected = {
+      nowait: false,
+      inputs: [{ kind: InputKind.TEXT, value: "inputText" }],
+    };
+    expect(result).toEqual(expected);
+  });
+
+  it("getAction with inputText returns null when the gesture is filtered by min_count", async () => {
+    await mapper.initialize();
+
+    const result = await mapper.getAction([
+      { kind: InputKind.TEXT, value: "inputText2", count: 1 },
+    ]);
+
+    expect(result).toBeNull();
+  });
+
+  it("getAction with inputText returns null when the gesture is filtered by max_count", async () => {
+    await mapper.initialize();
+
+    const result = await mapper.getAction([
+      { kind: InputKind.TEXT, value: "inputText3", count: 10 },
+    ]);
+
+    expect(result).toBeNull();
   });
 
   it("getAction returns a buffer local action", async () => {
@@ -139,13 +249,16 @@ describe("GestureMapper", () => {
     await mapper.initialize();
 
     const result = await mapper.getAction([
-      { direction: Direction.LEFT, length: 10 },
-      { direction: Direction.RIGHT, length: 10 },
+      { kind: InputKind.DIRECTION, value: Direction.LEFT, length: 10 },
+      { kind: InputKind.DIRECTION, value: Direction.RIGHT, length: 10 },
     ]);
 
     const expected = {
       nowait: false,
-      lines: [{ direction: Direction.LEFT }, { direction: Direction.RIGHT }],
+      inputs: [
+        { kind: InputKind.DIRECTION, value: Direction.LEFT },
+        { kind: InputKind.DIRECTION, value: Direction.RIGHT },
+      ],
       buffer: true,
     };
     expect(result).toEqual(expected);
@@ -163,7 +276,7 @@ describe("GestureMapper", () => {
     await mapper.initialize();
 
     const result = await mapper.getAction([
-      { direction: Direction.UP, length: 7 },
+      { kind: InputKind.DIRECTION, value: Direction.UP, length: 7 },
     ]);
 
     expect(result).toBeNull();
@@ -171,7 +284,7 @@ describe("GestureMapper", () => {
 
   it("getAction returns null when the gesture does not matched", async () => {
     const result = await mapper.getAction([
-      { direction: Direction.LEFT, length: 10 },
+      { kind: InputKind.DIRECTION, value: Direction.LEFT, length: 10 },
     ]);
 
     expect(result).toBeNull();
@@ -181,7 +294,7 @@ describe("GestureMapper", () => {
     await mapper.initialize();
 
     const result = await mapper.getAction([
-      { direction: Direction.LEFT, length: 7 },
+      { kind: InputKind.DIRECTION, value: Direction.LEFT, length: 7 },
     ]);
 
     expect(result).toBeNull();
@@ -191,7 +304,7 @@ describe("GestureMapper", () => {
     await mapper.initialize();
 
     const result = await mapper.getAction([
-      { direction: Direction.DOWN, length: 30 },
+      { kind: InputKind.DIRECTION, value: Direction.DOWN, length: 30 },
     ]);
 
     expect(result).toBeNull();
@@ -201,12 +314,14 @@ describe("GestureMapper", () => {
     await mapper.initialize();
 
     const result = await mapper.getNoWaitAction([
-      { direction: Direction.LEFT, length: 10 },
+      { kind: InputKind.DIRECTION, value: Direction.LEFT, length: 10 },
     ]);
 
     const expected = {
       nowait: true,
-      lines: [{ direction: Direction.LEFT, min_length: 8 }],
+      inputs: [
+        { kind: InputKind.DIRECTION, value: Direction.LEFT, min_length: 8 },
+      ],
     };
     expect(result).toEqual(expected);
   });
@@ -223,12 +338,12 @@ describe("GestureMapper", () => {
     await mapper.initialize();
 
     const result = await mapper.getNoWaitAction([
-      { direction: Direction.LEFT, length: 10 },
+      { kind: InputKind.DIRECTION, value: Direction.LEFT, length: 10 },
     ]);
 
     const expected = {
       nowait: true,
-      lines: [{ direction: Direction.LEFT }],
+      inputs: [{ kind: InputKind.DIRECTION, value: Direction.LEFT }],
       buffer: true,
     };
     expect(result).toEqual(expected);
@@ -246,7 +361,7 @@ describe("GestureMapper", () => {
     await mapper.initialize();
 
     const result = await mapper.getNoWaitAction([
-      { direction: Direction.UP, length: 7 },
+      { kind: InputKind.DIRECTION, value: Direction.UP, length: 7 },
     ]);
 
     expect(result).toBeNull();
@@ -254,7 +369,7 @@ describe("GestureMapper", () => {
 
   it("getNoWaitAction returns null when the gesture does not matched", async () => {
     const result = await mapper.getNoWaitAction([
-      { direction: Direction.LEFT, length: 10 },
+      { kind: InputKind.DIRECTION, value: Direction.LEFT, length: 10 },
     ]);
 
     expect(result).toBeNull();
@@ -264,7 +379,7 @@ describe("GestureMapper", () => {
     await mapper.initialize();
 
     const result = await mapper.getNoWaitAction([
-      { direction: Direction.RIGHT, length: 10 },
+      { kind: InputKind.DIRECTION, value: Direction.RIGHT, length: 10 },
     ]);
 
     expect(result).toBeNull();

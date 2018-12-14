@@ -1,17 +1,15 @@
 import { Neovim, Window, Buffer } from "neovim";
-import { Direction } from "./direction";
-import { GestureLine } from "./line";
 import { Context } from "./command";
 import { Logger, getLogger } from "./logger";
 import { Point, PointFactory } from "./point";
 import { ConfigRepository } from "./repository/config";
+import { TabpageRepository } from "./repository/tabpage";
+import { Input, InputArgument, InputKind, InputLine, InputText } from "./input";
 
 export class DirectionRecognizer {
-  protected readonly points: Point[] = [];
-  protected readonly gestureLines: GestureLine[] = [];
+  protected readonly inputs: Input[] = [];
 
   protected lastEdge: Point;
-  protected lastDirection: Direction | null = null;
   protected started: boolean = false;
 
   protected readonly logger: Logger;
@@ -22,20 +20,14 @@ export class DirectionRecognizer {
   constructor(
     protected readonly vim: Neovim,
     protected readonly pointFactory: PointFactory,
+    protected readonly tabpageRepository: TabpageRepository,
     protected readonly configRepository: ConfigRepository
   ) {
     this.logger = getLogger("recognizer");
     this.lastEdge = this.pointFactory.createForInitialize();
   }
 
-  public async add(x: number, y: number) {
-    const point = this.pointFactory.create(x, y);
-
-    if (!this.started) {
-      this.lastEdge = point;
-      this.started = true;
-    }
-
+  public async update(inputArgument: InputArgument) {
     const currentWindow = await this.vim.window;
     const currentWindowId = currentWindow.id;
     if (this.windowId === null || this.windowId !== currentWindowId) {
@@ -44,41 +36,18 @@ export class DirectionRecognizer {
       this.windowAndBuffers.push([currentWindow, buffer]);
     }
 
-    this.points.push(point);
-
-    const info = this.lastEdge.calculate(point);
-    if (
-      info.direction === null ||
-      info.length <
-        (await this.configRepository.getMinLengthByDirection(info.direction))
-    ) {
-      return;
+    switch (inputArgument.kind) {
+      case InputKind.DIRECTION:
+        await this.updateByDirection();
+        return;
+      case InputKind.TEXT:
+        await this.updateByText(inputArgument.value);
+        return;
     }
-
-    this.lastEdge = point;
-
-    const direction = info.direction;
-    const gestureLine = this.gestureLines.pop();
-    if (gestureLine === undefined || this.lastDirection !== direction) {
-      this.lastDirection = direction;
-      if (gestureLine !== undefined) {
-        this.gestureLines.push(gestureLine);
-      }
-      this.gestureLines.push({
-        direction: info.direction,
-        length: info.length,
-      });
-      return;
-    }
-
-    this.gestureLines.push({
-      direction: info.direction,
-      length: info.length + gestureLine.length,
-    });
   }
 
-  public getGestureLines(): ReadonlyArray<GestureLine> {
-    return this.gestureLines.slice();
+  public getInputs(): ReadonlyArray<Input> {
+    return this.inputs.slice();
   }
 
   public async getContext(): Promise<Context> {
@@ -93,13 +62,88 @@ export class DirectionRecognizer {
   }
 
   public clear() {
-    this.points.length = 0;
-    this.gestureLines.length = 0;
+    this.inputs.length = 0;
     this.started = false;
-    this.lastDirection = null;
     this.lastEdge = this.pointFactory.createForInitialize();
 
     this.windowId = null;
     this.windowAndBuffers.length = 0;
+  }
+
+  protected async updateByDirection() {
+    const globalPosition = await this.tabpageRepository.getGlobalPosition();
+    const point = this.pointFactory.create(globalPosition.x, globalPosition.y);
+    if (!this.started) {
+      this.lastEdge = point;
+      this.started = true;
+    }
+
+    const info = this.lastEdge.calculate(point);
+    if (
+      info.direction === null ||
+      info.length <
+        (await this.configRepository.getMinLengthByDirection(info.direction))
+    ) {
+      return;
+    }
+
+    this.lastEdge = point;
+
+    const lastInputs = this.inputs
+      .slice(-1)
+      .filter(
+        (input): input is InputLine => input.kind === InputKind.DIRECTION
+      );
+    const newInput: InputLine = {
+      kind: InputKind.DIRECTION,
+      value: info.direction,
+      length: info.length,
+    };
+
+    if (
+      lastInputs.length === 0 ||
+      (lastInputs.length === 1 && lastInputs[0].value !== info.direction)
+    ) {
+      this.inputs.push(newInput);
+      return;
+    }
+
+    const newLength = lastInputs.concat([newInput]).reduce((acc, input) => {
+      acc += input.length;
+      return acc;
+    }, 0);
+    this.inputs.pop();
+    this.inputs.push({
+      kind: InputKind.DIRECTION,
+      value: newInput.value,
+      length: newLength,
+    });
+  }
+
+  protected async updateByText(value: string) {
+    if (!this.started) {
+      this.started = true;
+    }
+
+    const lastInputs = this.inputs
+      .slice(-1)
+      .filter((input): input is InputText => input.kind === InputKind.TEXT);
+
+    const newInput: InputText = {
+      kind: InputKind.TEXT,
+      value: value,
+      count: 1,
+    };
+
+    const newCount = lastInputs.concat([newInput]).reduce((acc, input) => {
+      acc += input.count;
+      return acc;
+    }, 0);
+    this.inputs.pop();
+    this.inputs.push({
+      kind: InputKind.TEXT,
+      value: newInput.value,
+      count: newCount,
+    });
   }
 }

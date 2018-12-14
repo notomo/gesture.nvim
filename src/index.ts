@@ -3,7 +3,7 @@ import { Gesture } from "./gesture";
 import { Reporter } from "./reporter";
 import { Di } from "./di";
 import { Command } from "./command";
-import { GestureLine } from "./line";
+import { Input, InputKind, InputArgument } from "./input";
 
 export class GesturePlugin {
   protected readonly gesture: Gesture;
@@ -28,21 +28,23 @@ export class GesturePlugin {
       sync: true,
     });
 
-    plugin.registerFunction(
-      "_gesture_get_inputs",
-      [this, this.getGestureLines],
-      {
-        sync: true,
-      }
-    );
+    plugin.registerFunction("_gesture_get_inputs", [this, this.getInputs], {
+      sync: true,
+    });
   }
 
   public async initialize(args: []): Promise<void> {
     await this.gesture.initialize().catch(e => this.reporter.error(e));
   }
 
-  public async execute(args: []): Promise<Command | null> {
-    return await this.gesture.execute().catch(e => {
+  public async execute(
+    args: [InputKind.DIRECTION, null] | [InputKind.TEXT, string]
+  ): Promise<Command | null> {
+    const inputArgument = {
+      kind: args[0],
+      value: args[1],
+    } as InputArgument;
+    return await this.gesture.execute(inputArgument).catch(e => {
       this.reporter.error(e);
       return null;
     });
@@ -55,8 +57,8 @@ export class GesturePlugin {
     });
   }
 
-  public getGestureLines(args: []): ReadonlyArray<GestureLine> {
-    return this.gesture.getGestureLines();
+  public getInputs(args: []): ReadonlyArray<Input> {
+    return this.gesture.getInputs();
   }
 }
 

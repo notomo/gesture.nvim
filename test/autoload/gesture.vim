@@ -230,7 +230,7 @@ function! s:suite.get_inputs()
 
     call gesture#draw()
 
-    call s:assert.equals(gesture#get_inputs(), [{'direction' : 'DOWN', 'length' : 5}, {'direction' : 'UP', 'length' : 5}])
+    call s:assert.equals(gesture#get_inputs(), [{'kind' : 'direction', 'value' : 'DOWN', 'length' : 5}, {'kind' : 'direction', 'value' : 'UP', 'length' : 5}])
 
     call gesture#finish()
 endfunction

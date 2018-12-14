@@ -9,15 +9,18 @@ import { GestureBuffer } from "./buffer";
 import { OptionStore, BufferOptionStoreFactory } from "./option";
 import { CommandFactory } from "./command";
 import { ConfigRepository } from "./repository/config";
+import { TabpageRepository } from "./repository/tabpage";
 
 export class Di {
   protected static readonly deps: Deps = {
     Gesture: (vim: Neovim) => {
       const pointFactory = new PointFactory();
       const configRepository = Di.get("ConfigRepository", vim);
+      const tabpageRepository = new TabpageRepository(vim);
       const recognizer = new DirectionRecognizer(
         vim,
         pointFactory,
+        tabpageRepository,
         configRepository
       );
       const mapper = new GestureMapper(vim);

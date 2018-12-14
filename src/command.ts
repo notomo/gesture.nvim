@@ -1,11 +1,7 @@
-import { Direction } from "./direction";
+import { InputDefinition } from "./input";
 
 export interface Action {
-  lines: {
-    direction: Direction;
-    max_length?: number;
-    min_length?: number;
-  }[];
+  inputs: InputDefinition[];
   nowait: boolean;
   silent: boolean;
   noremap: boolean;
