@@ -15,13 +15,13 @@ function! gesture#draw() abort
     call s:execute(command_info)
 endfunction
 
-function! gesture#send(value) abort
-    if type(a:value) != v:t_string
-        throw 'value must be a string'
+function! gesture#input_text(text) abort
+    if type(a:text) != v:t_string
+        throw 'text must be a string'
     endif
 
     call _gesture_initialize()
-    let command_info = _gesture_execute('text', a:value)
+    let command_info = _gesture_execute('text', a:text)
     call s:execute(command_info)
 endfunction
 
@@ -78,14 +78,14 @@ function! gesture#register() abort
         return self
     endfunction
 
-    function! register.text(value, ...) abort
-        if type(a:value) != v:t_string
-            throw 'value must be a string'
+    function! register.text(text, ...) abort
+        if type(a:text) != v:t_string
+            throw 'text must be a string'
         endif
 
         let attributes = call('s:get_text_attributes', a:000)
         let attributes['kind'] = 'text'
-        let attributes['value'] = a:value
+        let attributes['value'] = a:text
 
         call add(s:inputs, attributes)
         return self

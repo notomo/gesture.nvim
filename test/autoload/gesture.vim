@@ -358,10 +358,10 @@ function! s:suite.cancel()
     call s:assert.equals(gesture#get_inputs(), [])
 endfunction
 
-function! s:suite.send()
+function! s:suite.input_text()
     call gesture#register().text('inputText').right().noremap(":tabnew \<CR>")
 
-    call gesture#send('inputText')
+    call gesture#input_text('inputText')
 
     call gesture#draw()
 
@@ -376,7 +376,7 @@ function! s:suite.send()
     call s:assert.equals(tabpagenr('$'), 2)
 endfunction
 
-function! s:suite.send_the_same_text()
+function! s:suite.input_text_the_same_text()
     call gesture#register().right().text('inputText1', {'min_count' : 3, 'max_count': 3}).text('inputText2').left().noremap(":tabnew \<CR>")
 
     call gesture#draw()
@@ -385,10 +385,10 @@ function! s:suite.send_the_same_text()
 
     call gesture#draw()
 
-    call gesture#send('inputText1')
-    call gesture#send('inputText1')
-    call gesture#send('inputText1')
-    call gesture#send('inputText2')
+    call gesture#input_text('inputText1')
+    call gesture#input_text('inputText1')
+    call gesture#input_text('inputText1')
+    call gesture#input_text('inputText2')
 
     call gesture#draw()
 
@@ -408,34 +408,34 @@ function! s:suite.send_the_same_text()
     call s:assert.equals(tabpagenr('$'), 2)
 endfunction
 
-function! s:suite.send_more_than_max()
+function! s:suite.input_text_more_than_max()
     call gesture#register().text('inputText1', {'max_count': 3}).noremap(":tabnew \<CR>")
 
-    call gesture#send('inputText1')
-    call gesture#send('inputText1')
-    call gesture#send('inputText1')
-    call gesture#send('inputText1')
+    call gesture#input_text('inputText1')
+    call gesture#input_text('inputText1')
+    call gesture#input_text('inputText1')
+    call gesture#input_text('inputText1')
 
     call gesture#finish()
 
     call s:assert.equals(tabpagenr('$'), 1)
 endfunction
 
-function! s:suite.send_less_than_min()
+function! s:suite.input_text_less_than_min()
     call gesture#register().text('inputText1', {'min_count' : 3}).noremap(":tabnew \<CR>")
 
-    call gesture#send('inputText1')
-    call gesture#send('inputText1')
+    call gesture#input_text('inputText1')
+    call gesture#input_text('inputText1')
 
     call gesture#finish()
 
     call s:assert.equals(tabpagenr('$'), 1)
 endfunction
 
-function! s:suite.send_nowait()
+function! s:suite.input_text_nowait()
     call gesture#register().text('inputText').noremap(":tabnew \<CR>", {'nowait' : v:true})
 
-    call gesture#send('inputText')
+    call gesture#input_text('inputText')
 
     call s:assert.equals(tabpagenr('$'), 2)
 endfunction
