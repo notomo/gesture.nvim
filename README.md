@@ -6,6 +6,9 @@
 
 gesture.nvim is a mouse gesture plugin for Neovim.
 
+## Demo
+<img src="https://raw.github.com/wiki/notomo/gesture.nvim/images/demo.gif" width="1280">
+
 ## Requirements
 - Neovim
     - Node.js provider
