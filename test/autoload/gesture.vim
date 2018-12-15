@@ -431,3 +431,11 @@ function! s:suite.send_less_than_min()
 
     call s:assert.equals(tabpagenr('$'), 1)
 endfunction
+
+function! s:suite.send_nowait()
+    call gesture#register().text('inputText').noremap(":tabnew \<CR>", {'nowait' : v:true})
+
+    call gesture#send('inputText')
+
+    call s:assert.equals(tabpagenr('$'), 2)
+endfunction

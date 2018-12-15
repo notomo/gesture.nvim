@@ -21,7 +21,8 @@ function! gesture#send(value) abort
     endif
 
     call _gesture_initialize()
-    call _gesture_execute('text', a:value)
+    let command_info = _gesture_execute('text', a:value)
+    call s:execute(command_info)
 endfunction
 
 function! gesture#finish() abort
