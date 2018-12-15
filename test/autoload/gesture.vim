@@ -439,3 +439,37 @@ function! s:suite.input_text_nowait()
 
     call s:assert.equals(tabpagenr('$'), 2)
 endfunction
+
+function! s:suite.invalid_text()
+    let e = 'text must be a string except directions'
+
+    try
+        call gesture#register().text(1)
+    catch /e/
+        call s:assert.equals(gesture#get(), {})
+    endtry
+
+    try
+        call gesture#register().text('LEFT')
+    catch /e/
+        call s:assert.equals(gesture#get(), {})
+    endtry
+
+    try
+        call gesture#register().text('RIGHT')
+    catch /e/
+        call s:assert.equals(gesture#get(), {})
+    endtry
+
+    try
+        call gesture#register().text('UP')
+    catch /e/
+        call s:assert.equals(gesture#get(), {})
+    endtry
+
+    try
+        call gesture#register().text('DOWN')
+    catch /e/
+        call s:assert.equals(gesture#get(), {})
+    endtry
+endfunction

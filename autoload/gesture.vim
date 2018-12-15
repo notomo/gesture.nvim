@@ -80,7 +80,11 @@ function! gesture#register() abort
 
     function! register.text(text, ...) abort
         if type(a:text) != v:t_string
-            throw 'text must be a string'
+           \ || a:text ==# 'LEFT'
+           \ || a:text ==# 'RIGHT'
+           \ || a:text ==# 'DOWN'
+           \ || a:text ==# 'UP'
+            throw 'text must be a string except directions'
         endif
 
         let attributes = call('s:get_text_attributes', a:000)
