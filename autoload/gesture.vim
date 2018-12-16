@@ -12,7 +12,14 @@ function! gesture#draw() abort
     endif
 
     let command_info = _gesture_execute('direction', v:null)
-    call s:execute(command_info)
+    try
+        let executed = s:execute(command_info)
+        let s:is_started = !executed
+    catch
+        " when a nowait action throws an error
+        let s:is_started = v:false
+    endtry
+    return executed
 endfunction
 
 function! gesture#input_text(text) abort
@@ -22,16 +29,25 @@ function! gesture#input_text(text) abort
 
     call _gesture_initialize()
     let command_info = _gesture_execute('text', a:text)
-    call s:execute(command_info)
+    try
+        let executed = s:execute(command_info)
+        let s:is_started = !executed
+    catch
+        " when a nowait action throws an error
+        let s:is_started = v:false
+    endtry
+    return executed
 endfunction
 
 function! gesture#finish() abort
     let command_info = _gesture_finish()
-    call s:execute(command_info)
+    let s:is_started = v:false
+    return s:execute(command_info)
 endfunction
 
 function! gesture#cancel() abort
     call _gesture_finish()
+    let s:is_started = v:false
 endfunction
 
 let s:id = 0
@@ -125,6 +141,11 @@ function! gesture#get_inputs() abort
     return _gesture_get_inputs()
 endfunction
 
+let s:is_started = v:false
+function! gesture#is_started() abort
+    return s:is_started
+endfunction
+
 function! gesture#get() abort
     return s:gestures
 endfunction
@@ -188,20 +209,21 @@ endfunction
 
 function! s:execute(command_info) abort
     if empty(a:command_info)
-        return
+        return v:false
     endif
 
     let action = a:command_info.action
     if action.is_func == v:false
         execute a:command_info.command
-        return
+        return v:true
     endif
 
     if !has_key(s:funcs, action.id)
-        return
+        return v:false
     endif
 
     call s:funcs[action.id](a:command_info.context)
+    return v:true
 endfunction
 
 function! s:get_map_attributes(...) abort

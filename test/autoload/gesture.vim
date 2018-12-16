@@ -14,7 +14,8 @@ function! s:suite.draw()
     call gesture#register().down().right().noremap(":tabnew \<CR>")
     call gesture#register().down().noremap(":qa\<CR>")
 
-    call gesture#draw()
+    let nowait_executed = gesture#draw()
+    call s:assert.equals(nowait_executed, v:false)
 
     call s:assert.equals(&modified, v:true)
 
@@ -26,7 +27,8 @@ function! s:suite.draw()
 
     call gesture#draw()
 
-    call gesture#finish()
+    let executed = gesture#finish()
+    call s:assert.equals(executed, v:true)
 
     call s:assert.equals(tabpagenr('$'), 2)
     silent! tabclose
@@ -67,7 +69,8 @@ function! s:suite.nowait()
 
     normal! G
 
-    call gesture#draw()
+    let nowait_executed = gesture#draw()
+    call s:assert.equals(nowait_executed, v:true)
 
     call s:assert.equals(tabpagenr('$'), 2)
     tabclose
@@ -191,7 +194,8 @@ function! s:suite.set_large_length_threshold()
 
     call gesture#draw()
 
-    call gesture#finish()
+    let executed = gesture#finish()
+    call s:assert.equals(executed, v:false)
 
     call s:assert.equals(tabpagenr('$'), 1)
 endfunction
@@ -361,7 +365,8 @@ endfunction
 function! s:suite.input_text()
     call gesture#register().text('inputText').right().noremap(":tabnew \<CR>")
 
-    call gesture#input_text('inputText')
+    let nowait_executed = gesture#input_text('inputText')
+    call s:assert.equals(nowait_executed, v:false)
 
     call gesture#draw()
 
@@ -435,7 +440,8 @@ endfunction
 function! s:suite.input_text_nowait()
     call gesture#register().text('inputText').noremap(":tabnew \<CR>", {'nowait' : v:true})
 
-    call gesture#input_text('inputText')
+    let nowait_executed = gesture#input_text('inputText')
+    call s:assert.equals(nowait_executed, v:true)
 
     call s:assert.equals(tabpagenr('$'), 2)
 endfunction
@@ -471,5 +477,51 @@ function! s:suite.invalid_text()
         call gesture#register().text('DOWN')
     catch /e/
         call s:assert.equals(gesture#get(), {})
+    endtry
+endfunction
+
+function! s:suite.is_started()
+    call gesture#register().right().noremap(":tabnew \<CR>", {'nowait' : v:true})
+    call gesture#register().text('match').noremap(":tabnew \<CR>", {'nowait' : v:true})
+
+    call s:assert.equals(gesture#is_started(), v:false)
+
+    call gesture#draw()
+    call s:assert.equals(gesture#is_started(), v:true)
+    call gesture#finish()
+    call s:assert.equals(gesture#is_started(), v:false)
+    
+    call gesture#input_text('not_match')
+    call s:assert.equals(gesture#is_started(), v:true)
+    call gesture#finish()
+    call s:assert.equals(gesture#is_started(), v:false)
+    
+    call gesture#draw()
+    call s:assert.equals(gesture#is_started(), v:true)
+    normal! 30l
+    call gesture#draw()
+    call s:assert.equals(gesture#is_started(), v:false)
+    
+    call gesture#input_text('match')
+    call s:assert.equals(gesture#is_started(), v:false)
+endfunction
+
+function! s:suite.is_started_with_error()
+    call gesture#register().right().noremap(":InvalidCommand \<CR>", {'nowait' : v:true})
+    call gesture#register().text('match').noremap(":InvalidCommand \<CR>", {'nowait' : v:true})
+    let e = 'Vim:E492: Not an editor command: InvalidCommand'
+
+    call gesture#draw()
+    normal! 30l
+    try
+        call gesture#draw()
+    catch /e/
+        call s:assert.equals(gesture#is_started(), v:false)
+    endtry
+
+    try
+        call gesture#input_text('match')
+    catch /e/
+        call s:assert.equals(gesture#is_started(), v:false)
     endtry
 endfunction

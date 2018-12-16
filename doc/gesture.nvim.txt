@@ -97,6 +97,9 @@ gesture#get_inputs()                                     *gesture#get_inputs()*
 
     Return type: Input[]
 
+gesture#is_started()                                     *gesture#is_started()*
+   Return v:true if the gesture inputting is started. 
+
 gesture#custom#set({name}, {value})                      *gesture#custom#set()*
     Set custom settings.
 
