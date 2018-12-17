@@ -16,6 +16,9 @@ gesture#draw()                                                 *gesture#draw()*
     If the current gesture match registered nowait gestures,
     the registered action is executed.
 
+    Return type: bool
+        Return true if a nowait action is executed
+
 gesture#input_text({text})                               *gesture#input_text()*
     Input gesture from the argument.
     If the current gesture match registered nowait gestures,
@@ -24,10 +27,16 @@ gesture#input_text({text})                               *gesture#input_text()*
     Arguments:
       {text}: string
 
+    Return type: bool
+        Return true if a nowait action is executed
+
 gesture#finish()                                             *gesture#finish()*
     Finish inputting gestures.
     If the current gesture match registered gestures,
     the registered action is executed.
+
+    Return type: bool
+        Return true if an action is executed
 
 gesture#cancel()                                             *gesture#cancel()*
     Cancel the current gesture.
@@ -86,11 +95,11 @@ gesture#get_inputs()                                     *gesture#get_inputs()*
 
     Input =
       {
-        'type': 'direction',
+        'kind': 'direction',
         'value': 'LEFT' | 'RIGHT' | 'UP' | 'DOWN',
         'length': int,
       } | {
-        'type': 'text',
+        'kind': 'text',
         'value': string
         'count': int,
       }
