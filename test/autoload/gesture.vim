@@ -360,6 +360,7 @@ function! s:suite.cancel()
 
     call s:assert.equals(tabpagenr('$'), 1)
     call s:assert.equals(gesture#get_inputs(), [])
+    call s:assert.equals(gesture#is_started(), v:false)
 endfunction
 
 function! s:suite.input_text()
