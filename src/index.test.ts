@@ -17,6 +17,7 @@ describe("GesturePlugin", () => {
   let execute: jest.Mock;
   let finish: jest.Mock;
   let getInputs: jest.Mock;
+  let isStarted: jest.Mock;
 
   let error: jest.Mock;
 
@@ -43,11 +44,13 @@ describe("GesturePlugin", () => {
       return null;
     });
     getInputs = jest.fn().mockReturnValue([]);
+    isStarted = jest.fn().mockReturnValue(false);
     const GestureClass = jest.fn<Gesture>(() => ({
       initialize: initialize,
       execute: execute,
       finish: finish,
       getInputs: getInputs,
+      isStarted: isStarted,
     }));
     const gesture = new GestureClass();
     Di.set("Gesture", gesture);
@@ -140,6 +143,12 @@ describe("GesturePlugin", () => {
     const result = gesturePlugin.getInputs([]);
 
     expect(result).toEqual([]);
+  });
+
+  it("isStarted", () => {
+    const result = gesturePlugin.isStarted([]);
+
+    expect(result).toEqual(false);
   });
 
   it("newPlugin", () => {

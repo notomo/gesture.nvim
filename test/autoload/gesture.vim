@@ -505,23 +505,3 @@ function! s:suite.is_started()
     call gesture#input_text('match')
     call s:assert.equals(gesture#is_started(), v:false)
 endfunction
-
-function! s:suite.is_started_with_error()
-    call gesture#register().right().noremap(":InvalidCommand \<CR>", {'nowait' : v:true})
-    call gesture#register().text('match').noremap(":InvalidCommand \<CR>", {'nowait' : v:true})
-    let e = 'Vim:E492: Not an editor command: InvalidCommand'
-
-    call gesture#draw()
-    normal! 30l
-    try
-        call gesture#draw()
-    catch /e/
-        call s:assert.equals(gesture#is_started(), v:false)
-    endtry
-
-    try
-        call gesture#input_text('match')
-    catch /e/
-        call s:assert.equals(gesture#is_started(), v:false)
-    endtry
-endfunction

@@ -227,4 +227,10 @@ describe("Gesture", () => {
 
     expect(result).toEqual(inputs);
   });
+
+  it("isStarted", async () => {
+    const result = await gesture.isStarted();
+
+    expect(result).toEqual(false);
+  });
 });

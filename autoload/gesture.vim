@@ -12,14 +12,7 @@ function! gesture#draw() abort
     endif
 
     let command_info = _gesture_execute('direction', v:null)
-    try
-        let executed = s:execute(command_info)
-        let s:is_started = !executed
-    catch
-        " when a nowait action throws an error
-        let s:is_started = v:false
-    endtry
-    return executed
+    return s:execute(command_info)
 endfunction
 
 function! gesture#input_text(text) abort
@@ -29,25 +22,16 @@ function! gesture#input_text(text) abort
 
     call _gesture_initialize()
     let command_info = _gesture_execute('text', a:text)
-    try
-        let executed = s:execute(command_info)
-        let s:is_started = !executed
-    catch
-        " when a nowait action throws an error
-        let s:is_started = v:false
-    endtry
-    return executed
+    return s:execute(command_info)
 endfunction
 
 function! gesture#finish() abort
     let command_info = _gesture_finish()
-    let s:is_started = v:false
     return s:execute(command_info)
 endfunction
 
 function! gesture#cancel() abort
     call _gesture_finish()
-    let s:is_started = v:false
 endfunction
 
 let s:id = 0
@@ -141,9 +125,8 @@ function! gesture#get_inputs() abort
     return _gesture_get_inputs()
 endfunction
 
-let s:is_started = v:false
 function! gesture#is_started() abort
-    return s:is_started
+    return !empty(_gesture_is_started())
 endfunction
 
 function! gesture#get() abort
