@@ -31,6 +31,10 @@ export class GesturePlugin {
     plugin.registerFunction("_gesture_get_inputs", [this, this.getInputs], {
       sync: true,
     });
+
+    plugin.registerFunction("_gesture_is_started", [this, this.isStarted], {
+      sync: true,
+    });
   }
 
   public async initialize(args: []): Promise<void> {
@@ -59,6 +63,10 @@ export class GesturePlugin {
 
   public getInputs(args: []): ReadonlyArray<Input> {
     return this.gesture.getInputs();
+  }
+
+  public isStarted(args: []): boolean {
+    return this.gesture.isStarted();
   }
 }
 

@@ -78,4 +78,8 @@ export class Gesture {
     }
     return this.recognizer.getInputs();
   }
+
+  public isStarted(): boolean {
+    return this.gestureBuffer.isStarted();
+  }
 }
