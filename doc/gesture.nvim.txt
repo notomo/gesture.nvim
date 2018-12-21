@@ -114,7 +114,7 @@ gesture#custom#set({name}, {value})                      *gesture#custom#set()*
 
     Arguments:
       {name}: string (|gesture.nvim-custom| key)
-      {attrs}: any (|gesture.nvim-custom| value)
+      {value}: any (|gesture.nvim-custom| value)
 
 gesture#custom#clear()                                 *gesture#custom#clear()*
     Restore default custom settings.
