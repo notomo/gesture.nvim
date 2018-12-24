@@ -1,10 +1,10 @@
-import { homedir } from "os";
+import { tmpdir } from "os";
 import { join } from "path";
 import * as log4js from "log4js";
 
 const BACKUP_FILE_COUNT = 3;
 const LOG_FILE_PATH =
-  process.env.NVIM_GESTURE_LOG_FILE || join(homedir(), "gesture.log");
+  process.env.NVIM_GESTURE_LOG_FILE || join(tmpdir(), "gesture.log");
 
 const level = process.env.NVIM_GESTURE_LOG_LEVEL || "info";
 
