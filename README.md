@@ -39,6 +39,9 @@ repo = 'notomo/gesture.nvim'
 build = 'npm run setup'
 ```
 
+NOTE: If the npm version < 5.7, use `npm install & npm run build` instead of `npm run setup`.
+`npm run setup` requires `npm ci`.
+
 ## Usage
 
 ```vim

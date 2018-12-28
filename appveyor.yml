@@ -13,7 +13,7 @@ install:
     - npm install --global npm@latest
     - set PATH=%APPDATA%\npm;%PATH%
     - npm install -g neovim
-    - npm install
+    - npm ci
 
     - ps: |
         $zip = $Env:APPVEYOR_BUILD_FOLDER + '\nvim.zip'
