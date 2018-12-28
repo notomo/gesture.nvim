@@ -4,7 +4,7 @@ let s:default_custom = {
     \ 'x_length_threshold': 5,
     \ 'y_length_threshold': 5,
 \ }
-let s:custom = s:default_custom
+let s:custom = deepcopy(s:default_custom)
 
 function! gesture#custom#set(key, value) abort
     if !has_key(s:custom, a:key)
@@ -21,5 +21,5 @@ function! gesture#custom#get(key) abort
 endfunction
 
 function! gesture#custom#clear() abort
-    let s:custom = s:default_custom
+    let s:custom = deepcopy(s:default_custom)
 endfunction
