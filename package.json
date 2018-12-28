@@ -20,7 +20,7 @@
         "test": "jest --coverage",
         "build": "tsc -p tsconfig.json",
         "watch": "tsc -p tsconfig.json --watch true",
-        "setup": "npm install && npm run build"
+        "setup": "npm ci && npm run build"
     },
     "jest": {
         "moduleFileExtensions": [
