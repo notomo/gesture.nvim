@@ -3,7 +3,11 @@ let s:suite = themis#suite('custom')
 let s:assert = themis#helper('assert')
 
 function! s:suite.before()
-    let s:root = GestureTestBeforeEach()
+    let s:root = GestureTestBefore()
+endfunction
+
+function! s:suite.before_each()
+    call GestureTestBeforeEach()
 endfunction
 
 function! s:suite.after_each()
