@@ -18,6 +18,7 @@ endfunction
 function! GestureTestAfterEach() abort
     call gesture#clear()
     call gesture#custom#clear()
+    call health#gesture#_set_test_path('')
     silent! %bwipeout!
     execute 'cd ' . s:root
 endfunction
