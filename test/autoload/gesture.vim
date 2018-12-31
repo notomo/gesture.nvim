@@ -510,3 +510,24 @@ function! s:suite.is_started()
     call gesture#input_text('match')
     call s:assert.equals(gesture#is_started(), v:false)
 endfunction
+
+function! s:suite.draw_with_float_threshold()
+    call gesture#custom#set('x_length_threshold', 3.9)
+    call gesture#custom#set('y_length_threshold', 3.9)
+
+    call gesture#register().down().right().noremap(":tabnew \<CR>")
+
+    call gesture#draw()
+
+    normal! 4j
+
+    call gesture#draw()
+
+    normal! 4l
+
+    call gesture#draw()
+
+    call gesture#finish()
+
+    call s:assert.equals(tabpagenr('$'), 2)
+endfunction
