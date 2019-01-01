@@ -32,8 +32,6 @@ export class UndoStore {
     this.undoFile = (await this.vim.call("tempname")) as string;
     await this.vim.command("wundo " + this.undoFile);
 
-    await this.clearUndo();
-
     await this.vim.setWindow(currentWindow);
   }
 
@@ -48,10 +46,7 @@ export class UndoStore {
 
     await this.vim.setWindow(targetWindow);
 
-    const modifiable = (await this.buffer.getOption("modifiable")) as boolean;
-    if (modifiable) {
-      await this.vim.command("keepjump silent undo");
-    }
+    await this.vim.command("keepjump silent undo");
     if (this.undoFile !== null) {
       await this.restoreFromUndoFile(this.undoFile);
     }
@@ -63,24 +58,9 @@ export class UndoStore {
   protected async restoreFromUndoFile(undoFile: string) {
     const readable = (await this.vim.call("filereadable", undoFile)) as boolean;
     if (!readable) {
-      await this.clearUndo();
       return;
     }
 
     await this.vim.command("silent rundo " + this.undoFile);
-  }
-
-  protected async clearUndo() {
-    const modifiable = (await this.buffer.getOption("modifiable")) as boolean;
-    if (!modifiable) {
-      return;
-    }
-    const undolevels = (await this.vim.call(
-      "gesture#impl#get_undolevels",
-      this.buffer.id
-    )) as number;
-    await this.buffer.setOption("undolevels", -1);
-    await this.vim.command('noautocmd execute "normal! A \\<BS>\\<Esc>"');
-    await this.buffer.setOption("undolevels", undolevels);
   }
 }
