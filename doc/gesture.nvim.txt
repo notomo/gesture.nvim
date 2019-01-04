@@ -154,6 +154,11 @@ y_length_threshold                     *gesture.nvim-custom-y_length_threshold*
     value.
     Default: 5
 
+enabled_buffer_fill                   *gesture.nvim-custom-enabled_buffer_fill*
+    If this is v:false, gesture#draw() does not modify the buffers.
+    NOTE: The workaround for |gesture.nvim-known-issues|
+    Default: v:true
+
 ==============================================================================
 EXAMPLES                                                *gesture.nvim-examples*
 >
@@ -196,6 +201,16 @@ EXAMPLES                                                *gesture.nvim-examples*
 
         call gesture#custom#set('x_length_threshold', 16)
         call gesture#custom#set('y_length_threshold', 9)
+
+==============================================================================
+KNOWN ISSUES                                        *gesture.nvim-known-issues*
+
+- The mode change in the gesture modifies the buffers unintentionally.
+|gesture.nvim-custom-enabled_buffer_fill| is the workaround option.
+>
+        " NOTICE: You can hardly gesture in a few lines buffer, 
+        call gesture#custom#set('enabled_buffer_fill', v:false)
+
 
 ==============================================================================
 vim:tw=78:ts=8:sw=2:ft=help:et:norl:fen:fdl=0:
