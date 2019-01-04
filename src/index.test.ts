@@ -66,7 +66,7 @@ describe("GesturePlugin", () => {
   });
 
   it("initialize", async () => {
-    await gesturePlugin.initialize([]);
+    await gesturePlugin.initialize([true]);
 
     expect(initialize).toHaveBeenCalled();
   });
@@ -84,7 +84,7 @@ describe("GesturePlugin", () => {
 
     gesturePlugin = new GesturePlugin(plugin);
 
-    await gesturePlugin.initialize([]);
+    await gesturePlugin.initialize([true]);
 
     expect(error).toHaveBeenCalled();
   });

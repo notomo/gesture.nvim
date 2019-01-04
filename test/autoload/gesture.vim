@@ -531,3 +531,15 @@ function! s:suite.draw_with_float_threshold()
 
     call s:assert.equals(tabpagenr('$'), 2)
 endfunction
+
+function! s:suite.disable_buffer_fill()
+    let initial_line_count = line('$')
+
+    call gesture#custom#set('enabled_buffer_fill', v:false)
+
+    call gesture#draw()
+    call s:assert.equals(line('$'), initial_line_count)
+
+    call gesture#finish()
+    call s:assert.equals(line('$'), initial_line_count)
+endfunction
