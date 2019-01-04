@@ -110,8 +110,8 @@ describe("Gesture", () => {
   });
 
   it("initialize", async () => {
-    await gesture.initialize();
-    await gesture.initialize();
+    await gesture.initialize(true);
+    await gesture.initialize(true);
 
     expect(clear).toHaveBeenCalledTimes(1);
     expect(initialize).toHaveBeenCalledTimes(1);
@@ -195,7 +195,7 @@ describe("Gesture", () => {
       commandFactory
     );
 
-    await gesture.initialize();
+    await gesture.initialize(true);
 
     const result = await gesture.finish();
 
@@ -205,7 +205,7 @@ describe("Gesture", () => {
   });
 
   it("finish", async () => {
-    await gesture.initialize();
+    await gesture.initialize(true);
 
     const result = await gesture.finish();
 
@@ -221,7 +221,7 @@ describe("Gesture", () => {
   });
 
   it("getInputs", async () => {
-    await gesture.initialize();
+    await gesture.initialize(true);
 
     const result = await gesture.getInputs();
 

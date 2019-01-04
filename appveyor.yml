@@ -1,6 +1,7 @@
 environment:
     matrix:
         - nodejs_version: '10'
+          neovim_version_tag: 'v0.3.2'
 
 matrix:
     fast_finish: true
@@ -17,7 +18,7 @@ install:
 
     - ps: |
         $zip = $Env:APPVEYOR_BUILD_FOLDER + '\nvim.zip'
-        $url = 'https://github.com/neovim/neovim/releases/download/nightly/nvim-win64.zip'
+        $url = 'https://github.com/neovim/neovim/releases/download/' + $env:neovim_version_tag + '/nvim-win64.zip'
         (New-Object Net.WebClient).DownloadFile($url, $zip)
         [Reflection.Assembly]::LoadWithPartialName('System.IO.Compression.FileSystem') > $null
         [System.IO.Compression.ZipFile]::ExtractToDirectory($zip, $Env:APPVEYOR_BUILD_FOLDER)

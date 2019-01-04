@@ -24,13 +24,17 @@ export class GestureBuffer {
     this.logger = getLogger("buffer");
   }
 
-  public async setup() {
+  public async setup(enabledBufferFill: boolean) {
     await this.optionStore.set();
 
     this.started = true;
 
     this.startPointTabpage = await this.vim.tabpage;
     this.startPointWindow = await this.vim.window;
+
+    if (!enabledBufferFill) {
+      return;
+    }
     const cursor = await this.startPointWindow.cursor;
 
     const bufferMaxEmptyLineCounts: Map<

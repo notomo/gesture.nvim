@@ -4,7 +4,7 @@ if exists('*gesture#draw')
 endif
 
 function! gesture#draw() abort
-    call _gesture_initialize()
+    call _gesture_initialize(gesture#custom#get('enabled_buffer_fill'))
 
     let cursor_setter = gesture#custom#get('cursor_setter')
     if !empty(cursor_setter)
@@ -20,7 +20,7 @@ function! gesture#input_text(text) abort
         throw 'text must be a string'
     endif
 
-    call _gesture_initialize()
+    call _gesture_initialize(gesture#custom#get('enabled_buffer_fill'))
     let command_info = _gesture_execute('text', a:text)
     return s:execute(command_info)
 endfunction

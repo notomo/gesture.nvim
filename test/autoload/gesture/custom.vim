@@ -29,6 +29,11 @@ function! s:suite.custom_set_and_get()
     call gesture#custom#set('y_length_threshold', y_length_threshold)
 
     call s:assert.equals(gesture#custom#get('y_length_threshold'), y_length_threshold)
+
+    let enabled_buffer_fill = v:false
+    call gesture#custom#set('enabled_buffer_fill', enabled_buffer_fill)
+
+    call s:assert.equals(gesture#custom#get('enabled_buffer_fill'), enabled_buffer_fill)
 endfunction
 
 function! s:suite.clear()
@@ -61,5 +66,10 @@ function! s:suite.set_invalid_value()
     try
         call gesture#custom#set('y_length_threshold', 'invalid_value')
     catch /y_length_threshold must be a positive number./
+    endtry
+
+    try
+        call gesture#custom#set('enabled_buffer_fill', 'invalid_value')
+    catch /enabled_buffer_fill must be a bool./
     endtry
 endfunction

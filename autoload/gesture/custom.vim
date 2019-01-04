@@ -3,6 +3,7 @@ let s:default_custom = {
     \ 'cursor_setter': "normal! \<LeftMouse>",
     \ 'x_length_threshold': 5,
     \ 'y_length_threshold': 5,
+    \ 'enabled_buffer_fill': v:true,
 \ }
 let s:custom = deepcopy(s:default_custom)
 
@@ -19,7 +20,11 @@ let s:validations = {
     \ 'y_length_threshold': {
         \ 'description': 'a positive number',
         \ 'func': s:is_positive,
-    \ }
+    \ },
+    \ 'enabled_buffer_fill': {
+        \ 'description': 'a bool',
+        \ 'func': {x -> type(x) == v:t_bool},
+    \ },
 \ }
 
 function! gesture#custom#set(key, value) abort

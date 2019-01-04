@@ -37,8 +37,8 @@ export class GesturePlugin {
     });
   }
 
-  public async initialize(args: []): Promise<void> {
-    await this.gesture.initialize().catch(e => this.reporter.error(e));
+  public async initialize(args: [boolean]): Promise<void> {
+    await this.gesture.initialize(args[0]).catch(e => this.reporter.error(e));
   }
 
   public async execute(

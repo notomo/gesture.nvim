@@ -60,7 +60,7 @@ export class Gesture {
     return command;
   }
 
-  public async initialize() {
+  public async initialize(enabledBufferFill: boolean) {
     if (this.gestureBuffer.isStarted()) {
       return;
     }
@@ -68,7 +68,7 @@ export class Gesture {
     await Promise.all([
       this.recognizer.clear(),
       this.mapper.initialize(),
-      this.gestureBuffer.setup(),
+      this.gestureBuffer.setup(enabledBufferFill),
     ]);
   }
 
