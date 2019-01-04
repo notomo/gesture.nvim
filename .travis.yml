@@ -3,9 +3,6 @@ language:
 node_js:
     - 'node'
 
-env:
-  - NEOVIM_VERSION_TAG=v0.3.2
-
 install:
     - sudo modprobe fuse
     - user="$(whoami)"
@@ -23,6 +20,8 @@ env:
     global:
         - THEMIS_VIM=nvim
         - THEMIS_ARGS="-e --headless"
+    matrix:
+        - NEOVIM_VERSION_TAG=v0.3.2
 
 script:
     - npm run build
