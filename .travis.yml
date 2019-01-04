@@ -3,11 +3,14 @@ language:
 node_js:
     - 'node'
 
+env:
+  - NEOVIM_VERSION_TAG=v0.3.2
+
 install:
     - sudo modprobe fuse
     - user="$(whoami)"
     - sudo usermod -a -G fuse $user
-    - wget -nv https://github.com/neovim/neovim/releases/download/nightly/nvim.appimage
+    - wget -nv https://github.com/neovim/neovim/releases/download/${NEOVIM_VERSION_TAG}/nvim.appimage
     - mkdir -p ~/neovim/bin
     - cp nvim.appimage ~/neovim/bin/nvim
     - chmod u+x ~/neovim/bin/nvim
