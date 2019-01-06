@@ -236,3 +236,8 @@ function! s:get_text_attributes(...) abort
 
     return {'max_count' : max_count, 'min_count' : min_count}
 endfunction
+
+augroup gesture
+    autocmd!
+    autocmd InsertEnter * call gesture#cancel()
+augroup END

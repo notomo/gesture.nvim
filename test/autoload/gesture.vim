@@ -543,3 +543,27 @@ function! s:suite.disable_buffer_fill()
     call gesture#finish()
     call s:assert.equals(line('$'), initial_line_count)
 endfunction
+
+function! s:suite.change_to_insert_mode()
+    let initial_line_count = line('$')
+
+    call gesture#draw()
+    normal! i
+
+    call s:assert.equals(gesture#is_started(), v:false)
+    call s:assert.equals(line('$'), initial_line_count)
+endfunction
+
+function! s:suite.change_to_visual_mode()
+    call gesture#register().right().noremap(":\<C-u>tabnew \<CR>")
+
+    call gesture#draw()
+    normal! v
+    normal! 30l
+
+    call gesture#draw()
+
+    call gesture#finish()
+
+    call s:assert.equals(tabpagenr('$'), 2)
+endfunction
