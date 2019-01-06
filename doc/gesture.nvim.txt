@@ -164,19 +164,18 @@ EXAMPLES                                                *gesture.nvim-examples*
 >
         " -- Basic settings ----------------------------------------------
 
-        " Ensure to enable the mouse support
-        " `mouse` must include `n` or `a`
-        set mouse=n " or set mouse=a
+        " Ensure to enable the mouse support.
+        set mouse=a
 
-        nnoremap <silent> <LeftDrag> :<C-u>call gesture#draw()<CR>
-        nnoremap <silent> <LeftRelease> :<C-u>call gesture#finish()<CR>
+        noremap <silent> <LeftDrag> :<C-u>call gesture#draw()<CR>
+        noremap <silent> <LeftRelease> :<C-u>call gesture#finish()<CR>
 
         " If you use the right mouse button,
         " you need to disable the right click. you use the right mouse button.
 
-        nnoremap <RightMouse> <Nop>
-        nnoremap <silent> <RightDrag> :<C-u>call gesture#draw()<CR>
-        nnoremap <silent> <RightRelease> :<C-u>call gesture#finish()<CR>
+        noremap <RightMouse> <Nop>
+        noremap <silent> <RightDrag> :<C-u>call gesture#draw()<CR>
+        noremap <silent> <RightRelease> :<C-u>call gesture#finish()<CR>
 
 
         " -- Gesture settings ----------------------------------------------
@@ -205,7 +204,7 @@ EXAMPLES                                                *gesture.nvim-examples*
 ==============================================================================
 KNOWN ISSUES                                        *gesture.nvim-known-issues*
 
-- The mode change in the gesture modifies the buffers unintentionally.
+- The mode change in the gesture may modify the buffers unintentionally.
 |gesture.nvim-custom-enabled_buffer_fill| is the workaround option.
 >
         " NOTICE: You can hardly gesture in a few lines buffer, 

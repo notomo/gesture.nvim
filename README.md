@@ -47,8 +47,8 @@ NOTE: `:checkhealth gesture` checks whether the installation is valid.
 ## Usage
 
 ```vim
-nnoremap <silent> <LeftDrag> :<C-u>call gesture#draw()<CR>
-nnoremap <silent> <LeftRelease> :<C-u>call gesture#finish()<CR>
+noremap <silent> <LeftDrag> :<C-u>call gesture#draw()<CR>
+noremap <silent> <LeftRelease> :<C-u>call gesture#finish()<CR>
 
 " register gestures
 call gesture#register().up().down().noremap('G')
