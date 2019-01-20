@@ -86,6 +86,11 @@ gesture#register().func({f}, [{attrs}])             *gesture#register().func()*
             'id': int, " window id
             'buffer': int, " buffer id
           }[]
+          'start': {
+            'row': int,
+            'column': int,
+            'text': string,
+          }
         }
 
       {attrs}: |gesture.nvim-attributes| dictionary
@@ -167,6 +172,7 @@ EXAMPLES                                                *gesture.nvim-examples*
         " Ensure to enable the mouse support.
         set mouse=a
 
+        noremap <silent> <LeftMouse> :<C-u>call gesture#draw()<CR>
         noremap <silent> <LeftDrag> :<C-u>call gesture#draw()<CR>
         noremap <silent> <LeftRelease> :<C-u>call gesture#finish()<CR>
 

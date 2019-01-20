@@ -47,6 +47,7 @@ NOTE: `:checkhealth gesture` checks whether the installation is valid.
 ## Usage
 
 ```vim
+noremap <silent> <LeftMouse> :<C-u>call gesture#draw()<CR>
 noremap <silent> <LeftDrag> :<C-u>call gesture#draw()<CR>
 noremap <silent> <LeftRelease> :<C-u>call gesture#finish()<CR>
 
