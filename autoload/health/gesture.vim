@@ -22,7 +22,8 @@ function! s:check_ts_build() abort
         return
     endif
 
-    let built_version = join(readfile(version_file), '')
+    let built_version_json = join(readfile(version_file), '')
+    let built_version = json_decode(built_version_json)['version']
 
     let package_json = join(readfile(project_root . '/package.json'), '')
     let package_version = json_decode(package_json)['version']

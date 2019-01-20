@@ -14,7 +14,7 @@ install:
     - npm install --global npm@latest
     - set PATH=%APPDATA%\npm;%PATH%
     - npm install -g neovim
-    - npm ci
+    - npm run setup
 
     - ps: |
         $zip = $Env:APPVEYOR_BUILD_FOLDER + '\nvim.zip'
@@ -32,7 +32,6 @@ install:
 test_script:
     - node --version
     - npm --version
-    - npm run build
     - npm run test -- --testMatch="**\src\**\*.test.ts"
     - echo %PATH%
     - echo %THEMIS_HOME%
