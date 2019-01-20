@@ -1,6 +1,7 @@
 import { Neovim, Window } from "neovim";
 import { DirectionRecognizer } from "./recognizer";
 import { PointFactory, Point } from "./point";
+import { PointContextFactory } from "./context";
 import { ConfigRepository } from "./repository/config";
 import { TabpageRepository } from "./repository/tabpage";
 import { InputKind, InputLineArgument, InputTextArgument } from "./input";
@@ -36,6 +37,10 @@ describe("DirectionRecognizer", () => {
 
   let tabpageRepository: TabpageRepository;
   let getGlobalPosition: jest.Mock;
+
+  let pointContextFactory: PointContextFactory;
+  let createPointContext: jest.Mock;
+  const startPointContext = { row: 1, column: 2, text: "text" };
 
   const inputLineArgument: InputLineArgument = {
     kind: InputKind.DIRECTION,
@@ -98,11 +103,18 @@ describe("DirectionRecognizer", () => {
     }));
     tabpageRepository = new TabpageRepositoryClass();
 
+    createPointContext = jest.fn().mockReturnValue(startPointContext);
+    const PointContextFactoryClass = jest.fn<PointContextFactory>(() => ({
+      create: createPointContext,
+    }));
+    pointContextFactory = new PointContextFactoryClass();
+
     recognizer = new DirectionRecognizer(
       vim,
       pointFactory,
       tabpageRepository,
-      configRepository
+      configRepository,
+      pointContextFactory
     );
   });
 
@@ -149,7 +161,8 @@ describe("DirectionRecognizer", () => {
       vim,
       pointFactory,
       tabpageRepository,
-      configRepository
+      configRepository,
+      pointContextFactory
     );
 
     await recognizer.update(inputLineArgument);
@@ -189,7 +202,8 @@ describe("DirectionRecognizer", () => {
       vim,
       pointFactory,
       tabpageRepository,
-      configRepository
+      configRepository,
+      pointContextFactory
     );
 
     await recognizer.update(inputLineArgument);
@@ -243,6 +257,7 @@ describe("DirectionRecognizer", () => {
 
     const context = await recognizer.getContext();
     expect(context).toEqual({
+      start: startPointContext,
       windows: [{ id: windowId, bufferId: bufferId }],
     });
 
@@ -250,7 +265,10 @@ describe("DirectionRecognizer", () => {
 
     await recognizer.clear();
 
-    expect(await recognizer.getContext()).toEqual({ windows: [] });
+    expect(await recognizer.getContext()).toEqual({
+      start: null,
+      windows: [],
+    });
     expect(recognizer.getInputs()).toEqual([]);
     expect(gestureLines).toEqual([
       {

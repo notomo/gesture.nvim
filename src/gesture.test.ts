@@ -2,7 +2,8 @@ import { Neovim } from "neovim";
 import { DirectionRecognizer } from "./recognizer";
 import { GestureMapper } from "./mapper";
 import { GestureBuffer } from "./buffer";
-import { CommandFactory, Command, Context, Action } from "./command";
+import { CommandFactory, Command, Action } from "./command";
+import { Context } from "./context";
 import { Gesture } from "./gesture";
 import { Input, InputArgument } from "./input";
 

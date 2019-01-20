@@ -100,18 +100,27 @@ endfunction
 
 function! s:suite.func()
 
-    function! s:f(c) abort
+    let start_text = 'start_text'
+    let start_column = len('start_text')
+
+    function! s:f(c, start_column, start_text) abort
         let window_id = win_getid()
         let buffer_id = bufnr('%')
         call s:assert.equals(window_id, a:c['windows'][0]['id'])
         call s:assert.equals(buffer_id, a:c['windows'][0]['bufferId'])
+
+        call s:assert.equals(1, a:c['start']['row'])
+        call s:assert.equals(a:start_column, a:c['start']['column'])
+        call s:assert.equals(a:start_text, a:c['start']['text'])
 
         silent! tabnew
         call s:assert.equals(tabpagenr('$'), 2)
     endfunction
 
     let F = funcref('s:f')
-    call gesture#register().right().left().down().up().func({ c -> F })
+    call gesture#register().right().left().down().up().func({ c -> F(c, start_column, start_text) })
+
+    execute 'normal! i' . start_text . "\<ESC>"
 
     call gesture#draw()
 
