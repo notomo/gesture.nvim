@@ -1,6 +1,10 @@
 const fs = require("fs");
-
 const readFileSync = fs.readFileSync;
-const version = JSON.parse(readFileSync("./package.json"))["version"];
 
-fs.writeFileSync("./lib/version", version);
+const filePath = process.argv[2];
+const version = JSON.parse(readFileSync(filePath))["version"];
+
+const output = { version: version };
+const outputJson = JSON.stringify(output);
+
+console.log(outputJson);
