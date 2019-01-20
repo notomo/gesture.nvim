@@ -1,4 +1,5 @@
 import { InputDefinition } from "./input";
+import { Context } from "./context";
 
 export interface Action {
   inputs: InputDefinition[];
@@ -7,13 +8,6 @@ export interface Action {
   noremap: boolean;
   is_func: boolean;
   rhs: string;
-}
-
-export interface Context {
-  windows: {
-    id: number;
-    bufferId: number;
-  }[];
 }
 
 export interface Command {

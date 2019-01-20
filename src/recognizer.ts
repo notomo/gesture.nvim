@@ -1,5 +1,5 @@
 import { Neovim, Window, Buffer } from "neovim";
-import { Context } from "./command";
+import { Context, PointContext, PointContextFactory } from "./context";
 import { Logger, getLogger } from "./logger";
 import { Point, PointFactory } from "./point";
 import { ConfigRepository } from "./repository/config";
@@ -12,6 +12,8 @@ export class DirectionRecognizer {
   protected lastEdge: Point;
   protected lineStarted: boolean = false;
 
+  protected startPointContext: PointContext | null = null;
+
   protected readonly logger: Logger;
 
   protected windowId: number | null = null;
@@ -21,7 +23,8 @@ export class DirectionRecognizer {
     protected readonly vim: Neovim,
     protected readonly pointFactory: PointFactory,
     protected readonly tabpageRepository: TabpageRepository,
-    protected readonly configRepository: ConfigRepository
+    protected readonly configRepository: ConfigRepository,
+    protected readonly pointContextFactory: PointContextFactory
   ) {
     this.logger = getLogger("recognizer");
     this.lastEdge = this.pointFactory.createForInitialize();
@@ -34,6 +37,9 @@ export class DirectionRecognizer {
       this.windowId = currentWindowId;
       const buffer = await currentWindow.buffer;
       this.windowAndBuffers.push([currentWindow, buffer]);
+    }
+    if (this.startPointContext === null) {
+      this.startPointContext = await this.pointContextFactory.create();
     }
 
     switch (inputArgument.kind) {
@@ -58,13 +64,18 @@ export class DirectionRecognizer {
       };
     });
 
-    return { windows: windows };
+    return {
+      windows: windows,
+      start: this.startPointContext,
+    };
   }
 
-  public clear() {
+  public async clear() {
     this.inputs.length = 0;
     this.lineStarted = false;
     this.lastEdge = this.pointFactory.createForInitialize();
+
+    this.startPointContext = null;
 
     this.windowId = null;
     this.windowAndBuffers.length = 0;

@@ -1,4 +1,5 @@
-import { CommandFactory, Context } from "./command";
+import { CommandFactory } from "./command";
+import { Context } from "./context";
 
 describe("CommandFactory", () => {
   let commandFactory: CommandFactory;
