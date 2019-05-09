@@ -6,15 +6,15 @@
     "main": "lib/index.js",
     "dependencies": {
         "log4js": "^3.0.6",
-        "neovim": "^4.2.1",
+        "neovim": "^4.5.0",
         "tslib": "^1.9.3"
     },
     "devDependencies": {
-        "@types/jest": "^23.3.9",
-        "@types/node": "^10.12.2",
+        "@types/jest": "^23.3.14",
+        "@types/node": "^10.14.6",
         "jest": "^23.6.0",
-        "ts-jest": "^23.10.4",
-        "typescript": "^3.1.6"
+        "ts-jest": "^23.10.5",
+        "typescript": "^3.4.5"
     },
     "scripts": {
         "test": "jest --coverage",
