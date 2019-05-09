@@ -40,7 +40,12 @@ describe("CommandFactory", () => {
         rhs: info.rhs,
       };
 
-      const ContextClass = jest.fn<Context>(() => ({}));
+      const ContextClass = jest.fn<Context, []>(() => {
+        return {
+          windows: [],
+          start: null,
+        };
+      });
       const context = new ContextClass();
 
       const result = commandFactory.create(action, context);
