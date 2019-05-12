@@ -12,9 +12,9 @@ describe("ConfigRepository", () => {
     it(`getMinLengthByDirection with ${data.direction}`, async () => {
       const call = jest.fn();
 
-      const NeovimClass = jest.fn<Neovim>(() => ({
+      const NeovimClass: jest.Mock<Neovim> = jest.fn(() => ({
         call: call,
-      }));
+      })) as any;
       const vim = new NeovimClass();
 
       const configRepository = new ConfigRepository(vim);

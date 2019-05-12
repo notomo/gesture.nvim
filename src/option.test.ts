@@ -23,10 +23,10 @@ describe("OptionStore", () => {
       .mockReturnValueOnce(virtualedit)
       .mockReturnValueOnce(scrolloff)
       .mockReturnValueOnce(sidescrolloff);
-    const NeovimClass = jest.fn<Neovim>(() => ({
+    const NeovimClass: jest.Mock<Neovim> = jest.fn(() => ({
       setOption: setOption,
       getOption: getOption,
-    }));
+    })) as any;
     const vim = new NeovimClass();
 
     optionStore = new OptionStore(vim);
@@ -67,18 +67,18 @@ describe("BufferOptionStore", () => {
   beforeEach(() => {
     setOption = jest.fn();
     getOption = jest.fn().mockReturnValueOnce(modified);
-    const BufferClass = jest.fn<Buffer>(() => ({
+    const BufferClass: jest.Mock<Buffer> = jest.fn(() => ({
       setOption: setOption,
       getOption: getOption,
-    }));
+    })) as any;
     const buffer = new BufferClass();
 
     save = jest.fn();
     restore = jest.fn();
-    const UndoStoreClass = jest.fn<UndoStore>(() => ({
+    const UndoStoreClass: jest.Mock<UndoStore> = jest.fn(() => ({
       save: save,
       restore: restore,
-    }));
+    })) as any;
     const undoStore = new UndoStoreClass();
 
     bufferOptionStore = new BufferOptionStore(buffer, undoStore);
@@ -105,12 +105,12 @@ describe("BufferOptionStore", () => {
 
 describe("BufferOptionStoreFactory", () => {
   it("create", () => {
-    const NeovimClass = jest.fn<Neovim>(() => ({}));
+    const NeovimClass: jest.Mock<Neovim> = jest.fn(() => ({})) as any;
     const vim = new NeovimClass();
 
     const bufferOptionStoreFactory = new BufferOptionStoreFactory(vim);
 
-    const BufferClass = jest.fn<Buffer>(() => ({}));
+    const BufferClass: jest.Mock<Buffer> = jest.fn(() => ({})) as any;
     const buffer = new BufferClass();
 
     bufferOptionStoreFactory.create(buffer);

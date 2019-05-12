@@ -39,39 +39,41 @@ describe("Gesture", () => {
   let inputArgument: InputArgument;
 
   beforeEach(() => {
-    const NeovimClass = jest.fn<Neovim>(() => ({}));
+    const NeovimClass: jest.Mock<Neovim> = jest.fn(() => ({})) as any;
     vim = new NeovimClass();
 
-    const GestureLineClass = jest.fn<Input>(() => ({}));
+    const GestureLineClass: jest.Mock<Input> = jest.fn(() => ({})) as any;
     const gestureLine = new GestureLineClass();
     inputs = [gestureLine];
 
-    const ContextClass = jest.fn<Context>(() => ({}));
+    const ContextClass: jest.Mock<Context> = jest.fn(() => ({})) as any;
     context = new ContextClass();
 
     clear = jest.fn();
     getInputs = jest.fn().mockReturnValue(inputs);
     getContext = jest.fn().mockReturnValue(context);
     update = jest.fn();
-    const DirectionRecognizerClass = jest.fn<DirectionRecognizer>(() => ({
-      clear: clear,
-      getInputs: getInputs,
-      getContext: getContext,
-      update: update,
-    }));
+    const DirectionRecognizerClass: jest.Mock<DirectionRecognizer> = jest.fn(
+      () => ({
+        clear: clear,
+        getInputs: getInputs,
+        getContext: getContext,
+        update: update,
+      })
+    ) as any;
     directionRecognizer = new DirectionRecognizerClass();
 
-    const ActionClass = jest.fn<Action>(() => ({}));
+    const ActionClass: jest.Mock<Action> = jest.fn(() => ({})) as any;
     action = new ActionClass();
 
     initialize = jest.fn();
     getAction = jest.fn().mockReturnValue(action);
     getNoWaitAction = jest.fn().mockReturnValue(action);
-    const GestureMapperClass = jest.fn<GestureMapper>(() => ({
+    const GestureMapperClass: jest.Mock<GestureMapper> = jest.fn(() => ({
       initialize: initialize,
       getAction: getAction,
       getNoWaitAction: getNoWaitAction,
-    }));
+    })) as any;
     gestureMapper = new GestureMapperClass();
 
     setup = jest.fn();
@@ -81,19 +83,19 @@ describe("Gesture", () => {
       .mockReturnValueOnce(true);
     restore = jest.fn();
     validate = jest.fn().mockReturnValue(true);
-    const GestureBufferClass = jest.fn<GestureBuffer>(() => ({
+    const GestureBufferClass: jest.Mock<GestureBuffer> = jest.fn(() => ({
       setup: setup,
       isStarted: isStarted,
       restore: restore,
       validate: validate,
-    }));
+    })) as any;
     gestureBuffer = new GestureBufferClass();
 
-    const CommandClass = jest.fn<Command>(() => ({}));
+    const CommandClass: jest.Mock<Command> = jest.fn(() => ({})) as any;
     command = new CommandClass();
 
     create = jest.fn().mockReturnValue(command);
-    const CommandFactoryClass = jest.fn<CommandFactory>(() => ({
+    const CommandFactoryClass: jest.Mock<CommandFactory> = jest.fn(() => ({
       create: create,
     }));
     commandFactory = new CommandFactoryClass();
@@ -106,7 +108,9 @@ describe("Gesture", () => {
       commandFactory
     );
 
-    const InputArgumentClass = jest.fn<InputArgument>(() => ({}));
+    const InputArgumentClass: jest.Mock<InputArgument> = jest.fn(
+      () => ({})
+    ) as any;
     inputArgument = new InputArgumentClass();
   });
 
@@ -122,10 +126,10 @@ describe("Gesture", () => {
   it("execute returns null when the gesture is invalid", async () => {
     restore = jest.fn();
     validate = jest.fn().mockReturnValue(false);
-    const GestureBufferClass = jest.fn<GestureBuffer>(() => ({
+    const GestureBufferClass: jest.Mock<GestureBuffer> = jest.fn(() => ({
       restore: restore,
       validate: validate,
-    }));
+    })) as any;
     gestureBuffer = new GestureBufferClass();
 
     gesture = new Gesture(
@@ -145,10 +149,10 @@ describe("Gesture", () => {
   it("execute returns null when the gesture is not matched with nowait", async () => {
     initialize = jest.fn();
     getNoWaitAction = jest.fn().mockReturnValue(null);
-    const GestureMapperClass = jest.fn<GestureMapper>(() => ({
+    const GestureMapperClass: jest.Mock<GestureMapper> = jest.fn(() => ({
       initialize: initialize,
       getNoWaitAction: getNoWaitAction,
-    }));
+    })) as any;
     gestureMapper = new GestureMapperClass();
 
     gesture = new Gesture(
@@ -182,10 +186,10 @@ describe("Gesture", () => {
   it("finish returns null when the gesture is not matched", async () => {
     initialize = jest.fn();
     getAction = jest.fn().mockReturnValue(null);
-    const GestureMapperClass = jest.fn<GestureMapper>(() => ({
+    const GestureMapperClass: jest.Mock<GestureMapper> = jest.fn(() => ({
       initialize: initialize,
       getAction: getAction,
-    }));
+    })) as any;
     gestureMapper = new GestureMapperClass();
 
     gesture = new Gesture(

@@ -40,12 +40,7 @@ describe("CommandFactory", () => {
         rhs: info.rhs,
       };
 
-      const ContextClass = jest.fn<Context, []>(() => {
-        return {
-          windows: [],
-          start: null,
-        };
-      });
+      const ContextClass: jest.Mock<Context> = jest.fn(() => ({})) as any;
       const context = new ContextClass();
 
       const result = commandFactory.create(action, context);

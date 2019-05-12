@@ -53,60 +53,64 @@ describe("DirectionRecognizer", () => {
   };
 
   beforeEach(() => {
-    const BufferClass = jest.fn<Buffer>(() => ({
+    const BufferClass: jest.Mock<Buffer> = jest.fn(() => ({
       id: bufferId,
-    }));
+    })) as any;
     const buf = new BufferClass();
 
     const buffer = jest.fn().mockImplementation(async () => {
       return buf;
     })();
 
-    const WindowClass = jest.fn<Window>(() => ({
+    const WindowClass: jest.Mock<Window> = jest.fn(() => ({
       id: windowId,
       buffer: buffer,
-    }));
+    })) as any;
     const win = new WindowClass();
 
     const window = jest.fn().mockImplementation(async () => {
       return win;
     })();
 
-    const NeovimClass = jest.fn<Neovim>(() => ({
+    const NeovimClass: jest.Mock<Neovim> = jest.fn(() => ({
       window: window,
-    }));
+    })) as any;
     vim = new NeovimClass();
 
     calculate = jest.fn().mockReturnValue(infoLeft);
-    const PointClass = jest.fn<Point>(() => ({
+    const PointClass: jest.Mock<Point> = jest.fn(() => ({
       calculate: calculate,
-    }));
+    })) as any;
     const point = new PointClass();
 
     create = jest.fn().mockReturnValue(point);
     createForInitialize = jest.fn().mockReturnValue(point);
-    const PointFactoryClass = jest.fn<PointFactory>(() => ({
+    const PointFactoryClass: jest.Mock<PointFactory> = jest.fn(() => ({
       create: create,
       createForInitialize: createForInitialize,
     }));
     pointFactory = new PointFactoryClass();
 
     getMinLengthByDirection = jest.fn().mockReturnValue(8);
-    const ConfigRepositoryClass = jest.fn<ConfigRepository>(() => ({
+    const ConfigRepositoryClass: jest.Mock<ConfigRepository> = jest.fn(() => ({
       getMinLengthByDirection: getMinLengthByDirection,
-    }));
+    })) as any;
     configRepository = new ConfigRepositoryClass();
 
     getGlobalPosition = jest.fn().mockReturnValue({ x: 1, y: 1 });
-    const TabpageRepositoryClass = jest.fn<TabpageRepository>(() => ({
-      getGlobalPosition: getGlobalPosition,
-    }));
+    const TabpageRepositoryClass: jest.Mock<TabpageRepository> = jest.fn(
+      () => ({
+        getGlobalPosition: getGlobalPosition,
+      })
+    ) as any;
     tabpageRepository = new TabpageRepositoryClass();
 
     createPointContext = jest.fn().mockReturnValue(startPointContext);
-    const PointContextFactoryClass = jest.fn<PointContextFactory>(() => ({
-      create: createPointContext,
-    }));
+    const PointContextFactoryClass: jest.Mock<PointContextFactory> = jest.fn(
+      () => ({
+        create: createPointContext,
+      })
+    ) as any;
     pointContextFactory = new PointContextFactoryClass();
 
     recognizer = new DirectionRecognizer(
@@ -145,13 +149,13 @@ describe("DirectionRecognizer", () => {
       .fn()
       .mockReturnValueOnce(infoLeft)
       .mockReturnValueOnce(infoRight);
-    const PointClass = jest.fn<Point>(() => ({
+    const PointClass: jest.Mock<Point> = jest.fn(() => ({
       calculate: calculate,
-    }));
+    })) as any;
     const point = new PointClass();
 
     create = jest.fn().mockReturnValue(point);
-    const PointFactoryClass = jest.fn<PointFactory>(() => ({
+    const PointFactoryClass: jest.Mock<PointFactory> = jest.fn(() => ({
       create: create,
       createForInitialize: createForInitialize,
     }));
@@ -186,13 +190,13 @@ describe("DirectionRecognizer", () => {
 
   it("update is filters line when the length is short", async () => {
     calculate = jest.fn().mockReturnValue(infoShortLength);
-    const PointClass = jest.fn<Point>(() => ({
+    const PointClass: jest.Mock<Point> = jest.fn(() => ({
       calculate: calculate,
-    }));
+    })) as any;
     const point = new PointClass();
 
     create = jest.fn().mockReturnValue(point);
-    const PointFactoryClass = jest.fn<PointFactory>(() => ({
+    const PointFactoryClass: jest.Mock<PointFactory> = jest.fn(() => ({
       create: create,
       createForInitialize: createForInitialize,
     }));
