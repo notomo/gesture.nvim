@@ -22,16 +22,16 @@ describe("GesturePlugin", () => {
   let error: jest.Mock;
 
   beforeEach(() => {
-    const NeovimClass = jest.fn<Neovim>(() => ({}));
+    const NeovimClass: jest.Mock<Neovim> = jest.fn(() => ({})) as any;
     const nvim = new NeovimClass();
 
     setOptions = jest.fn();
     registerFunction = jest.fn();
-    const NvimPluginClass = jest.fn<NvimPlugin>(() => ({
+    const NvimPluginClass: jest.Mock<NvimPlugin> = jest.fn(() => ({
       nvim: nvim,
       setOptions: setOptions,
       registerFunction: registerFunction,
-    }));
+    })) as any;
     plugin = new NvimPluginClass();
 
     initialize = jest.fn().mockImplementation(async () => {
@@ -45,20 +45,20 @@ describe("GesturePlugin", () => {
     });
     getInputs = jest.fn().mockReturnValue([]);
     isStarted = jest.fn().mockReturnValue(false);
-    const GestureClass = jest.fn<Gesture>(() => ({
+    const GestureClass: jest.Mock<Gesture> = jest.fn(() => ({
       initialize: initialize,
       execute: execute,
       finish: finish,
       getInputs: getInputs,
       isStarted: isStarted,
-    }));
+    })) as any;
     const gesture = new GestureClass();
     Di.set("Gesture", gesture);
 
     error = jest.fn();
-    const ReporterClass = jest.fn<Reporter>(() => ({
+    const ReporterClass: jest.Mock<Reporter> = jest.fn(() => ({
       error: error,
-    }));
+    })) as any;
     const reporter = new ReporterClass();
     Di.set("Reporter", reporter);
 
@@ -76,9 +76,9 @@ describe("GesturePlugin", () => {
       throw new Error("");
     });
 
-    const GestureClass = jest.fn<Gesture>(() => ({
+    const GestureClass: jest.Mock<Gesture> = jest.fn(() => ({
       initialize: initialize,
-    }));
+    })) as any;
     const gesture = new GestureClass();
     Di.set("Gesture", gesture);
 
@@ -100,9 +100,9 @@ describe("GesturePlugin", () => {
       throw new Error("");
     });
 
-    const GestureClass = jest.fn<Gesture>(() => ({
+    const GestureClass: jest.Mock<Gesture> = jest.fn(() => ({
       execute: execute,
-    }));
+    })) as any;
     const gesture = new GestureClass();
     Di.set("Gesture", gesture);
 
@@ -125,9 +125,9 @@ describe("GesturePlugin", () => {
       throw new Error("");
     });
 
-    const GestureClass = jest.fn<Gesture>(() => ({
+    const GestureClass: jest.Mock<Gesture> = jest.fn(() => ({
       finish: finish,
-    }));
+    })) as any;
     const gesture = new GestureClass();
     Di.set("Gesture", gesture);
 

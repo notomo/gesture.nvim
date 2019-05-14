@@ -12,14 +12,14 @@ describe("GestureMapper", () => {
   let buffer2: jest.Mock;
 
   beforeEach(() => {
-    const BufferClass1 = jest.fn<Buffer>(() => ({
+    const BufferClass1: jest.Mock<Buffer> = jest.fn(() => ({
       id: 1,
-    }));
+    })) as any;
     const buf1 = new BufferClass1();
 
-    const BufferClass2 = jest.fn<Buffer>(() => ({
+    const BufferClass2: jest.Mock<Buffer> = jest.fn(() => ({
       id: 2,
-    }));
+    })) as any;
     const buf2 = new BufferClass2();
 
     buffer1 = jest.fn().mockImplementation(async () => {
@@ -170,10 +170,10 @@ describe("GestureMapper", () => {
         buffer: {},
       },
     });
-    const NeovimClass = jest.fn<Neovim>(() => ({
+    const NeovimClass: jest.Mock<Neovim> = jest.fn(() => ({
       call: call,
       buffer: buffer1,
-    }));
+    })) as any;
     const vim = new NeovimClass();
 
     mapper = new GestureMapper(vim);
@@ -238,10 +238,10 @@ describe("GestureMapper", () => {
   });
 
   it("getAction returns a buffer local action", async () => {
-    const NeovimClass = jest.fn<Neovim>(() => ({
+    const NeovimClass: jest.Mock<Neovim> = jest.fn(() => ({
       call: call,
       buffer: buffer2,
-    }));
+    })) as any;
     const vim = new NeovimClass();
 
     mapper = new GestureMapper(vim);
@@ -265,10 +265,10 @@ describe("GestureMapper", () => {
   });
 
   it("getAction returns null when the gesture is filtered buffer local action by min_length", async () => {
-    const NeovimClass = jest.fn<Neovim>(() => ({
+    const NeovimClass: jest.Mock<Neovim> = jest.fn(() => ({
       call: call,
       buffer: buffer2,
-    }));
+    })) as any;
     const vim = new NeovimClass();
 
     mapper = new GestureMapper(vim);
@@ -327,10 +327,10 @@ describe("GestureMapper", () => {
   });
 
   it("getNoWaitAction returns a buffer local action", async () => {
-    const NeovimClass = jest.fn<Neovim>(() => ({
+    const NeovimClass: jest.Mock<Neovim> = jest.fn(() => ({
       call: call,
       buffer: buffer2,
-    }));
+    })) as any;
     const vim = new NeovimClass();
 
     mapper = new GestureMapper(vim);
@@ -350,10 +350,10 @@ describe("GestureMapper", () => {
   });
 
   it("getNoWaitAction returns null when the gesture is filtered buffer local action by min_length", async () => {
-    const NeovimClass = jest.fn<Neovim>(() => ({
+    const NeovimClass: jest.Mock<Neovim> = jest.fn(() => ({
       call: call,
       buffer: buffer2,
-    }));
+    })) as any;
     const vim = new NeovimClass();
 
     mapper = new GestureMapper(vim);

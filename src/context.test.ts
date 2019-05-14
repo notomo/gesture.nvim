@@ -8,27 +8,27 @@ describe("PointContextFactory", () => {
   const text = "text";
 
   it("create", async () => {
-    const WindowClass = jest.fn<Window>(() => ({
+    const WindowClass: jest.Mock<Window> = jest.fn(() => ({
       cursor: [row, column],
-    }));
+    })) as any;
     const win = new WindowClass();
     const window = jest.fn().mockImplementation(async () => {
       return win;
     })();
 
     const call = jest.fn().mockReturnValue(text);
-    const NeovimClass = jest.fn<Neovim>(() => ({
+    const NeovimClass: jest.Mock<Neovim> = jest.fn(() => ({
       window: window,
       call: call,
-    }));
+    })) as any;
     const vim = new NeovimClass();
 
     const getVirtualColumn = jest.fn().mockReturnValue(column);
     const getWord = jest.fn().mockReturnValue(text);
-    const CursorRepositoryClass = jest.fn<CursorRepository>(() => ({
+    const CursorRepositoryClass: jest.Mock<CursorRepository> = jest.fn(() => ({
       getVirtualColumn: getVirtualColumn,
       getWord: getWord,
-    }));
+    })) as any;
     const cursorRepository = new CursorRepositoryClass();
 
     const pointContextFactory = new PointContextFactory(vim, cursorRepository);

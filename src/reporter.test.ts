@@ -12,15 +12,15 @@ describe("Reporter", () => {
 
   beforeEach(() => {
     errWrite = jest.fn(async () => {});
-    const NeovimClass = jest.fn<Neovim>(() => ({
+    const NeovimClass: jest.Mock<Neovim> = jest.fn(() => ({
       errWrite: errWrite,
-    }));
+    })) as any;
     const vim = new NeovimClass();
 
     error = jest.fn();
-    const LoggerClass = jest.fn<Logger>(() => ({
+    const LoggerClass: jest.Mock<Logger> = jest.fn(() => ({
       error: error,
-    }));
+    })) as any;
     const logger = new LoggerClass();
 
     reporter = new Reporter(vim, logger);

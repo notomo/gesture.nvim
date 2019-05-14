@@ -16,19 +16,19 @@ describe("TabpageRepository", () => {
       }
     });
 
-    const WindowClass = jest.fn<Window>(() => ({
+    const WindowClass: jest.Mock<Window> = jest.fn(() => ({
       id: 1,
-    }));
+    })) as any;
     const win = new WindowClass();
 
     const window = jest.fn().mockImplementation(async () => {
       return win;
     })();
 
-    const NeovimClass = jest.fn<Neovim>(() => ({
+    const NeovimClass: jest.Mock<Neovim> = jest.fn(() => ({
       window: window,
       call: call,
-    }));
+    })) as any;
     const vim = new NeovimClass();
 
     const tabpageRepository = new TabpageRepository(vim);
