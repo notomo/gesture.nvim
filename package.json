@@ -18,7 +18,7 @@
     },
     "scripts": {
         "test": "jest --coverage",
-        "build": "tsc -p tsconfig.json && node ./version.js ./package.json > ./lib/version",
+        "build": "tsc -p tsconfig.json && node ./version.js > ./lib/version.json",
         "watch": "tsc -p tsconfig.json --watch true",
         "setup": "node ./setup.js"
     },

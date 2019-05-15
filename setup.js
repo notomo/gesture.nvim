@@ -5,19 +5,18 @@ const npm = cmd => {
   console.log(result);
 };
 const getVersions = filePath => {
-  const version = JSON.parse(fs.readFileSync(filePath))["version"];
-  const versions = version.split(".");
+  const versions = JSON.parse(fs.readFileSync(filePath));
   return {
-    dependency: versions[1],
-    build: versions[2],
+    dependency: versions["dependency"],
+    build: versions["build"],
   };
 };
 
-const packageVersions = getVersions("./package.json");
+const packageVersions = getVersions("./version.json");
 let currentVersions;
 try {
-  fs.statSync("./lib/version");
-  currentVersions = getVersions("./lib/version");
+  fs.statSync("./lib/version.json");
+  currentVersions = getVersions("./lib/version.json");
 } catch (err) {
   npm("ci");
   npm("run build");
