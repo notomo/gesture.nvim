@@ -17,4 +17,15 @@ export class TabpageRepository {
 
     return { x: xInWindow + offsets[1], y: yInWindow + offsets[0] };
   }
+
+  public async getSize(): Promise<{ width: number; height: number }> {
+    const results = (await this.vim.callAtomic([
+      ["nvim_get_option", ["columns"]],
+      ["nvim_get_option", ["lines"]],
+    ]))[0];
+    return {
+      width: results[0],
+      height: results[1],
+    };
+  }
 }

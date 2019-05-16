@@ -34,6 +34,11 @@ function! s:suite.custom_set_and_get()
     call gesture#custom#set('enabled_buffer_fill', enabled_buffer_fill)
 
     call s:assert.equals(gesture#custom#get('enabled_buffer_fill'), enabled_buffer_fill)
+
+    let enabled_input_view = v:false
+    call gesture#custom#set('enabled_input_view', enabled_input_view)
+
+    call s:assert.equals(gesture#custom#get('enabled_input_view'), enabled_input_view)
 endfunction
 
 function! s:suite.clear()
@@ -71,5 +76,10 @@ function! s:suite.set_invalid_value()
     try
         call gesture#custom#set('enabled_buffer_fill', 'invalid_value')
     catch /enabled_buffer_fill must be a bool./
+    endtry
+
+    try
+        call gesture#custom#set('enabled_input_view', 'invalid_value')
+    catch /enabled_input_view must be a bool./
     endtry
 endfunction

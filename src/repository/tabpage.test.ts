@@ -37,4 +37,17 @@ describe("TabpageRepository", () => {
 
     expect(result).toEqual({ x: 11, y: 21 });
   });
+
+  it("getSize", async () => {
+    const callAtomic = jest.fn().mockReturnValue([[200, 100], []]);
+    const NeovimClass: jest.Mock<Neovim> = jest.fn(() => ({
+      callAtomic: callAtomic,
+    })) as any;
+    const vim = new NeovimClass();
+    const tabpageRepository = new TabpageRepository(vim);
+
+    const size = await tabpageRepository.getSize();
+
+    expect(size).toEqual({ width: 200, height: 100 });
+  });
 });

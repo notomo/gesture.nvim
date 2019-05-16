@@ -20,4 +20,11 @@ export class ConfigRepository {
         )) as number;
     }
   }
+
+  public async enabledInputView(): Promise<boolean> {
+    return (await this.vim.call(
+      "gesture#custom#get",
+      "enabled_input_view"
+    )) as boolean;
+  }
 }

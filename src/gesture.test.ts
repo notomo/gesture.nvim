@@ -5,6 +5,7 @@ import { GestureBuffer } from "./buffer";
 import { CommandFactory, Command, Action } from "./command";
 import { Context } from "./context";
 import { Gesture } from "./gesture";
+import { InputView } from "./view";
 import { Input, InputArgument } from "./input";
 
 describe("Gesture", () => {
@@ -27,6 +28,8 @@ describe("Gesture", () => {
   let command: Command;
   let commandFactory: CommandFactory;
   let create: jest.Mock;
+
+  let inputView: InputView;
 
   let gesture: Gesture;
 
@@ -100,12 +103,21 @@ describe("Gesture", () => {
     }));
     commandFactory = new CommandFactoryClass();
 
+    const render = jest.fn();
+    const destroy = jest.fn();
+    const InputViewClass: jest.Mock<InputView> = jest.fn(() => ({
+      render: render,
+      destroy: destroy,
+    })) as any;
+    inputView = new InputViewClass();
+
     gesture = new Gesture(
       vim,
       directionRecognizer,
       gestureMapper,
       gestureBuffer,
-      commandFactory
+      commandFactory,
+      inputView
     );
 
     const InputArgumentClass: jest.Mock<InputArgument> = jest.fn(
@@ -137,7 +149,8 @@ describe("Gesture", () => {
       directionRecognizer,
       gestureMapper,
       gestureBuffer,
-      commandFactory
+      commandFactory,
+      inputView
     );
 
     const result = await gesture.execute(inputArgument);
@@ -160,7 +173,8 @@ describe("Gesture", () => {
       directionRecognizer,
       gestureMapper,
       gestureBuffer,
-      commandFactory
+      commandFactory,
+      inputView
     );
 
     const result = await gesture.execute(inputArgument);
@@ -197,7 +211,8 @@ describe("Gesture", () => {
       directionRecognizer,
       gestureMapper,
       gestureBuffer,
-      commandFactory
+      commandFactory,
+      inputView
     );
 
     await gesture.initialize(true);

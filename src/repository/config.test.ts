@@ -24,4 +24,21 @@ describe("ConfigRepository", () => {
       expect(call).toHaveBeenCalledWith("gesture#custom#get", data.expected);
     });
   });
+
+  it("enabledInputView", async () => {
+    const call = jest.fn();
+    const NeovimClass: jest.Mock<Neovim> = jest.fn(() => ({
+      call: call,
+    })) as any;
+    const vim = new NeovimClass();
+
+    const configRepository = new ConfigRepository(vim);
+
+    await configRepository.enabledInputView();
+
+    expect(call).toHaveBeenCalledWith(
+      "gesture#custom#get",
+      "enabled_input_view"
+    );
+  });
 });

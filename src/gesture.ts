@@ -5,6 +5,7 @@ import { GestureMapper } from "./mapper";
 import { GestureBuffer } from "./buffer";
 import { Command, CommandFactory } from "./command";
 import { Input, InputArgument } from "./input";
+import { InputView } from "./view";
 
 export class Gesture {
   protected readonly logger: Logger;
@@ -14,7 +15,8 @@ export class Gesture {
     protected readonly recognizer: DirectionRecognizer,
     protected readonly mapper: GestureMapper,
     protected readonly gestureBuffer: GestureBuffer,
-    protected readonly commandFactory: CommandFactory
+    protected readonly commandFactory: CommandFactory,
+    protected readonly inputView: InputView
   ) {
     this.logger = getLogger("gesture");
   }
@@ -22,6 +24,7 @@ export class Gesture {
   public async execute(inputArgument: InputArgument): Promise<Command | null> {
     const isValid = await this.gestureBuffer.validate();
     if (!isValid) {
+      await this.inputView.destroy();
       await this.gestureBuffer.restore();
       return null;
     }
@@ -32,11 +35,13 @@ export class Gesture {
 
     const action = await this.mapper.getNoWaitAction(inputs);
     if (action !== null) {
+      await this.inputView.destroy();
       await this.gestureBuffer.restore();
 
       const context = await this.recognizer.getContext();
       return this.commandFactory.create(action, context);
     }
+    await this.inputView.render(inputs);
 
     return null;
   }
@@ -55,6 +60,7 @@ export class Gesture {
       command = this.commandFactory.create(action, context);
     }
 
+    await this.inputView.destroy();
     await this.gestureBuffer.restore();
 
     return command;
@@ -69,6 +75,7 @@ export class Gesture {
       this.recognizer.clear(),
       this.mapper.initialize(),
       this.gestureBuffer.setup(enabledBufferFill),
+      this.inputView.destroy(),
     ]);
   }
 
