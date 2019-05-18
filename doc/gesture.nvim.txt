@@ -164,6 +164,10 @@ enabled_buffer_fill                   *gesture.nvim-custom-enabled_buffer_fill*
     NOTE: The workaround for |gesture.nvim-known-issues|
     Default: v:true
 
+enabled_input_view                     *gesture.nvim-custom-enabled_input_view*
+    If this is v:true, gesture inputs are shown on floating window.
+    Default: v:false
+
 ==============================================================================
 EXAMPLES                                                *gesture.nvim-examples*
 >
@@ -206,6 +210,7 @@ EXAMPLES                                                *gesture.nvim-examples*
 
         call gesture#custom#set('x_length_threshold', 16)
         call gesture#custom#set('y_length_threshold', 9)
+        call gesture#custom#set('enabled_input_view', v:true)
 
 ==============================================================================
 KNOWN ISSUES                                        *gesture.nvim-known-issues*
