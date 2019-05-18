@@ -1,7 +1,7 @@
 environment:
     matrix:
         - nodejs_version: '10'
-          neovim_version_tag: 'stable'
+          neovim_version_tag: 'nightly'
 
 matrix:
     fast_finish: true

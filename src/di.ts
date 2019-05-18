@@ -6,6 +6,13 @@ import { DirectionRecognizer } from "./recognizer";
 import { GestureMapper } from "./mapper";
 import { PointFactory } from "./point";
 import { GestureBuffer } from "./buffer";
+import {
+  InputView,
+  ViewBufferFactory,
+  ViewWindowFactory,
+  InputLinesFactory,
+  WindowOptionsFactory,
+} from "./view";
 import { OptionStore, BufferOptionStoreFactory } from "./option";
 import { CommandFactory } from "./command";
 import { PointContextFactory } from "./context";
@@ -36,12 +43,27 @@ export class Di {
         optionStore,
         bufferOptionStoreFactory
       );
+      const viewBufferFactory = new ViewBufferFactory(vim);
+      const inputLinesFactory = new InputLinesFactory();
+      const viewWindowFactory = new ViewWindowFactory(vim);
+      const windowOptionsFactory = new WindowOptionsFactory(tabpageRepository);
+      const reporter = Di.get("Reporter", vim);
+      const inputView = new InputView(
+        vim,
+        viewBufferFactory,
+        inputLinesFactory,
+        viewWindowFactory,
+        windowOptionsFactory,
+        configRepository,
+        reporter
+      );
       return new Gesture(
         vim,
         recognizer,
         mapper,
         gestureBuffer,
-        commandFactory
+        commandFactory,
+        inputView
       );
     },
     Reporter: (vim: Neovim) => {

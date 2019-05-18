@@ -4,6 +4,7 @@ let s:default_custom = {
     \ 'x_length_threshold': 5,
     \ 'y_length_threshold': 5,
     \ 'enabled_buffer_fill': v:true,
+    \ 'enabled_input_view': v:false,
 \ }
 let s:custom = deepcopy(s:default_custom)
 
@@ -22,6 +23,10 @@ let s:validations = {
         \ 'func': s:is_positive,
     \ },
     \ 'enabled_buffer_fill': {
+        \ 'description': 'a bool',
+        \ 'func': {x -> type(x) == v:t_bool},
+    \ },
+    \ 'enabled_input_view': {
         \ 'description': 'a bool',
         \ 'func': {x -> type(x) == v:t_bool},
     \ },

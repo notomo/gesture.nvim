@@ -8,6 +8,7 @@ runtime! plugin/rplugin.vim
 function! GestureTestBeforeEach() abort
     " NOTICE: Disable <LeftMouse>
     call gesture#custom#set('cursor_setter', '')
+    call gesture#custom#set('enabled_input_view', v:true)
 endfunction
 
 function! GestureTestBefore() abort
