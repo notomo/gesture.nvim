@@ -19,7 +19,7 @@ env:
         - THEMIS_VIM=nvim
         - THEMIS_ARGS="-e --headless"
     matrix:
-        - NEOVIM_VERSION_TAG=stable
+        - NEOVIM_VERSION_TAG=nightly
 
 script:
     - PATH="./vim-themis/bin:$HOME/neovim/bin:$PATH" THEMIS_HOME=./vim-themis make test
