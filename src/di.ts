@@ -55,6 +55,7 @@ export class Di {
         viewWindowFactory,
         windowOptionsFactory,
         configRepository,
+        mapper,
         reporter
       );
       return new Gesture(

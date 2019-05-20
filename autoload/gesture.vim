@@ -241,3 +241,6 @@ augroup gesture
     autocmd!
     autocmd InsertEnter * call gesture#cancel()
 augroup END
+
+highlight default link GestureInput NormalFloat
+highlight default GestureActionLabel guifg=#a8d2eb ctermfg=153
