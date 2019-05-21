@@ -4,6 +4,8 @@ import { Logger, getLogger } from "./logger";
 import { WithError } from "./error";
 import { TabpageRepository } from "./repository/tabpage";
 import { ConfigRepository } from "./repository/config";
+import { GestureMapper } from "./mapper";
+import { Action } from "./command";
 import { Reporter } from "./reporter";
 
 export class InputView {
@@ -21,6 +23,7 @@ export class InputView {
     private readonly viewWindowFactory: ViewWindowFactory,
     private readonly windowOptionsFactory: WindowOptionsFactory,
     private readonly configRepository: ConfigRepository,
+    private readonly mapper: GestureMapper,
     private readonly reporter: Reporter
   ) {
     this.logger = getLogger("view");
@@ -39,8 +42,10 @@ export class InputView {
       this.reporter.error(bufErr);
       return;
     }
+    const action = await this.mapper.getAction(inputs);
     const lines = await this.inputLinesFactory.create(
       inputs,
+      action,
       this.width,
       this.sidePadding
     );
@@ -50,6 +55,14 @@ export class InputView {
       end: lines.length,
       strictIndexing: false,
     });
+
+    const hasAction = action !== null;
+    if (hasAction) {
+      await buffer.addHighlight({
+        hlGroup: "GestureActionLabel",
+        line: lines.length - 1,
+      });
+    }
 
     const windowOptions = await this.windowOptionsFactory.create(
       lines.length,
@@ -69,6 +82,7 @@ export class InputView {
     }
     this.window = window;
     await this.vim.windowConfig(this.window, windowOptions);
+    await this.window.setOption("winhighlight", "NormalFloat:GestureInput");
   }
 
   public async destroy() {
@@ -163,6 +177,7 @@ export class InputLinesFactory {
 
   public create(
     inputs: ReadonlyArray<Input>,
+    action: Action | null,
     width: number,
     sidePadding: number
   ): string[] {
@@ -192,7 +207,15 @@ export class InputLinesFactory {
       paddingLines.push(`${space}${line}${space}`);
     }
     paddingLines.unshift("");
-    paddingLines.push("");
+
+    if (action === null) {
+      paddingLines.push("");
+      return paddingLines;
+    }
+
+    const remaining = width - action.rhs.length;
+    const space = " ".repeat(remaining > 0 ? remaining / 2 : 0);
+    paddingLines.push(`${space}${action.rhs}${space}`);
 
     return paddingLines;
   }

@@ -11,6 +11,7 @@ import { Direction } from "./direction";
 import { InputKind } from "./input";
 import { TabpageRepository } from "./repository/tabpage";
 import { ConfigRepository } from "./repository/config";
+import { GestureMapper } from "./mapper";
 import { Neovim, Buffer, Window } from "neovim";
 import { Reporter } from "./reporter";
 
@@ -20,6 +21,7 @@ describe("InputView", () => {
 
   let remove: jest.Mock;
   let setLines: jest.Mock;
+  let addHighlight: jest.Mock;
 
   let viewBufferFactory: ViewBufferFactory;
   let get: jest.Mock;
@@ -31,6 +33,7 @@ describe("InputView", () => {
   let createWindow: jest.Mock;
   let window: Window;
   let close: jest.Mock;
+  let setOption: jest.Mock;
 
   let windowOptionsFactory: WindowOptionsFactory;
   let createWindowOptions: jest.Mock;
@@ -38,6 +41,9 @@ describe("InputView", () => {
 
   let configRepository: ConfigRepository;
   let enabledInputView: jest.Mock;
+
+  let mapper: GestureMapper;
+  let getAction: jest.Mock;
 
   let reporter: Reporter;
   let error: jest.Mock;
@@ -51,9 +57,11 @@ describe("InputView", () => {
 
     remove = jest.fn();
     setLines = jest.fn();
+    addHighlight = jest.fn();
     const BufferClass: jest.Mock<Buffer> = jest.fn(() => ({
       remove: remove,
       setLines: setLines,
+      addHighlight: addHighlight,
     })) as any;
     const buffer = new BufferClass();
 
@@ -74,8 +82,10 @@ describe("InputView", () => {
     inputLinesFactory = new InputLinesFactoryClass();
 
     close = jest.fn();
+    setOption = jest.fn();
     const WindowClass: jest.Mock<Window> = jest.fn(() => ({
       close: close,
+      setOption: setOption,
     })) as any;
     window = new WindowClass();
 
@@ -101,6 +111,12 @@ describe("InputView", () => {
     })) as any;
     configRepository = new ConfigRepositoryClass();
 
+    getAction = jest.fn().mockReturnValue(null);
+    const GestureMapperClass: jest.Mock<GestureMapper> = jest.fn(() => ({
+      getAction: getAction,
+    })) as any;
+    mapper = new GestureMapperClass();
+
     error = jest.fn();
     const ReporterClass: jest.Mock<Reporter> = jest.fn(() => ({
       error: error,
@@ -116,6 +132,7 @@ describe("InputView", () => {
       viewWindowFactory,
       windowOptionsFactory,
       configRepository,
+      mapper,
       reporter
     );
     await inputView.render([]);
@@ -136,6 +153,7 @@ describe("InputView", () => {
       viewWindowFactory,
       windowOptionsFactory,
       configRepository,
+      mapper,
       reporter
     );
     await inputView.render([
@@ -152,6 +170,7 @@ describe("InputView", () => {
       viewWindowFactory,
       windowOptionsFactory,
       configRepository,
+      mapper,
       reporter
     );
     await inputView.render([
@@ -164,6 +183,37 @@ describe("InputView", () => {
     expect(createWindow).toHaveBeenCalledTimes(1);
     expect(windowConfig).toHaveBeenCalledWith(window, options);
     expect(windowConfig).toHaveBeenCalledTimes(2);
+  });
+
+  it("render with action", async () => {
+    const action = {
+      inputs: [],
+      nowait: false,
+      silent: false,
+      noremap: false,
+      is_func: false,
+      rhs: "gg",
+    };
+    getAction = jest.fn().mockReturnValue(action);
+    const GestureMapperClass: jest.Mock<GestureMapper> = jest.fn(() => ({
+      getAction: getAction,
+    })) as any;
+    mapper = new GestureMapperClass();
+
+    const inputView = new InputView(
+      vim,
+      viewBufferFactory,
+      inputLinesFactory,
+      viewWindowFactory,
+      windowOptionsFactory,
+      configRepository,
+      mapper,
+      reporter
+    );
+    await inputView.render([
+      { value: Direction.LEFT, kind: InputKind.DIRECTION, length: 10 },
+    ]);
+    expect(addHighlight).toHaveBeenCalled();
   });
 
   it("render reports buffer error", async () => {
@@ -182,6 +232,7 @@ describe("InputView", () => {
       viewWindowFactory,
       windowOptionsFactory,
       configRepository,
+      mapper,
       reporter
     );
     await inputView.render([
@@ -207,6 +258,7 @@ describe("InputView", () => {
       viewWindowFactory,
       windowOptionsFactory,
       configRepository,
+      mapper,
       reporter
     );
     await inputView.render([
@@ -224,6 +276,7 @@ describe("InputView", () => {
       viewWindowFactory,
       windowOptionsFactory,
       configRepository,
+      mapper,
       reporter
     );
     await inputView.destroy();
@@ -396,6 +449,7 @@ describe("InputLinesFactory", () => {
     {
       name: "empty",
       inputs: [],
+      action: null,
       expected: ["", ""],
       width: 50,
     },
@@ -404,7 +458,44 @@ describe("InputLinesFactory", () => {
       inputs: [
         { value: Direction.LEFT, kind: InputKind.DIRECTION, length: 10 },
       ] as const,
+      action: null,
       expected: ["", " ".repeat(6) + "LEFT" + " ".repeat(6), ""],
+      width: 6 + 4 + 6,
+    },
+    {
+      name: "one with action",
+      inputs: [
+        { value: Direction.UP, kind: InputKind.DIRECTION, length: 10 },
+      ] as const,
+      action: {
+        inputs: [],
+        nowait: false,
+        silent: false,
+        noremap: false,
+        is_func: false,
+        rhs: "gg",
+      },
+      expected: [
+        "",
+        " ".repeat(7) + "UP" + " ".repeat(7),
+        " ".repeat(7) + "gg" + " ".repeat(7),
+      ],
+      width: 6 + 4 + 6,
+    },
+    {
+      name: "large action rhs",
+      inputs: [
+        { value: Direction.UP, kind: InputKind.DIRECTION, length: 10 },
+      ] as const,
+      action: {
+        inputs: [],
+        nowait: false,
+        silent: false,
+        noremap: false,
+        is_func: false,
+        rhs: "eeeeeeeeeeeeeeee",
+      },
+      expected: ["", " ".repeat(7) + "UP" + " ".repeat(7), "eeeeeeeeeeeeeeee"],
       width: 6 + 4 + 6,
     },
     {
@@ -413,6 +504,7 @@ describe("InputLinesFactory", () => {
         { value: Direction.LEFT, kind: InputKind.DIRECTION, length: 10 },
         { value: Direction.RIGHT, kind: InputKind.DIRECTION, length: 10 },
       ] as const,
+      action: null,
       expected: ["", " ".repeat(21) + "LEFT RIGHT" + " ".repeat(21), ""],
       width: 21 + 10 + 21,
     },
@@ -423,6 +515,7 @@ describe("InputLinesFactory", () => {
         { value: Direction.RIGHT, kind: InputKind.DIRECTION, length: 10 },
         { value: Direction.LEFT, kind: InputKind.DIRECTION, length: 10 },
       ] as const,
+      action: null,
       expected: [
         "",
         " ".repeat(sidePadding) + "LEFT RIGHT" + " ".repeat(sidePadding),
@@ -433,11 +526,17 @@ describe("InputLinesFactory", () => {
     },
   ].forEach(data => {
     const inputs = data.inputs;
+    const action = data.action;
     const width = data.width;
     const expected = data.expected;
     it(`create ${data.name}`, () => {
       const inputLinesFactory = new InputLinesFactory();
-      const result = inputLinesFactory.create(inputs, width, sidePadding);
+      const result = inputLinesFactory.create(
+        inputs,
+        action,
+        width,
+        sidePadding
+      );
       expect(result).toEqual(expected);
     });
   });
