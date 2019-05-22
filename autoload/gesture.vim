@@ -37,9 +37,9 @@ endfunction
 let s:id = 0
 let s:gestures = {}
 let s:funcs = {}
-function! gesture#register() abort
+function! gesture#register(...) abort
 
-    let register = {}
+    let register = call('s:get_gesture_attributes', a:000)
     let s:inputs = []
 
     function! register.left(...) abort
@@ -99,7 +99,7 @@ function! gesture#register() abort
         let attributes = call('s:get_map_attributes', a:000)
         let attributes['noremap'] = v:true
 
-        call s:add(s:inputs, a:rhs, attributes)
+        call s:add(s:inputs, a:rhs, self.name, attributes)
         let s:inputs = []
     endfunction
 
@@ -107,14 +107,14 @@ function! gesture#register() abort
         let attributes = call('s:get_map_attributes', a:000)
         let attributes['noremap'] = v:false
 
-        call s:add(s:inputs, a:rhs, attributes)
+        call s:add(s:inputs, a:rhs, self.name, attributes)
         let s:inputs = []
     endfunction
 
     function! register.func(f, ...) abort
         let attributes = call('s:get_map_attributes', a:000)
 
-        call s:add_func(s:inputs, a:f, attributes)
+        call s:add_func(s:inputs, a:f, self.name, attributes)
         let s:inputs = []
     endfunction
 
@@ -139,7 +139,7 @@ function! gesture#clear() abort
     let s:funcs = {}
 endfunction
 
-function! s:add(inputs, rhs, attributes) abort
+function! s:add(inputs, rhs, name, attributes) abort
     if type(a:rhs) != v:t_string
         throw 'rhs must be a string'
     endif
@@ -147,11 +147,12 @@ function! s:add(inputs, rhs, attributes) abort
     let gesture = a:attributes
     let gesture['inputs'] = a:inputs
     let gesture['rhs'] = a:rhs
+    let gesture['name'] = a:name
 
     call s:add_gesture(gesture)
 endfunction
 
-function! s:add_func(inputs, f, attributes) abort
+function! s:add_func(inputs, f, name, attributes) abort
     if type(a:f) != v:t_func
         throw 'f must be a function'
     endif
@@ -159,6 +160,7 @@ function! s:add_func(inputs, f, attributes) abort
     let gesture = a:attributes
     let gesture['inputs'] = a:inputs
     let gesture['is_func'] = v:true
+    let gesture['name'] = a:name
 
     let id = s:add_gesture(gesture)
     let s:funcs[id] = a:f
@@ -217,6 +219,14 @@ function! s:get_map_attributes(...) abort
     let buffer = get(attributes, 'buffer', v:false)
 
     return {'rhs' : '', 'nowait' : nowait, 'silent' : silent, 'buffer' : buffer, 'is_func' : v:false}
+endfunction
+
+function! s:get_gesture_attributes(...) abort
+    let attributes = get(a:, 1, {})
+
+    let name = get(attributes, 'name', '')
+
+    return {'name': name}
 endfunction
 
 function! s:get_line_attributes(...) abort
