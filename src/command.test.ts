@@ -10,19 +10,43 @@ describe("CommandFactory", () => {
 
   [
     {
-      action: { rhs: "gg", noremap: true, silent: false, is_func: false },
+      action: {
+        rhs: "gg",
+        noremap: true,
+        silent: false,
+        is_func: false,
+        name: "",
+      },
       expected: "normal! gg",
     },
     {
-      action: { rhs: "gg", noremap: false, silent: false, is_func: false },
+      action: {
+        rhs: "gg",
+        noremap: false,
+        silent: false,
+        is_func: false,
+        name: "",
+      },
       expected: "normal gg",
     },
     {
-      action: { rhs: "gg", noremap: false, silent: true, is_func: false },
+      action: {
+        rhs: "gg",
+        noremap: false,
+        silent: true,
+        is_func: false,
+        name: "",
+      },
       expected: "silent normal gg",
     },
     {
-      action: { rhs: "", noremap: false, silent: false, is_func: true },
+      action: {
+        rhs: "",
+        noremap: false,
+        silent: false,
+        is_func: true,
+        name: "",
+      },
       expected: "",
     },
   ].forEach(data => {
@@ -38,6 +62,7 @@ describe("CommandFactory", () => {
         silent: info.silent,
         is_func: info.is_func,
         rhs: info.rhs,
+        name: info.name,
       };
 
       const ContextClass: jest.Mock<Context> = jest.fn(() => ({})) as any;

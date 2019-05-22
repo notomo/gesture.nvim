@@ -8,6 +8,7 @@ export interface Action {
   noremap: boolean;
   is_func: boolean;
   rhs: string;
+  name: string;
 }
 
 export interface Command {

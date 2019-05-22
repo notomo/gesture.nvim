@@ -213,9 +213,10 @@ export class InputLinesFactory {
       return paddingLines;
     }
 
-    const remaining = width - action.rhs.length;
+    const name = action.name.length === 0 ? action.rhs : action.name;
+    const remaining = width - name.length;
     const space = " ".repeat(remaining > 0 ? remaining / 2 : 0);
-    paddingLines.push(`${space}${action.rhs}${space}`);
+    paddingLines.push(`${space}${name}${space}`);
 
     return paddingLines;
   }

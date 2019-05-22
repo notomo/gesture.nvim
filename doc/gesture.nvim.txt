@@ -44,7 +44,14 @@ gesture#cancel()                                             *gesture#cancel()*
 gesture#clear()                                               *gesture#clear()*
     Clear registered gesture settings.
 
-gesture#register()                                 *gesture#register()*
+gesture#register({options})                                *gesture#register()*
+    Define a gesture.
+
+    Arguments:
+      {options}: {
+        'name': string?
+      }
+
 gesture#register().left([{attrs}])                 *gesture#register().left()*
 gesture#register().right([{attrs}])                *gesture#register().right()*
 gesture#register().down([{attrs}])                 *gesture#register().down()*
