@@ -253,4 +253,5 @@ augroup gesture
 augroup END
 
 highlight default link GestureInput NormalFloat
+highlight default GestureNoAction guifg=#8d9eb2 ctermfg=103 guibg=#3a4b5c ctermbg=235
 highlight default GestureActionLabel guifg=#a8d2eb ctermfg=153
