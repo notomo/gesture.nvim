@@ -23,6 +23,19 @@ export class GestureMapper {
     this.actions = (await this.vim.call("gesture#get")) as Actions;
   }
 
+  public async hasForwardMatch(gestureLines: ReadonlyArray<Input>) {
+    const gesturedDirections = gestureLines
+      .map(gestureLine => gestureLine.value)
+      .join(",");
+
+    for (const index in this.actions) {
+      if (index.startsWith(gesturedDirections)) {
+        return true;
+      }
+    }
+    return false;
+  }
+
   public async getAction(
     gestureLines: ReadonlyArray<Input>
   ): Promise<Action | null> {

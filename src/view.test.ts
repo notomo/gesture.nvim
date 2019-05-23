@@ -44,6 +44,7 @@ describe("InputView", () => {
 
   let mapper: GestureMapper;
   let getAction: jest.Mock;
+  let hasForwardMatch: jest.Mock;
 
   let reporter: Reporter;
   let error: jest.Mock;
@@ -112,8 +113,10 @@ describe("InputView", () => {
     configRepository = new ConfigRepositoryClass();
 
     getAction = jest.fn().mockReturnValue(null);
+    hasForwardMatch = jest.fn().mockReturnValue(false);
     const GestureMapperClass: jest.Mock<GestureMapper> = jest.fn(() => ({
       getAction: getAction,
+      hasForwardMatch: hasForwardMatch,
     })) as any;
     mapper = new GestureMapperClass();
 
@@ -183,6 +186,10 @@ describe("InputView", () => {
     expect(createWindow).toHaveBeenCalledTimes(1);
     expect(windowConfig).toHaveBeenCalledWith(window, options);
     expect(windowConfig).toHaveBeenCalledTimes(2);
+    expect(setOption).toHaveBeenCalledWith(
+      "winhighlight",
+      "NormalFloat:GestureNoAction"
+    );
   });
 
   it("render with action", async () => {
@@ -195,8 +202,10 @@ describe("InputView", () => {
       rhs: "gg",
     };
     getAction = jest.fn().mockReturnValue(action);
+    hasForwardMatch = jest.fn().mockReturnValue(true);
     const GestureMapperClass: jest.Mock<GestureMapper> = jest.fn(() => ({
       getAction: getAction,
+      hasForwardMatch: hasForwardMatch,
     })) as any;
     mapper = new GestureMapperClass();
 
@@ -213,7 +222,46 @@ describe("InputView", () => {
     await inputView.render([
       { value: Direction.LEFT, kind: InputKind.DIRECTION, length: 10 },
     ]);
+    await inputView.render([
+      { value: Direction.LEFT, kind: InputKind.DIRECTION, length: 10 },
+    ]);
     expect(addHighlight).toHaveBeenCalled();
+  });
+
+  it("render with forward match", async () => {
+    const action = {
+      inputs: [],
+      nowait: false,
+      silent: false,
+      noremap: false,
+      is_func: false,
+      rhs: "gg",
+    };
+    getAction = jest.fn().mockReturnValue(action);
+    hasForwardMatch = jest.fn().mockReturnValue(true);
+    const GestureMapperClass: jest.Mock<GestureMapper> = jest.fn(() => ({
+      getAction: getAction,
+      hasForwardMatch: hasForwardMatch,
+    })) as any;
+    mapper = new GestureMapperClass();
+
+    const inputView = new InputView(
+      vim,
+      viewBufferFactory,
+      inputLinesFactory,
+      viewWindowFactory,
+      windowOptionsFactory,
+      configRepository,
+      mapper,
+      reporter
+    );
+    await inputView.render([
+      { value: Direction.LEFT, kind: InputKind.DIRECTION, length: 10 },
+    ]);
+    expect(setOption).toHaveBeenCalledWith(
+      "winhighlight",
+      "NormalFloat:GestureInput"
+    );
   });
 
   it("render reports buffer error", async () => {

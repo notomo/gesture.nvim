@@ -63,13 +63,19 @@ export class InputView {
         line: lines.length - 1,
       });
     }
-
+    const hasForwardMatch = await this.mapper.hasForwardMatch(inputs);
     const windowOptions = await this.windowOptionsFactory.create(
       lines.length,
       this.width
     );
     if (this.window !== null) {
       await this.vim.windowConfig(this.window, windowOptions);
+      if (!hasForwardMatch) {
+        await this.window.setOption(
+          "winhighlight",
+          "NormalFloat:GestureNoAction"
+        );
+      }
       return;
     }
     const [window, winErr] = await this.viewWindowFactory.create(
@@ -82,7 +88,14 @@ export class InputView {
     }
     this.window = window;
     await this.vim.windowConfig(this.window, windowOptions);
-    await this.window.setOption("winhighlight", "NormalFloat:GestureInput");
+    if (!hasForwardMatch) {
+      await this.window.setOption(
+        "winhighlight",
+        "NormalFloat:GestureNoAction"
+      );
+    } else {
+      await this.window.setOption("winhighlight", "NormalFloat:GestureInput");
+    }
   }
 
   public async destroy() {

@@ -31,29 +31,6 @@ describe("GestureMapper", () => {
     })();
 
     call = jest.fn().mockReturnValue({
-      "LEFT,RIGHT": {
-        global: [
-          {
-            nowait: false,
-            inputs: [
-              { kind: InputKind.DIRECTION, value: Direction.LEFT },
-              { kind: InputKind.DIRECTION, value: Direction.RIGHT },
-            ],
-          },
-        ],
-        buffer: {
-          2: [
-            {
-              nowait: false,
-              inputs: [
-                { kind: InputKind.DIRECTION, value: Direction.LEFT },
-                { kind: InputKind.DIRECTION, value: Direction.RIGHT },
-              ],
-              buffer: true,
-            },
-          ],
-        },
-      },
       LEFT: {
         global: [
           {
@@ -72,6 +49,29 @@ describe("GestureMapper", () => {
             {
               nowait: true,
               inputs: [{ kind: InputKind.DIRECTION, value: Direction.LEFT }],
+              buffer: true,
+            },
+          ],
+        },
+      },
+      "LEFT,RIGHT": {
+        global: [
+          {
+            nowait: false,
+            inputs: [
+              { kind: InputKind.DIRECTION, value: Direction.LEFT },
+              { kind: InputKind.DIRECTION, value: Direction.RIGHT },
+            ],
+          },
+        ],
+        buffer: {
+          2: [
+            {
+              nowait: false,
+              inputs: [
+                { kind: InputKind.DIRECTION, value: Direction.LEFT },
+                { kind: InputKind.DIRECTION, value: Direction.RIGHT },
+              ],
               buffer: true,
             },
           ],
@@ -383,5 +383,24 @@ describe("GestureMapper", () => {
     ]);
 
     expect(result).toBeNull();
+  });
+
+  it("hasForwardMatch", async () => {
+    await mapper.initialize();
+
+    const result = await mapper.hasForwardMatch([
+      { kind: InputKind.DIRECTION, value: Direction.LEFT, length: 10 },
+      { kind: InputKind.DIRECTION, value: Direction.RIGHT, length: 10 },
+    ]);
+
+    expect(result).toBeTruthy();
+  });
+
+  it("not hasForwardMatch", async () => {
+    const result = await mapper.hasForwardMatch([
+      { kind: InputKind.DIRECTION, value: Direction.RIGHT, length: 10 },
+    ]);
+
+    expect(result).toBeFalsy();
   });
 });
