@@ -95,23 +95,42 @@ function! gesture#register(...) abort
     endfunction
 
     function! dict.noremap(rhs, ...) abort
-        let attrs = call('s:get_map_attributes', a:000)
-        let attrs['noremap'] = v:true
+        if type(a:rhs) != v:t_string
+            throw 'rhs must be a string'
+        endif
+        let gesture = call('s:get_map_attributes', a:000)
+        let gesture['noremap'] = v:true
+        let gesture['inputs'] = self.inputs
+        let gesture['rhs'] = a:rhs
+        let gesture['name'] = self.name
 
-        call s:add(self.inputs, a:rhs, self.name, attrs)
+        call s:add_gesture(gesture)
     endfunction
 
     function! dict.map(rhs, ...) abort
-        let attrs = call('s:get_map_attributes', a:000)
-        let attrs['noremap'] = v:false
+        if type(a:rhs) != v:t_string
+            throw 'rhs must be a string'
+        endif
+        let gesture = call('s:get_map_attributes', a:000)
+        let gesture['noremap'] = v:false
+        let gesture['inputs'] = self.inputs
+        let gesture['rhs'] = a:rhs
+        let gesture['name'] = self.name
 
-        call s:add(self.inputs, a:rhs, self.name, attrs)
+        call s:add_gesture(gesture)
     endfunction
 
     function! dict.func(f, ...) abort
-        let attrs = call('s:get_map_attributes', a:000)
+        if type(a:f) != v:t_func
+            throw 'f must be a function'
+        endif
+        let gesture = call('s:get_map_attributes', a:000)
+        let gesture['inputs'] = self.inputs
+        let gesture['is_func'] = v:true
+        let gesture['name'] = self.name
 
-        call s:add_func(self.inputs, a:f, self.name, attrs)
+        let id = s:add_gesture(gesture)
+        let s:funcs[id] = a:f
     endfunction
 
     return dict
@@ -133,33 +152,6 @@ function! gesture#clear() abort
     let s:id = 0
     let s:gestures = {}
     let s:funcs = {}
-endfunction
-
-function! s:add(inputs, rhs, name, attributes) abort
-    if type(a:rhs) != v:t_string
-        throw 'rhs must be a string'
-    endif
-
-    let gesture = a:attributes
-    let gesture['inputs'] = a:inputs
-    let gesture['rhs'] = a:rhs
-    let gesture['name'] = a:name
-
-    call s:add_gesture(gesture)
-endfunction
-
-function! s:add_func(inputs, f, name, attributes) abort
-    if type(a:f) != v:t_func
-        throw 'f must be a function'
-    endif
-
-    let gesture = a:attributes
-    let gesture['inputs'] = a:inputs
-    let gesture['is_func'] = v:true
-    let gesture['name'] = a:name
-
-    let id = s:add_gesture(gesture)
-    let s:funcs[id] = a:f
 endfunction
 
 function! s:add_gesture(gesture) abort
