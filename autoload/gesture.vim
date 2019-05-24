@@ -1,8 +1,4 @@
 
-if exists('*gesture#draw')
-    finish
-endif
-
 function! gesture#draw() abort
     call _gesture_initialize(gesture#custom#get('enabled_buffer_fill'))
 
@@ -39,46 +35,45 @@ let s:gestures = {}
 let s:funcs = {}
 function! gesture#register(...) abort
 
-    let register = call('s:get_gesture_attributes', a:000)
-    let s:inputs = []
+    let dict = call('s:get_gesture_attributes', a:000)
 
-    function! register.left(...) abort
-        let attributes = call('s:get_line_attributes', a:000)
-        let attributes['kind'] = 'direction'
-        let attributes['value'] = 'LEFT'
+    function! dict.left(...) abort
+        let attrs = call('s:get_line_attributes', a:000)
+        let attrs['kind'] = 'direction'
+        let attrs['value'] = 'LEFT'
 
-        call add(s:inputs, attributes)
+        call add(self.inputs, attrs)
         return self
     endfunction
 
-    function! register.right(...) abort
-        let attributes = call('s:get_line_attributes', a:000)
-        let attributes['kind'] = 'direction'
-        let attributes['value'] = 'RIGHT'
+    function! dict.right(...) abort
+        let attrs = call('s:get_line_attributes', a:000)
+        let attrs['kind'] = 'direction'
+        let attrs['value'] = 'RIGHT'
 
-        call add(s:inputs, attributes)
+        call add(self.inputs, attrs)
         return self
     endfunction
 
-    function! register.down(...) abort
-        let attributes = call('s:get_line_attributes', a:000)
-        let attributes['kind'] = 'direction'
-        let attributes['value'] = 'DOWN'
+    function! dict.down(...) abort
+        let attrs = call('s:get_line_attributes', a:000)
+        let attrs['kind'] = 'direction'
+        let attrs['value'] = 'DOWN'
 
-        call add(s:inputs, attributes)
+        call add(self.inputs, attrs)
         return self
     endfunction
 
-    function! register.up(...) abort
-        let attributes = call('s:get_line_attributes', a:000)
-        let attributes['kind'] = 'direction'
-        let attributes['value'] = 'UP'
+    function! dict.up(...) abort
+        let attrs = call('s:get_line_attributes', a:000)
+        let attrs['kind'] = 'direction'
+        let attrs['value'] = 'UP'
 
-        call add(s:inputs, attributes)
+        call add(self.inputs, attrs)
         return self
     endfunction
 
-    function! register.text(text, ...) abort
+    function! dict.text(text, ...) abort
         if type(a:text) != v:t_string
            \ || a:text ==# 'LEFT'
            \ || a:text ==# 'RIGHT'
@@ -87,38 +82,54 @@ function! gesture#register(...) abort
             throw 'text must be a string except directions'
         endif
 
-        let attributes = call('s:get_text_attributes', a:000)
-        let attributes['kind'] = 'text'
-        let attributes['value'] = a:text
+        let attrs = call('s:get_text_attributes', a:000)
+        let attrs['kind'] = 'text'
+        let attrs['value'] = a:text
 
-        call add(s:inputs, attributes)
+        call add(self.inputs, attrs)
         return self
     endfunction
 
-    function! register.noremap(rhs, ...) abort
-        let attributes = call('s:get_map_attributes', a:000)
-        let attributes['noremap'] = v:true
+    function! dict.noremap(rhs, ...) abort
+        if type(a:rhs) != v:t_string
+            throw 'rhs must be a string'
+        endif
+        let gesture = call('s:get_map_attributes', a:000)
+        let gesture['noremap'] = v:true
+        let gesture['inputs'] = self.inputs
+        let gesture['rhs'] = a:rhs
+        let gesture['name'] = self.name
 
-        call s:add(s:inputs, a:rhs, self.name, attributes)
-        let s:inputs = []
+        call s:add_gesture(gesture)
     endfunction
 
-    function! register.map(rhs, ...) abort
-        let attributes = call('s:get_map_attributes', a:000)
-        let attributes['noremap'] = v:false
+    function! dict.map(rhs, ...) abort
+        if type(a:rhs) != v:t_string
+            throw 'rhs must be a string'
+        endif
+        let gesture = call('s:get_map_attributes', a:000)
+        let gesture['noremap'] = v:false
+        let gesture['inputs'] = self.inputs
+        let gesture['rhs'] = a:rhs
+        let gesture['name'] = self.name
 
-        call s:add(s:inputs, a:rhs, self.name, attributes)
-        let s:inputs = []
+        call s:add_gesture(gesture)
     endfunction
 
-    function! register.func(f, ...) abort
-        let attributes = call('s:get_map_attributes', a:000)
+    function! dict.func(f, ...) abort
+        if type(a:f) != v:t_func
+            throw 'f must be a function'
+        endif
+        let gesture = call('s:get_map_attributes', a:000)
+        let gesture['inputs'] = self.inputs
+        let gesture['is_func'] = v:true
+        let gesture['name'] = self.name
 
-        call s:add_func(s:inputs, a:f, self.name, attributes)
-        let s:inputs = []
+        let id = s:add_gesture(gesture)
+        let s:funcs[id] = a:f
     endfunction
 
-    return register
+    return dict
 endfunction
 
 function! gesture#get_inputs() abort
@@ -137,33 +148,6 @@ function! gesture#clear() abort
     let s:id = 0
     let s:gestures = {}
     let s:funcs = {}
-endfunction
-
-function! s:add(inputs, rhs, name, attributes) abort
-    if type(a:rhs) != v:t_string
-        throw 'rhs must be a string'
-    endif
-
-    let gesture = a:attributes
-    let gesture['inputs'] = a:inputs
-    let gesture['rhs'] = a:rhs
-    let gesture['name'] = a:name
-
-    call s:add_gesture(gesture)
-endfunction
-
-function! s:add_func(inputs, f, name, attributes) abort
-    if type(a:f) != v:t_func
-        throw 'f must be a function'
-    endif
-
-    let gesture = a:attributes
-    let gesture['inputs'] = a:inputs
-    let gesture['is_func'] = v:true
-    let gesture['name'] = a:name
-
-    let id = s:add_gesture(gesture)
-    let s:funcs[id] = a:f
 endfunction
 
 function! s:add_gesture(gesture) abort
@@ -226,7 +210,7 @@ function! s:get_gesture_attributes(...) abort
 
     let name = get(attributes, 'name', '')
 
-    return {'name': name}
+    return {'name': name, 'inputs': []}
 endfunction
 
 function! s:get_line_attributes(...) abort
