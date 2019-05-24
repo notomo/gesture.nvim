@@ -1,8 +1,4 @@
 
-if exists('*gesture#draw')
-    finish
-endif
-
 function! gesture#draw() abort
     call _gesture_initialize(gesture#custom#get('enabled_buffer_fill'))
 
