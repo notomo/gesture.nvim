@@ -39,46 +39,45 @@ let s:gestures = {}
 let s:funcs = {}
 function! gesture#register(...) abort
 
-    let register = call('s:get_gesture_attributes', a:000)
-    let s:inputs = []
+    let dict = call('s:get_gesture_attributes', a:000)
 
-    function! register.left(...) abort
-        let attributes = call('s:get_line_attributes', a:000)
-        let attributes['kind'] = 'direction'
-        let attributes['value'] = 'LEFT'
+    function! dict.left(...) abort
+        let attrs = call('s:get_line_attributes', a:000)
+        let attrs['kind'] = 'direction'
+        let attrs['value'] = 'LEFT'
 
-        call add(s:inputs, attributes)
+        call add(self.inputs, attrs)
         return self
     endfunction
 
-    function! register.right(...) abort
-        let attributes = call('s:get_line_attributes', a:000)
-        let attributes['kind'] = 'direction'
-        let attributes['value'] = 'RIGHT'
+    function! dict.right(...) abort
+        let attrs = call('s:get_line_attributes', a:000)
+        let attrs['kind'] = 'direction'
+        let attrs['value'] = 'RIGHT'
 
-        call add(s:inputs, attributes)
+        call add(self.inputs, attrs)
         return self
     endfunction
 
-    function! register.down(...) abort
-        let attributes = call('s:get_line_attributes', a:000)
-        let attributes['kind'] = 'direction'
-        let attributes['value'] = 'DOWN'
+    function! dict.down(...) abort
+        let attrs = call('s:get_line_attributes', a:000)
+        let attrs['kind'] = 'direction'
+        let attrs['value'] = 'DOWN'
 
-        call add(s:inputs, attributes)
+        call add(self.inputs, attrs)
         return self
     endfunction
 
-    function! register.up(...) abort
-        let attributes = call('s:get_line_attributes', a:000)
-        let attributes['kind'] = 'direction'
-        let attributes['value'] = 'UP'
+    function! dict.up(...) abort
+        let attrs = call('s:get_line_attributes', a:000)
+        let attrs['kind'] = 'direction'
+        let attrs['value'] = 'UP'
 
-        call add(s:inputs, attributes)
+        call add(self.inputs, attrs)
         return self
     endfunction
 
-    function! register.text(text, ...) abort
+    function! dict.text(text, ...) abort
         if type(a:text) != v:t_string
            \ || a:text ==# 'LEFT'
            \ || a:text ==# 'RIGHT'
@@ -87,38 +86,35 @@ function! gesture#register(...) abort
             throw 'text must be a string except directions'
         endif
 
-        let attributes = call('s:get_text_attributes', a:000)
-        let attributes['kind'] = 'text'
-        let attributes['value'] = a:text
+        let attrs = call('s:get_text_attributes', a:000)
+        let attrs['kind'] = 'text'
+        let attrs['value'] = a:text
 
-        call add(s:inputs, attributes)
+        call add(self.inputs, attrs)
         return self
     endfunction
 
-    function! register.noremap(rhs, ...) abort
-        let attributes = call('s:get_map_attributes', a:000)
-        let attributes['noremap'] = v:true
+    function! dict.noremap(rhs, ...) abort
+        let attrs = call('s:get_map_attributes', a:000)
+        let attrs['noremap'] = v:true
 
-        call s:add(s:inputs, a:rhs, self.name, attributes)
-        let s:inputs = []
+        call s:add(self.inputs, a:rhs, self.name, attrs)
     endfunction
 
-    function! register.map(rhs, ...) abort
-        let attributes = call('s:get_map_attributes', a:000)
-        let attributes['noremap'] = v:false
+    function! dict.map(rhs, ...) abort
+        let attrs = call('s:get_map_attributes', a:000)
+        let attrs['noremap'] = v:false
 
-        call s:add(s:inputs, a:rhs, self.name, attributes)
-        let s:inputs = []
+        call s:add(self.inputs, a:rhs, self.name, attrs)
     endfunction
 
-    function! register.func(f, ...) abort
-        let attributes = call('s:get_map_attributes', a:000)
+    function! dict.func(f, ...) abort
+        let attrs = call('s:get_map_attributes', a:000)
 
-        call s:add_func(s:inputs, a:f, self.name, attributes)
-        let s:inputs = []
+        call s:add_func(self.inputs, a:f, self.name, attrs)
     endfunction
 
-    return register
+    return dict
 endfunction
 
 function! gesture#get_inputs() abort
@@ -226,7 +222,7 @@ function! s:get_gesture_attributes(...) abort
 
     let name = get(attributes, 'name', '')
 
-    return {'name': name}
+    return {'name': name, 'inputs': []}
 endfunction
 
 function! s:get_line_attributes(...) abort
