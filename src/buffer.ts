@@ -122,6 +122,7 @@ export class GestureBuffer {
     const currentTabpage = await this.vim.tabpage;
     return (
       this.startPointTabpage !== null &&
+      (await this.startPointTabpage.valid) &&
       (await this.startPointTabpage.number) === (await currentTabpage.number)
     );
   }

@@ -87,6 +87,7 @@ describe("InputView", () => {
     const WindowClass: jest.Mock<Window> = jest.fn(() => ({
       close: close,
       setOption: setOption,
+      valid: true,
     })) as any;
     window = new WindowClass();
 
@@ -337,6 +338,43 @@ describe("InputView", () => {
     await inputView.destroy();
     await inputView.destroy(); // test do nothing
     expect(close).toHaveBeenCalledTimes(1);
+  });
+
+  it("destroy", async () => {
+    close = jest.fn();
+    setOption = jest.fn();
+    const WindowClass: jest.Mock<Window> = jest.fn(() => ({
+      close: close,
+      setOption: setOption,
+      valid: false,
+    })) as any;
+    window = new WindowClass();
+
+    createWindow = jest.fn().mockReturnValue([window, null]);
+    const ViewWindowFactoryClass: jest.Mock<ViewWindowFactory> = jest.fn(
+      () => ({
+        create: createWindow,
+      })
+    ) as any;
+    viewWindowFactory = new ViewWindowFactoryClass();
+
+    const inputView = new InputView(
+      vim,
+      viewBufferFactory,
+      inputLinesFactory,
+      viewWindowFactory,
+      windowOptionsFactory,
+      configRepository,
+      mapper,
+      reporter
+    );
+
+    await inputView.render([
+      { value: Direction.LEFT, kind: InputKind.DIRECTION, length: 10 },
+    ]);
+
+    await inputView.destroy();
+    expect(close).not.toHaveBeenCalled();
   });
 });
 

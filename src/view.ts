@@ -102,7 +102,9 @@ export class InputView {
     if (this.window === null) {
       return;
     }
-    await this.window.close();
+    if (await this.window.valid) {
+      await this.window.close();
+    }
     this.window = null;
   }
 }
