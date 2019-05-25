@@ -50,6 +50,12 @@ export class Gesture {
     if (!this.gestureBuffer.isStarted()) {
       return null;
     }
+    const isValid = await this.gestureBuffer.validate();
+    if (!isValid) {
+      await this.inputView.destroy();
+      await this.gestureBuffer.restore();
+      return null;
+    }
 
     const inputs = this.recognizer.getInputs();
 

@@ -224,6 +224,31 @@ describe("Gesture", () => {
     expect(create).not.toHaveBeenCalled();
   });
 
+  it("finish returns null when the buffer is invalid", async () => {
+    isStarted = jest.fn().mockReturnValueOnce(true);
+    restore = jest.fn();
+    validate = jest.fn().mockReturnValue(false);
+    const GestureBufferClass: jest.Mock<GestureBuffer> = jest.fn(() => ({
+      isStarted: isStarted,
+      restore: restore,
+      validate: validate,
+    })) as any;
+    gestureBuffer = new GestureBufferClass();
+
+    gesture = new Gesture(
+      vim,
+      directionRecognizer,
+      gestureMapper,
+      gestureBuffer,
+      commandFactory,
+      inputView
+    );
+    const result = await gesture.finish();
+
+    expect(result).toBeNull();
+    expect(restore).toHaveBeenCalledTimes(1);
+  });
+
   it("finish", async () => {
     await gesture.initialize(true);
 
