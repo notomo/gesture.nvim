@@ -3,18 +3,7 @@ import { TabpageRepository } from "./tabpage";
 
 describe("TabpageRepository", () => {
   it("getGlobalPosition", async () => {
-    const call = jest.fn().mockImplementation(name => {
-      switch (name) {
-        case "win_screenpos":
-          return [1, 1];
-        case "wincol":
-          return 10;
-        case "winline":
-          return 20;
-        default:
-          return -8888;
-      }
-    });
+    const callAtomic = jest.fn().mockReturnValue([[[1, 1], 10, 20], []]);
 
     const WindowClass: jest.Mock<Window> = jest.fn(() => ({
       id: 1,
@@ -27,7 +16,7 @@ describe("TabpageRepository", () => {
 
     const NeovimClass: jest.Mock<Neovim> = jest.fn(() => ({
       window: window,
-      call: call,
+      callAtomic: callAtomic,
     })) as any;
     const vim = new NeovimClass();
 

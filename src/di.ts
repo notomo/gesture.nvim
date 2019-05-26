@@ -19,6 +19,7 @@ import { PointContextFactory } from "./context";
 import { ConfigRepository } from "./repository/config";
 import { CursorRepository } from "./repository/cursor";
 import { TabpageRepository } from "./repository/tabpage";
+import { OptionRepository } from "./repository/option";
 
 export class Di {
   protected static readonly deps: Deps = {
@@ -35,7 +36,8 @@ export class Di {
         pointContextFactory
       );
       const mapper = new GestureMapper(vim);
-      const optionStore = new OptionStore(vim);
+      const optionRepository = new OptionRepository(vim);
+      const optionStore = new OptionStore(optionRepository);
       const bufferOptionStoreFactory = new BufferOptionStoreFactory(vim);
       const commandFactory = new CommandFactory();
       const gestureBuffer = new GestureBuffer(
