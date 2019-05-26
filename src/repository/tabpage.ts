@@ -1,19 +1,20 @@
 import { Neovim } from "neovim";
+import { Logger, getLogger } from "../logger";
 
 export class TabpageRepository {
-  constructor(protected readonly vim: Neovim) {}
+  protected readonly logger: Logger;
+
+  constructor(protected readonly vim: Neovim) {
+    this.logger = getLogger("repository.option");
+  }
 
   public async getGlobalPosition(): Promise<{ x: number; y: number }> {
     const window = await this.vim.window;
-    const offsets = (await this.vim.call("win_screenpos", window.id)) as [
-      number,
-      number
-    ];
-
-    const [xInWindow, yInWindow] = await Promise.all([
-      this.vim.call("wincol") as Promise<number>,
-      this.vim.call("winline") as Promise<number>,
-    ]);
+    const [offsets, xInWindow, yInWindow] = (await this.vim.callAtomic([
+      ["nvim_call_function", ["win_screenpos", [window.id]]],
+      ["nvim_call_function", ["wincol", []]],
+      ["nvim_call_function", ["winline", []]],
+    ]))[0];
 
     return { x: xInWindow + offsets[1], y: yInWindow + offsets[0] };
   }
