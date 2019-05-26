@@ -1,12 +1,13 @@
 import { Neovim, Buffer } from "neovim";
 import { UndoStore } from "./undo";
+import { OptionRepository } from "./repository/option";
 
 export class OptionStore {
   protected virtualEdit: string | null = null;
   protected scrollOff: number | null = null;
   protected sideScrollOff: number | null = null;
 
-  constructor(protected readonly vim: Neovim) {}
+  constructor(private readonly optionRepository: OptionRepository) {}
 
   public async restore() {
     if (
@@ -17,11 +18,11 @@ export class OptionStore {
       return;
     }
 
-    await Promise.all([
-      this.vim.setOption("virtualedit", this.virtualEdit),
-      this.vim.setOption("scrolloff", this.scrollOff),
-      this.vim.setOption("sidescrolloff", this.sideScrollOff),
-    ]);
+    await this.optionRepository.set(
+      ["virtualedit", this.virtualEdit],
+      ["scrolloff", this.scrollOff],
+      ["sidescrolloff", this.sideScrollOff]
+    );
 
     this.virtualEdit = null;
     this.scrollOff = null;
@@ -29,17 +30,21 @@ export class OptionStore {
   }
 
   public async set() {
-    [this.virtualEdit, this.scrollOff, this.sideScrollOff] = await Promise.all([
-      this.vim.getOption("virtualedit") as Promise<string>,
-      this.vim.getOption("scrolloff") as Promise<number>,
-      this.vim.getOption("sidescrolloff") as Promise<number>,
-    ]);
+    [
+      this.virtualEdit,
+      this.scrollOff,
+      this.sideScrollOff,
+    ] = await this.optionRepository.get(
+      "virtualedit",
+      "scrolloff",
+      "sidescrolloff"
+    );
 
-    await Promise.all([
-      this.vim.setOption("virtualedit", "all"),
-      this.vim.setOption("scrolloff", 0),
-      this.vim.setOption("sidescrolloff", 0),
-    ]);
+    await this.optionRepository.set(
+      ["virtualedit", "all"],
+      ["scrolloff", 0],
+      ["sidescrolloff", 0]
+    );
   }
 }
 

@@ -5,12 +5,15 @@ import {
   BufferOptionStoreFactory,
 } from "./option";
 import { UndoStore } from "./undo";
+import { OptionRepository } from "./repository/option";
 
 describe("OptionStore", () => {
+  let optionRepository: OptionRepository;
+
   let optionStore: OptionStore;
 
-  let getOption: jest.Mock;
   let setOption: jest.Mock;
+  let getOption: jest.Mock;
 
   const virtualedit = "";
   const scrolloff = 8;
@@ -20,16 +23,14 @@ describe("OptionStore", () => {
     setOption = jest.fn();
     getOption = jest
       .fn()
-      .mockReturnValueOnce(virtualedit)
-      .mockReturnValueOnce(scrolloff)
-      .mockReturnValueOnce(sidescrolloff);
-    const NeovimClass: jest.Mock<Neovim> = jest.fn(() => ({
-      setOption: setOption,
-      getOption: getOption,
+      .mockReturnValueOnce([virtualedit, scrolloff, sidescrolloff]);
+    const OptionRepositoryClass: jest.Mock<OptionRepository> = jest.fn(() => ({
+      set: setOption,
+      get: getOption,
     })) as any;
-    const vim = new NeovimClass();
+    optionRepository = new OptionRepositoryClass();
 
-    optionStore = new OptionStore(vim);
+    optionStore = new OptionStore(optionRepository);
   });
 
   it("restore does nothing when options are not stored", async () => {
@@ -41,15 +42,19 @@ describe("OptionStore", () => {
   it("set and restore", async () => {
     await optionStore.set();
 
-    expect(setOption).toHaveBeenCalledWith("virtualedit", "all");
-    expect(setOption).toHaveBeenCalledWith("scrolloff", 0);
-    expect(setOption).toHaveBeenCalledWith("sidescrolloff", 0);
+    expect(setOption).toHaveBeenCalledWith(
+      ["virtualedit", "all"],
+      ["scrolloff", 0],
+      ["sidescrolloff", 0]
+    );
 
     await optionStore.restore();
 
-    expect(setOption).toHaveBeenCalledWith("virtualedit", virtualedit);
-    expect(setOption).toHaveBeenCalledWith("scrolloff", scrolloff);
-    expect(setOption).toHaveBeenCalledWith("sidescrolloff", sidescrolloff);
+    expect(setOption).toHaveBeenCalledWith(
+      ["virtualedit", virtualedit],
+      ["scrolloff", scrolloff],
+      ["sidescrolloff", sidescrolloff]
+    );
   });
 });
 
