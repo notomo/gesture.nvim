@@ -156,7 +156,8 @@ export class Di {
     }
     const resolved = this.deps[cls](vim);
     if (cacheable) {
-      this.cache[cls] = resolved;
+      // FIXME: needs `as any` from typescript 3.5
+      this.cache[cls] = resolved as any;
     }
     return resolved;
   }
@@ -165,7 +166,8 @@ export class Di {
     cls: keyof Deps,
     value: ReturnType<Deps[keyof Deps]>
   ): void {
-    this.cache[cls] = value;
+    // FIXME: needs `as any` from typescript 3.5
+    this.cache[cls] = value as any;
   }
 
   public static clear(): void {
