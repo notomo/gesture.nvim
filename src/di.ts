@@ -21,8 +21,33 @@ import { CursorRepository } from "./repository/cursor";
 import { TabpageRepository } from "./repository/tabpage";
 import { OptionRepository } from "./repository/option";
 
+type Deps = {
+  Gesture: Gesture;
+  GestureBuffer: GestureBuffer;
+  GestureMapper: GestureMapper;
+  OptionStore: OptionStore;
+  WindowOptionsFactory: WindowOptionsFactory;
+  InputView: InputView;
+  DirectionRecognizer: DirectionRecognizer;
+  Reporter: Reporter;
+  PointContextFactory: PointContextFactory;
+  ConfigRepository: ConfigRepository;
+  TabpageRepository: TabpageRepository;
+  CursorRepository: CursorRepository;
+};
+
+type DepsFuncs = { [P in keyof Deps]: { (vim: Neovim): Deps[P] } };
+type DepsCache = { [P in keyof Deps]: Deps[P] | null };
+const initDepsCache = (depsFuncs: DepsFuncs): DepsCache => {
+  const caches = {} as DepsCache;
+  Object.keys(depsFuncs).map(key => {
+    caches[key as keyof Deps] = null;
+  });
+  return caches;
+};
+
 export class Di {
-  protected static readonly deps: Deps = {
+  protected static readonly deps: DepsFuncs = {
     Gesture: (vim: Neovim) => {
       const recognizer = Di.get("DirectionRecognizer", vim);
       const mapper = Di.get("GestureMapper", vim);
@@ -105,69 +130,31 @@ export class Di {
     },
   };
 
-  protected static readonly cache: DepsCache = {
-    Gesture: null,
-    GestureBuffer: null,
-    GestureMapper: null,
-    OptionStore: null,
-    WindowOptionsFactory: null,
-    InputView: null,
-    DirectionRecognizer: null,
-    Reporter: null,
-    PointContextFactory: null,
-    ConfigRepository: null,
-    TabpageRepository: null,
-    CursorRepository: null,
-  };
+  protected static readonly cache: DepsCache = initDepsCache(Di.deps);
 
-  public static get(cls: "CursorRepository", vim: Neovim): CursorRepository;
-  public static get(cls: "TabpageRepository", vim: Neovim): TabpageRepository;
-  public static get(cls: "ConfigRepository", vim: Neovim): ConfigRepository;
-  public static get(
-    cls: "PointContextFactory",
-    vim: Neovim
-  ): PointContextFactory;
-  public static get(cls: "GestureBuffer", vim: Neovim): GestureBuffer;
-  public static get(cls: "GestureMapper", vim: Neovim): GestureMapper;
-  public static get(
-    cls: "OptionStore",
-    vim: Neovim,
-    cacheable: false
-  ): OptionStore;
-  public static get(
-    cls: "WindowOptionsFactory",
-    vim: Neovim
-  ): WindowOptionsFactory;
-  public static get(cls: "InputView", vim: Neovim): InputView;
-  public static get(
-    cls: "DirectionRecognizer",
-    vim: Neovim
-  ): DirectionRecognizer;
-  public static get(cls: "Reporter", vim: Neovim): Reporter;
-  public static get(cls: "Gesture", vim: Neovim): Gesture;
-  public static get(
-    cls: keyof Deps,
+  public static get<ClassName extends keyof Deps>(
+    cls: ClassName,
     vim: Neovim,
     cacheable: boolean = true
-  ): ReturnType<Deps[keyof Deps]> {
+  ): Deps[ClassName] {
     const cache = this.cache[cls];
     if (cache !== null) {
-      return cache;
+      // FIXME: needs type assertion from typescript 3.5
+      return cache as Deps[ClassName];
     }
-    const resolved = this.deps[cls](vim);
+    // FIXME: needs type assertion from typescript 3.5
+    const resolved = this.deps[cls](vim) as Deps[ClassName];
     if (cacheable) {
-      // FIXME: needs `as any` from typescript 3.5
-      this.cache[cls] = resolved as any;
+      this.cache[cls] = resolved;
     }
     return resolved;
   }
 
-  public static set(
-    cls: keyof Deps,
-    value: ReturnType<Deps[keyof Deps]>
+  public static set<ClassName extends keyof Deps>(
+    cls: ClassName,
+    value: Deps[ClassName]
   ): void {
-    // FIXME: needs `as any` from typescript 3.5
-    this.cache[cls] = value as any;
+    this.cache[cls] = value;
   }
 
   public static clear(): void {
@@ -176,20 +163,3 @@ export class Di {
     }
   }
 }
-
-interface Deps {
-  Gesture: { (vim: Neovim): Gesture };
-  GestureBuffer: { (vim: Neovim): GestureBuffer };
-  GestureMapper: { (vim: Neovim): GestureMapper };
-  OptionStore: { (vim: Neovim): OptionStore };
-  WindowOptionsFactory: { (vim: Neovim): WindowOptionsFactory };
-  InputView: { (vim: Neovim): InputView };
-  DirectionRecognizer: { (vim: Neovim): DirectionRecognizer };
-  Reporter: { (vim: Neovim): Reporter };
-  PointContextFactory: { (vim: Neovim): PointContextFactory };
-  ConfigRepository: { (vim: Neovim): ConfigRepository };
-  TabpageRepository: { (vim: Neovim): TabpageRepository };
-  CursorRepository: { (vim: Neovim): CursorRepository };
-}
-
-type DepsCache = { [P in keyof Deps]: ReturnType<Deps[P]> | null };
