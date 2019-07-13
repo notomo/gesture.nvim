@@ -126,7 +126,10 @@ export class ViewWindowFactory {
       return [null, WindowOpenError];
     }
 
-    await window.setOption("list", false);
+    await Promise.all([
+      window.setOption("list", false),
+      window.setOption("number", false),
+    ]);
     return [window, null];
   }
 }
