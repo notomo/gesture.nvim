@@ -9,15 +9,20 @@ INTRODUCTION                                        *gesture.nvim-introduction*
 *gesture.nvim* is a mouse gesture plugin for neovim.
 
 ==============================================================================
-FUNCTIONS                                              *gesture.nvim-functions*
+COMMANDS                                              *gesture.nvim-commands*
 
-gesture#draw()                                                 *gesture#draw()*
+:GestureDraw                                                    *:GestureDraw*
     Input gesture from the current cursor position.
     If the current gesture match registered nowait gestures,
     the registered action is executed.
 
-    Return type: bool
-        Return true if a nowait action is executed
+:GestureFinish                                                *:GestureFinish*
+    Finish inputting gestures.
+    If the current gesture match registered gestures,
+    the registered action is executed.
+
+==============================================================================
+FUNCTIONS                                              *gesture.nvim-functions*
 
 gesture#input_text({text})                               *gesture#input_text()*
     Input gesture from the argument.
@@ -29,14 +34,6 @@ gesture#input_text({text})                               *gesture#input_text()*
 
     Return type: bool
         Return true if a nowait action is executed
-
-gesture#finish()                                             *gesture#finish()*
-    Finish inputting gestures.
-    If the current gesture match registered gestures,
-    the registered action is executed.
-
-    Return type: bool
-        Return true if an action is executed
 
 gesture#cancel()                                             *gesture#cancel()*
     Cancel the current gesture.
@@ -183,16 +180,16 @@ EXAMPLES                                                *gesture.nvim-examples*
         " Ensure to enable the mouse support.
         set mouse=a
 
-        noremap <silent> <LeftMouse> :<C-u>call gesture#draw()<CR>
-        noremap <silent> <LeftDrag> :<C-u>call gesture#draw()<CR>
-        noremap <silent> <LeftRelease> :<C-u>call gesture#finish()<CR>
+        noremap <silent> <LeftMouse> :<C-u>GestureDraw<CR>
+        noremap <silent> <LeftDrag> :<C-u>GestureDraw<CR>
+        noremap <silent> <LeftRelease> :<C-u>GestureFinish<CR>
 
         " If you use the right mouse button,
         " you need to disable the right click. you use the right mouse button.
 
         noremap <RightMouse> <Nop>
-        noremap <silent> <RightDrag> :<C-u>call gesture#draw()<CR>
-        noremap <silent> <RightRelease> :<C-u>call gesture#finish()<CR>
+        noremap <silent> <RightDrag> :<C-u>GestureDraw<CR>
+        noremap <silent> <RightRelease> :<C-u>GestureFinish<CR>
 
 
         " -- Gesture settings ----------------------------------------------
