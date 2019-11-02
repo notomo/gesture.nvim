@@ -1,3 +1,4 @@
+doautocmd User GestureSourceLoad
 
 function! gesture#draw() abort
     call _gesture_initialize(gesture#custom#get('enabled_buffer_fill'))
