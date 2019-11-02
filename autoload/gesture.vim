@@ -1,3 +1,7 @@
+let s:id = 0
+let s:gestures = {}
+let s:funcs = {}
+
 doautocmd User GestureSourceLoad
 
 function! gesture#draw() abort
@@ -31,9 +35,6 @@ function! gesture#cancel() abort
     call _gesture_finish()
 endfunction
 
-let s:id = 0
-let s:gestures = {}
-let s:funcs = {}
 function! gesture#register(...) abort
 
     let dict = call('s:get_gesture_attributes', a:000)
