@@ -1,6 +1,7 @@
 " NOTICE: This plugin does not work in silent mode. ex. winline()
 " NOTE: :help -s-ex
 
+let g:node_host_prog = expand('<sfile>:h:h') . '/node_modules/neovim/bin/cli.js'
 call themis#option('recursive', 1)
 
 runtime! plugin/rplugin.vim
