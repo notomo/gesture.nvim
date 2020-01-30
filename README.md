@@ -1,7 +1,6 @@
 # gesture.nvim
 
-[![Build Status](https://travis-ci.org/notomo/gesture.nvim.svg?branch=master)](https://travis-ci.org/notomo/gesture.nvim)
-[![Build status](https://ci.appveyor.com/api/projects/status/ee3x3nl4jh207jjt/branch/master?svg=true)](https://ci.appveyor.com/project/notomo/gesture-nvim/branch/master)
+![Build Status](https://github.com/notomo/gesture.nvim/workflows/ci/badge.svg?branch=master)
 [![codecov](https://codecov.io/gh/notomo/gesture.nvim/branch/master/graph/badge.svg)](https://codecov.io/gh/notomo/gesture.nvim)
 
 gesture.nvim is a mouse gesture plugin for Neovim.

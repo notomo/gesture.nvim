@@ -1,0 +1,51 @@
+name: ci
+on: [push, pull_request]
+
+jobs:
+  test:
+    name: Test
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os: [ubuntu-latest, macos-latest, windows-latest]
+        node-version: [10.x]
+
+    steps:
+
+      - uses: actions/checkout@v2
+
+      - name: Use Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v1
+        with:
+          node-version: ${{ matrix.node-version }}
+
+      - name: Checkout themis.vim
+        uses: actions/checkout@v2
+        with:
+          repository: thinca/vim-themis
+          path: vim-themis
+
+      - name: Add themis to path
+        run: |
+          echo "::add-path::./vim-themis/bin"
+
+      - uses: rhysd/action-setup-vim@v1
+        id: vim
+        with:
+          neovim: true
+          version: nightly
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+
+      - run: npm run setup
+      - run: npm install -g neovim
+
+      - name: Run tests
+        env:
+          THEMIS_VIM: ${{ steps.vim.outputs.executable }}
+          THEMIS_HOME: ./vim-themis
+        run: make test
+
+      - name: Upload coverage
+        uses: codecov/codecov-action@v1.0.5
+        with:
+          token: ${{ secrets.CODECOV_TOKEN }}
