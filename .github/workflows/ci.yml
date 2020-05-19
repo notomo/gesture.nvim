@@ -29,12 +29,11 @@ jobs:
         run: |
           echo "::add-path::./vim-themis/bin"
 
-      - uses: rhysd/action-setup-vim@v1
+      - uses: rhysd/action-setup-vim@v1.2.3
         id: vim
         with:
           neovim: true
           version: nightly
-          github-token: ${{ secrets.GITHUB_TOKEN }}
 
       - run: npm run setup
       - run: npm install -g neovim
