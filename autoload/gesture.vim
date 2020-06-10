@@ -2,8 +2,6 @@ let s:id = 0
 let s:gestures = {}
 let s:funcs = {}
 
-doautocmd User GestureSourceLoad
-
 function! gesture#draw() abort
     call _gesture_initialize(gesture#custom#get('enabled_buffer_fill'))
 
