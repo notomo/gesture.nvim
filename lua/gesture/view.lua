@@ -50,13 +50,12 @@ M.open = function()
   local lines = vim.fn["repeat"]({line}, height)
   vim.api.nvim_buf_set_lines(bufnr, 0, -1, false, lines)
   vim.api.nvim_buf_set_option(bufnr, "bufhidden", "wipe")
-  vim.api.nvim_buf_set_option(bufnr, "modifiable", false)
   vim.api.nvim_buf_set_option(bufnr, "filetype", "gesture")
 
   vim.api.nvim_win_set_option(window_id, "scrolloff", 0)
   vim.api.nvim_win_set_option(window_id, "sidescrolloff", 0)
 
-  states.save(window_id, state)
+  states.save(window_id, bufnr, state)
 
   -- NOTE: show and move cursor to the window by <LeftDrag>
   vim.api.nvim_command("redraw")
@@ -72,8 +71,38 @@ M.close = function(state)
   close_window(0)
 end
 
-M.render = function(inputs)
-  -- TODO
+M.render = function(bufnr, inputs)
+  if #inputs == 0 then
+    return
+  end
+
+  local label = {}
+  for _, input in ipairs(inputs) do
+    table.insert(label, input.value)
+  end
+  local line = table.concat(label, " ")
+  local width = vim.o.columns
+  local remaining = (width - #line) / 2
+  local space = (" "):rep(remaining)
+
+  local row = vim.o.lines / 2
+
+  local lines = {space .. line .. space .. " "}
+
+  vim.api.nvim_buf_set_lines(bufnr, row - 1, row, false, lines)
+
+  local ns = vim.api.nvim_create_namespace("gesture")
+  vim.api.nvim_buf_clear_namespace(bufnr, ns, 0, -1)
+
+  local start_column = #space - 1
+  if start_column < 0 then
+    start_column = 0
+  end
+  local end_column = #(space .. line) + 1
+  if end_column > width then
+    end_column = width
+  end
+  vim.api.nvim_buf_add_highlight(bufnr, ns, "GestureInput", row - 1, start_column, end_column)
 end
 
 return M

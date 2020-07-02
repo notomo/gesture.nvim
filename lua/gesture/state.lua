@@ -54,14 +54,16 @@ M.get_or_create = function()
     last_point = nil,
     inputs = {},
     bufnr = vim.fn.bufnr("%"),
+    window_bufnr = nil,
     id = nil
   }
 
   return state, false
 end
 
-M.save = function(window_id, state)
+M.save = function(window_id, window_bufnr, state)
   state.id = window_id
+  state.window_bufnr = window_bufnr
   vim.api.nvim_win_set_var(window_id, "_gesture_state", state)
 end
 

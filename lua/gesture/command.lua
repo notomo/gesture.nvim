@@ -10,7 +10,7 @@ local cmds = {
     local state = view.open()
 
     states.update(state)
-    states.save(state.id, state)
+    states.save(state.id, state.window_bufnr, state)
 
     local inputs = state.inputs
     local action = mapper.no_wait_action(state.bufnr, state.inputs)
@@ -19,7 +19,7 @@ local cmds = {
       return execute(action)
     end
 
-    view.render(inputs)
+    view.render(state.window_bufnr, inputs)
   end,
   finish = function(_)
     local state = states.get()
