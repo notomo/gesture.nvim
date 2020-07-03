@@ -47,10 +47,24 @@ AM.current_line = function(expected)
   assert.equals(expected, actual, msg)
 end
 
+AM.current_word = function(expected)
+  local actual = vim.fn.expand("<cword>")
+  local msg = ("current word should be %s, but actual: %s"):format(expected, actual)
+  assert.equals(expected, actual, msg)
+end
+
 AM.window_count = function(expected)
   local actual = vim.fn.tabpagewinnr(vim.fn.tabpagenr(), "$")
   local msg = ("window count should be %s, but actual: %s"):format(expected, actual)
   assert.equals(expected, actual, msg)
+end
+
+AM.exists_pattern = function(pattern)
+  local result = vim.fn.search(pattern, "n")
+  if result == 0 then
+    local msg = ("`%s` not found"):format(pattern)
+    assert(false, msg)
+  end
 end
 
 M.assert = AM

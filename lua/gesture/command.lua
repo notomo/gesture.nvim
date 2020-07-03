@@ -1,6 +1,5 @@
 local view = require "gesture/view"
 local mapper = require "gesture/mapper"
-local execute = require "gesture/executor".execute
 local states = require "gesture/state"
 
 local M = {}
@@ -16,7 +15,7 @@ local cmds = {
     local no_wait_gesture = mapper.no_wait_match(state.bufnr, state.inputs)
     if no_wait_gesture ~= nil then
       view.close(state)
-      return execute(no_wait_gesture.action)
+      return vim.fn.execute(no_wait_gesture.action)
     end
 
     local gesture = mapper.match(state.bufnr, state.inputs)
@@ -34,7 +33,7 @@ local cmds = {
     view.close(state)
 
     if gesture ~= nil then
-      return execute(gesture.action)
+      return vim.fn.execute(gesture.action)
     end
   end,
   cancel = function(_)
