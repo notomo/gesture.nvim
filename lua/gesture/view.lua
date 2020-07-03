@@ -2,7 +2,7 @@ local states = require "gesture/state"
 
 local M = {}
 
-local close_window = function(id)
+M.close_window = function(id)
   if id == "" then
     return
   end
@@ -51,6 +51,7 @@ M.open = function()
   vim.api.nvim_buf_set_lines(bufnr, 0, -1, false, lines)
   vim.api.nvim_buf_set_option(bufnr, "bufhidden", "wipe")
   vim.api.nvim_buf_set_option(bufnr, "filetype", "gesture")
+  vim.api.nvim_buf_set_option(bufnr, "modifiable", false)
 
   vim.api.nvim_win_set_option(window_id, "scrolloff", 0)
   vim.api.nvim_win_set_option(window_id, "sidescrolloff", 0)
@@ -61,6 +62,18 @@ M.open = function()
   vim.api.nvim_command("redraw")
   M.click()
 
+  local on_win_leave =
+    ("autocmd WinLeave <buffer=%s> ++once lua require 'gesture/view'.close_window(%s)"):format(bufnr, window_id)
+  vim.api.nvim_command(on_win_leave)
+
+  local on_tab_leave =
+    ("autocmd TabLeave <buffer=%s> ++once lua require 'gesture/view'.close_window(%s)"):format(bufnr, window_id)
+  vim.api.nvim_command(on_tab_leave)
+
+  local on_buf_leave =
+    ("autocmd BufLeave <buffer=%s> ++once lua require 'gesture/view'.close_window(%s)"):format(bufnr, window_id)
+  vim.api.nvim_command(on_buf_leave)
+
   return state
 end
 
@@ -68,7 +81,7 @@ M.close = function(state)
   if state == nil then
     return
   end
-  close_window(0)
+  M.close_window(0)
 end
 
 M.render = function(bufnr, inputs, gesture, has_forward_match)
@@ -111,7 +124,9 @@ M.render = function(bufnr, inputs, gesture, has_forward_match)
   if row < 2 then
     row = 2
   end
+  vim.api.nvim_buf_set_option(bufnr, "modifiable", true)
   vim.api.nvim_buf_set_lines(bufnr, row, row + #lines, false, lines)
+  vim.api.nvim_buf_set_option(bufnr, "modifiable", false)
 
   local ns = vim.api.nvim_create_namespace("gesture")
   vim.api.nvim_buf_clear_namespace(bufnr, ns, 0, -1)
