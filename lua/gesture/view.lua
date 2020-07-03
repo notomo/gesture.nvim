@@ -76,33 +76,63 @@ M.render = function(bufnr, inputs)
     return
   end
 
-  local label = {}
-  for _, input in ipairs(inputs) do
-    table.insert(label, input.value)
-  end
-  local line = table.concat(label, " ")
+  local sep = " "
+  local padding = 3
+  local both_padding = padding * 2
   local width = vim.o.columns
-  local remaining = (width - #line) / 2
-  local space = (" "):rep(remaining)
+  local view_width = width / 4
 
-  local row = vim.o.lines / 2
+  local lines = {}
+  for _, input in ipairs(inputs) do
+    local str = input.value
+    local last = table.remove(lines, #lines)
+    if last == nil then
+      table.insert(lines, str)
+    elseif #last + #sep + #str + both_padding > view_width then
+      table.insert(lines, last)
+      table.insert(lines, str)
+    else
+      table.insert(lines, last .. sep .. str)
+    end
+  end
 
-  local lines = {space .. line .. space .. " "}
+  local start_column = width
+  local end_column = 0
+  for i, line in ipairs(lines) do
+    local remaining = (width - #line) / 2
+    local space = (" "):rep(remaining)
+    lines[i] = space .. line .. space
 
-  vim.api.nvim_buf_set_lines(bufnr, row - 1, row, false, lines)
+    local start_col = #space - 1 - padding
+    if start_col < start_column then
+      start_column = start_col
+    end
+
+    local end_col = #(space .. line) + padding + 1
+    if end_col > end_column then
+      end_column = end_col
+    end
+  end
+
+  local row = vim.o.lines / 2 - math.floor(#lines / 2 + 0.5) - 1
+  if row < 1 then
+    row = 1
+  end
+  vim.api.nvim_buf_set_lines(bufnr, row, row + #lines, false, lines)
 
   local ns = vim.api.nvim_create_namespace("gesture")
   vim.api.nvim_buf_clear_namespace(bufnr, ns, 0, -1)
 
-  local start_column = #space - 1
   if start_column < 0 then
     start_column = 0
   end
-  local end_column = #(space .. line) + 1
   if end_column > width then
     end_column = width
   end
-  vim.api.nvim_buf_add_highlight(bufnr, ns, "GestureInput", row - 1, start_column, end_column)
+
+  for _, r in ipairs(vim.fn.range(row - 1, row + #lines)) do
+    vim.api.nvim_buf_add_highlight(bufnr, ns, "GestureInput", r, start_column, end_column)
+  end
 end
 
 return M

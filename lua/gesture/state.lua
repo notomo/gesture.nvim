@@ -1,7 +1,7 @@
 local M = {}
 
-M.x_length_threshold = 10
-M.y_length_threshold = 10
+M.x_length_threshold = 5
+M.y_length_threshold = 5
 
 local get_length_threshold = function(direction)
   if direction == "UP" or direction == "DOWN" then
