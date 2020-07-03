@@ -66,4 +66,28 @@ M.match = function(bufnr, inputs)
   return filter_gesture_map(gestures.global, inputs, false)
 end
 
+M.has_forward_match = function(bufnr, inputs)
+  local lhss = {}
+  for _, input in ipairs(inputs) do
+    table.insert(lhss, input.value)
+  end
+  local lhs = table.concat(lhss, "-")
+
+  local buffer_gestures = gestures.buffer[bufnr]
+  if buffer_gestures ~= nil then
+    for key in pairs(buffer_gestures) do
+      if vim.startswith(key, lhs) then
+        return true
+      end
+    end
+  end
+
+  for key in pairs(gestures.global) do
+    if vim.startswith(key, lhs) then
+      return true
+    end
+  end
+  return false
+end
+
 return M

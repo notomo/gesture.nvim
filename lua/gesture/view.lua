@@ -71,7 +71,7 @@ M.close = function(state)
   close_window(0)
 end
 
-M.render = function(bufnr, inputs, gesture)
+M.render = function(bufnr, inputs, gesture, has_forward_match)
   if #inputs == 0 then
     return
   end
@@ -127,8 +127,12 @@ M.render = function(bufnr, inputs, gesture)
     end_column = width
   end
 
+  local highlight_group = "GestureInput"
+  if not has_forward_match then
+    highlight_group = "GestureNoAction"
+  end
   for _, r in ipairs(vim.fn.range(row - 2, row + #lines)) do
-    vim.api.nvim_buf_add_highlight(bufnr, ns, "GestureInput", r, start_column, end_column)
+    vim.api.nvim_buf_add_highlight(bufnr, ns, highlight_group, r, start_column, end_column)
   end
   vim.api.nvim_buf_add_highlight(bufnr, ns, "GestureActionLabel", row + #lines - 1, start_column, end_column)
 end
