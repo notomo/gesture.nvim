@@ -11,4 +11,4 @@ endif
 
 highlight default GestureInput ctermfg=230 ctermbg=235 gui=bold guifg=#fffeeb guibg=#3a4b5c blend=0
 highlight default GestureNoAction guifg=#8d9eb2 ctermfg=103 guibg=#3a4b5c ctermbg=235 blend=0
-highlight default GestureActionLabel guifg=#a8d2eb ctermfg=153 blend=0
+highlight default GestureActionLabel gui=bold guifg=#a8d2eb ctermfg=153 blend=0

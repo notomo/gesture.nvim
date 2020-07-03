@@ -71,7 +71,7 @@ M.close = function(state)
   close_window(0)
 end
 
-M.render = function(bufnr, inputs)
+M.render = function(bufnr, inputs, gesture)
   if #inputs == 0 then
     return
   end
@@ -95,34 +95,31 @@ M.render = function(bufnr, inputs)
       table.insert(lines, last .. sep .. str)
     end
   end
+  if gesture ~= nil then
+    table.insert(lines, gesture.name)
+  else
+    table.insert(lines, "")
+  end
 
-  local start_column = width
-  local end_column = 0
   for i, line in ipairs(lines) do
     local remaining = (width - #line) / 2
     local space = (" "):rep(remaining)
     lines[i] = space .. line .. space
-
-    local start_col = #space - 1 - padding
-    if start_col < start_column then
-      start_column = start_col
-    end
-
-    local end_col = #(space .. line) + padding + 1
-    if end_col > end_column then
-      end_column = end_col
-    end
   end
 
   local row = vim.o.lines / 2 - math.floor(#lines / 2 + 0.5) - 1
-  if row < 1 then
-    row = 1
+  if row < 2 then
+    row = 2
   end
   vim.api.nvim_buf_set_lines(bufnr, row, row + #lines, false, lines)
 
   local ns = vim.api.nvim_create_namespace("gesture")
   vim.api.nvim_buf_clear_namespace(bufnr, ns, 0, -1)
 
+  local half_width = math.floor(width / 2 + 0.5)
+  local half_view_width = math.floor(view_width / 2 + 0.5)
+  local start_column = half_width - half_view_width
+  local end_column = half_width + half_view_width
   if start_column < 0 then
     start_column = 0
   end
@@ -130,9 +127,10 @@ M.render = function(bufnr, inputs)
     end_column = width
   end
 
-  for _, r in ipairs(vim.fn.range(row - 1, row + #lines)) do
+  for _, r in ipairs(vim.fn.range(row - 2, row + #lines)) do
     vim.api.nvim_buf_add_highlight(bufnr, ns, "GestureInput", r, start_column, end_column)
   end
+  vim.api.nvim_buf_add_highlight(bufnr, ns, "GestureActionLabel", row + #lines - 1, start_column, end_column)
 end
 
 return M

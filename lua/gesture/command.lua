@@ -13,13 +13,14 @@ local cmds = {
     states.save(state.id, state.window_bufnr, state)
 
     local inputs = state.inputs
-    local action = mapper.no_wait_action(state.bufnr, state.inputs)
-    if action ~= nil then
+    local no_wait_gesture = mapper.no_wait_match(state.bufnr, state.inputs)
+    if no_wait_gesture ~= nil then
       view.close(state)
-      return execute(action)
+      return execute(no_wait_gesture.action)
     end
 
-    view.render(state.window_bufnr, inputs)
+    local gesture = mapper.match(state.bufnr, state.inputs)
+    view.render(state.window_bufnr, inputs, gesture)
   end,
   finish = function(_)
     local state = states.get()
@@ -27,12 +28,12 @@ local cmds = {
       return
     end
 
-    local action = mapper.action(state.bufnr, state.inputs)
+    local gesture = mapper.match(state.bufnr, state.inputs)
 
     view.close(state)
 
-    if action ~= nil then
-      return execute(action)
+    if gesture ~= nil then
+      return execute(gesture.action)
     end
   end,
   cancel = function(_)

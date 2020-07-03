@@ -2,7 +2,7 @@ local gestures = require "gesture"
 
 local M = {}
 
-local filter_gesture = function(gesture, inputs, nowait)
+local filter_gestures = function(gesture, inputs, nowait)
   if nowait and not gesture.nowait then
     return nil
   end
@@ -22,7 +22,7 @@ local filter_gesture = function(gesture, inputs, nowait)
   return gesture
 end
 
-local filter_action = function(gesture_map, inputs, nowait)
+local filter_gesture_map = function(gesture_map, inputs, nowait)
   local lhss = {}
   for _, input in ipairs(inputs) do
     table.insert(lhss, input.value)
@@ -35,35 +35,35 @@ local filter_action = function(gesture_map, inputs, nowait)
   end
 
   for _, gesture in ipairs(gs) do
-    local g = filter_gesture(gesture, inputs, nowait)
+    local g = filter_gestures(gesture, inputs, nowait)
     if g ~= nil then
-      return g.action
+      return g
     end
   end
 
   return nil
 end
 
-M.no_wait_action = function(bufnr, inputs)
+M.no_wait_match = function(bufnr, inputs)
   local buffer_gestures = gestures.buffer[bufnr]
   if buffer_gestures ~= nil then
-    local action = filter_action(buffer_gestures, inputs, true)
-    if action ~= nil then
-      return action
+    local gesture = filter_gesture_map(buffer_gestures, inputs, true)
+    if gesture ~= nil then
+      return gesture
     end
   end
-  return filter_action(gestures.global, inputs, true)
+  return filter_gesture_map(gestures.global, inputs, true)
 end
 
-M.action = function(bufnr, inputs)
+M.match = function(bufnr, inputs)
   local buffer_gestures = gestures.buffer[bufnr]
   if buffer_gestures ~= nil then
-    local action = filter_action(buffer_gestures, inputs, false)
-    if action ~= nil then
-      return action
+    local gesture = filter_gesture_map(buffer_gestures, inputs, false)
+    if gesture ~= nil then
+      return gesture
     end
   end
-  return filter_action(gestures.global, inputs, false)
+  return filter_gesture_map(gestures.global, inputs, false)
 end
 
 return M
