@@ -3,5 +3,12 @@ if exists('g:loaded_gesture')
 endif
 let g:loaded_gesture = 1
 
-command! GestureDraw call gesture#draw()
-command! GestureFinish call gesture#finish()
+if get(g:, 'gesture_debug', v:false)
+    command! -nargs=* Gesture lua require("gesture/cleanup")("gesture"); require("gesture/command").main(<f-args>)
+else
+    command! -nargs=* Gesture lua require("gesture/command").main(<f-args>)
+endif
+
+highlight default GestureInput ctermfg=230 ctermbg=235 gui=bold guifg=#fffeeb guibg=#3a4b5c blend=0
+highlight default GestureNoAction guifg=#8d9eb2 ctermfg=103 guibg=#3a4b5c ctermbg=235 blend=0
+highlight default GestureActionLabel gui=bold guifg=#a8d2eb ctermfg=153 blend=0

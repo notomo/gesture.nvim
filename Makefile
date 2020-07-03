@@ -1,12 +1,4 @@
-
 test:
-	NVIM_RPLUGIN_MANIFEST=rplugin.vim nvim -u ./update_remote_plugins.vim -i NONE -n --headless +q
-	cat rplugin.vim
-	THEMIS_ARGS="-e --headless" NVIM_RPLUGIN_MANIFEST=rplugin.vim themis
-	npm run test
-
-build:
-	npm run build
+	vusted ./test --shuffle -v
 
 .PHONY: test
-.PHONY: build

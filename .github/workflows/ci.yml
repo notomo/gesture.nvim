@@ -7,27 +7,30 @@ jobs:
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
-        os: [ubuntu-latest, macos-latest, windows-latest]
-        node-version: [10.x]
+        os: [ubuntu-latest]
 
     steps:
 
       - uses: actions/checkout@v2
 
-      - name: Use Node.js ${{ matrix.node-version }}
-        uses: actions/setup-node@v1
+      - uses: leafo/gh-actions-lua@v5
         with:
-          node-version: ${{ matrix.node-version }}
+          luaVersion: "luajit-2.1.0-beta3"
 
-      - name: Checkout themis.vim
+      - uses: leafo/gh-actions-luarocks@v2
+      - name: Install test dependencies
+        run: |
+          luarocks install busted
+
+      - name: Checkout vusted
         uses: actions/checkout@v2
         with:
-          repository: thinca/vim-themis
-          path: vim-themis
+          repository: notomo/vusted
+          path: vusted
 
-      - name: Add themis to path
+      - name: Add vusted to path
         run: |
-          echo "::add-path::./vim-themis/bin"
+          echo "::add-path::./vusted/bin"
 
       - uses: rhysd/action-setup-vim@v1.2.3
         id: vim
@@ -35,16 +38,7 @@ jobs:
           neovim: true
           version: nightly
 
-      - run: npm run setup
-      - run: npm install -g neovim
-
       - name: Run tests
         env:
-          THEMIS_VIM: ${{ steps.vim.outputs.executable }}
-          THEMIS_HOME: ./vim-themis
+          VUSTED_NVIM: ${{ steps.vim.outputs.executable }}
         run: make test
-
-      - name: Upload coverage
-        uses: codecov/codecov-action@v1.0.5
-        with:
-          token: ${{ secrets.CODECOV_TOKEN }}
