@@ -44,7 +44,7 @@ local filter_gesture_map = function(gesture_map, inputs, nowait)
   return nil
 end
 
-M.no_wait_match = function(bufnr, inputs)
+M.nowait_match = function(bufnr, inputs)
   local buffer_gestures = gestures.buffer[bufnr]
   if buffer_gestures ~= nil then
     local gesture = filter_gesture_map(buffer_gestures, inputs, true)

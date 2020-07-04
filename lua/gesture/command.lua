@@ -16,15 +16,15 @@ local cmds = {
     state.update(window)
 
     local inputs = state.inputs
-    local no_wait_gesture = mapper.no_wait_match(state.bufnr, inputs)
-    if no_wait_gesture ~= nil then
+    local nowait_gesture = mapper.nowait_match(state.bufnr, inputs)
+    if nowait_gesture ~= nil then
       view.close(state.window.id)
-      return vim.fn.execute(no_wait_gesture.action)
+      return vim.fn.execute(nowait_gesture.action)
     end
 
     local gesture = mapper.match(state.bufnr, inputs)
     local has_forward_match = mapper.has_forward_match(state.bufnr, inputs)
-    view.render(window.bufnr, inputs, gesture, has_forward_match)
+    view.render_input(window.bufnr, inputs, gesture, has_forward_match)
   end,
   finish = function(_)
     local state = states.get()

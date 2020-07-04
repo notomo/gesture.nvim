@@ -63,7 +63,7 @@ M.close = function(window_id)
   vim.api.nvim_win_close(window_id, true)
 end
 
-M.render = function(bufnr, inputs, gesture, has_forward_match)
+M.render_input = function(bufnr, inputs, gesture, has_forward_match)
   if #inputs == 0 then
     return
   end
