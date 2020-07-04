@@ -19,11 +19,7 @@ M.register = function(info)
   end
   gesture.execute = execute
 
-  local lhss = {}
-  for _, input in ipairs(gesture.inputs) do
-    table.insert(lhss, input.value)
-  end
-  local lhs = table.concat(lhss, "-")
+  local lhs = M.to_lhs(gesture.inputs)
 
   if gesture.buffer ~= nil then
     local bufnr = vim.fn.bufnr(gesture.buffer)
@@ -77,6 +73,14 @@ end
 
 M.left = function(info)
   return to_direction("LEFT", info)
+end
+
+M.to_lhs = function(inputs)
+  local lhss = {}
+  for _, input in ipairs(inputs) do
+    table.insert(lhss, input.value)
+  end
+  return table.concat(lhss, "-")
 end
 
 return M

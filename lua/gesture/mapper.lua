@@ -23,12 +23,7 @@ local filter_gestures = function(gesture, inputs, nowait)
 end
 
 local filter_gesture_map = function(gesture_map, inputs, nowait)
-  local lhss = {}
-  for _, input in ipairs(inputs) do
-    table.insert(lhss, input.value)
-  end
-  local lhs = table.concat(lhss, "-")
-
+  local lhs = gestures.to_lhs(inputs)
   local gs = gesture_map[lhs]
   if gs == nil then
     return nil
@@ -67,12 +62,7 @@ M.match = function(bufnr, inputs)
 end
 
 M.has_forward_match = function(bufnr, inputs)
-  local lhss = {}
-  for _, input in ipairs(inputs) do
-    table.insert(lhss, input.value)
-  end
-  local lhs = table.concat(lhss, "-")
-
+  local lhs = gestures.to_lhs(inputs)
   local buffer_gestures = gestures.buffer[bufnr]
   if buffer_gestures ~= nil then
     for key in pairs(buffer_gestures) do
