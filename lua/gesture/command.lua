@@ -19,7 +19,7 @@ local cmds = {
     local nowait_gesture = mapper.nowait_match(state.bufnr, inputs)
     if nowait_gesture ~= nil then
       view.close(state.window.id)
-      return vim.fn.execute(nowait_gesture.action)
+      return nowait_gesture.execute()
     end
 
     local gesture = mapper.match(state.bufnr, inputs)
@@ -35,7 +35,7 @@ local cmds = {
 
     local gesture = mapper.match(state.bufnr, state.inputs)
     if gesture ~= nil then
-      return vim.fn.execute(gesture.action)
+      return gesture.execute()
     end
   end,
   cancel = function(_)

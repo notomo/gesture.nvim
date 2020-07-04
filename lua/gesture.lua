@@ -14,6 +14,11 @@ M.register = function(info)
     return
   end
 
+  local execute = function()
+    vim.fn.execute(gesture.action)
+  end
+  gesture.execute = execute
+
   local lhss = {}
   for _, input in ipairs(gesture.inputs) do
     table.insert(lhss, input.value)
