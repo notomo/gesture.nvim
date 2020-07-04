@@ -1,30 +1,6 @@
-local states = require "gesture/state"
-
 local M = {}
 
-M.close_window = function(id)
-  if id == "" then
-    return
-  end
-  if not vim.api.nvim_win_is_valid(id) then
-    return
-  end
-  vim.api.nvim_win_close(id, true)
-end
-
-local mouse = vim.api.nvim_eval('"\\<LeftMouse>"')
-
-M.click = function()
-  vim.api.nvim_command("normal! " .. mouse)
-end
-
 M.open = function()
-  local state, ok = states.get_or_create()
-  if ok then
-    M.click()
-    return state
-  end
-
   local bufnr = vim.api.nvim_create_buf(false, true)
 
   local width = vim.o.columns
@@ -56,32 +32,35 @@ M.open = function()
   vim.api.nvim_win_set_option(window_id, "scrolloff", 0)
   vim.api.nvim_win_set_option(window_id, "sidescrolloff", 0)
 
-  states.save(window_id, bufnr, state)
-
   -- NOTE: show and move cursor to the window by <LeftDrag>
   vim.api.nvim_command("redraw")
-  M.click()
 
   local on_win_leave =
-    ("autocmd WinLeave <buffer=%s> ++once lua require 'gesture/view'.close_window(%s)"):format(bufnr, window_id)
+    ("autocmd WinLeave <buffer=%s> ++once lua require 'gesture/view'.close(%s)"):format(bufnr, window_id)
   vim.api.nvim_command(on_win_leave)
 
   local on_tab_leave =
-    ("autocmd TabLeave <buffer=%s> ++once lua require 'gesture/view'.close_window(%s)"):format(bufnr, window_id)
+    ("autocmd TabLeave <buffer=%s> ++once lua require 'gesture/view'.close(%s)"):format(bufnr, window_id)
   vim.api.nvim_command(on_tab_leave)
 
   local on_buf_leave =
-    ("autocmd BufLeave <buffer=%s> ++once lua require 'gesture/view'.close_window(%s)"):format(bufnr, window_id)
+    ("autocmd BufLeave <buffer=%s> ++once lua require 'gesture/view'.close(%s)"):format(bufnr, window_id)
   vim.api.nvim_command(on_buf_leave)
 
-  return state
+  return {
+    id = window_id,
+    bufnr = bufnr
+  }
 end
 
-M.close = function(state)
-  if state == nil then
+M.close = function(window_id)
+  if window_id == "" then
     return
   end
-  M.close_window(0)
+  if not vim.api.nvim_win_is_valid(window_id) then
+    return
+  end
+  vim.api.nvim_win_close(window_id, true)
 end
 
 M.render = function(bufnr, inputs, gesture, has_forward_match)

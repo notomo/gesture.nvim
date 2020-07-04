@@ -7,7 +7,7 @@ M.command = function(cmd)
 end
 
 M.before_each = function()
-  require("gesture/view").click = function()
+  require("gesture/command").click = function()
   end
 end
 

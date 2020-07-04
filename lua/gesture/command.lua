@@ -6,39 +6,44 @@ local M = {}
 
 local cmds = {
   draw = function(_)
-    local state = view.open()
+    local state, ok = states.get_or_create()
+    local window = state.window
+    if not ok then
+      window = view.open()
+    end
+    M.click()
 
-    states.update(state)
-    states.save(state.id, state.window_bufnr, state)
+    state.update(window)
 
     local inputs = state.inputs
-    local no_wait_gesture = mapper.no_wait_match(state.bufnr, state.inputs)
+    local no_wait_gesture = mapper.no_wait_match(state.bufnr, inputs)
     if no_wait_gesture ~= nil then
-      view.close(state)
+      view.close(state.window.id)
       return vim.fn.execute(no_wait_gesture.action)
     end
 
-    local gesture = mapper.match(state.bufnr, state.inputs)
+    local gesture = mapper.match(state.bufnr, inputs)
     local has_forward_match = mapper.has_forward_match(state.bufnr, inputs)
-    view.render(state.window_bufnr, inputs, gesture, has_forward_match)
+    view.render(window.bufnr, inputs, gesture, has_forward_match)
   end,
   finish = function(_)
     local state = states.get()
     if state == nil then
       return
     end
+    view.close(state.window.id)
 
     local gesture = mapper.match(state.bufnr, state.inputs)
-
-    view.close(state)
-
     if gesture ~= nil then
       return vim.fn.execute(gesture.action)
     end
   end,
   cancel = function(_)
     local state = states.get()
-    view.close(state)
+    if state == nil then
+      return
+    end
+    view.close(state.window.id)
   end
 }
 
@@ -70,6 +75,12 @@ M.main = function(...)
   end
 
   return cmd(args)
+end
+
+local mouse = vim.api.nvim_eval('"\\<LeftMouse>"')
+
+M.click = function()
+  vim.api.nvim_command("normal! " .. mouse)
 end
 
 vim.api.nvim_command("doautocmd User GestureSourceLoad")

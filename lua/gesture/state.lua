@@ -45,29 +45,7 @@ local Point = function(x, y)
   }
 end
 
-M.get_or_create = function()
-  local state = M.get()
-  if state ~= nil then
-    return state, true
-  end
-  state = {
-    last_point = nil,
-    inputs = {},
-    bufnr = vim.fn.bufnr("%"),
-    window_bufnr = nil,
-    id = nil
-  }
-
-  return state, false
-end
-
-M.save = function(window_id, window_bufnr, state)
-  state.id = window_id
-  state.window_bufnr = window_bufnr
-  vim.api.nvim_win_set_var(window_id, "_gesture_state", state)
-end
-
-M.update = function(state)
+local update = function(state)
   local x = vim.fn.wincol()
   local y = vim.fn.winline()
   local point = Point(x, y)
@@ -106,8 +84,42 @@ M.update = function(state)
   )
 end
 
+local wrap = function(raw_state)
+  local save_and_update = function(window)
+    raw_state.window = window
+    update(raw_state)
+    vim.api.nvim_win_set_var(window.id, "_gesture_state", raw_state)
+  end
+
+  return {
+    update = save_and_update,
+    bufnr = raw_state.bufnr,
+    inputs = raw_state.inputs,
+    window = raw_state.window
+  }
+end
+
+M.get_or_create = function()
+  local state = M.get()
+  if state ~= nil then
+    return state, true
+  end
+
+  raw_state = {
+    last_point = nil,
+    inputs = {},
+    bufnr = vim.fn.bufnr("%"),
+    window = nil
+  }
+  return wrap(raw_state), false
+end
+
 M.get = function()
-  return vim.w._gesture_state
+  local raw_state = vim.w._gesture_state
+  if raw_state == nil then
+    return nil
+  end
+  return wrap(raw_state)
 end
 
 return M
