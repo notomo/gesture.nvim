@@ -1,15 +1,13 @@
 local M = {}
 
 M.register = function(info)
-  local gesture =
-    info or
-    {
-      name = "",
-      action = nil,
-      inputs = {},
-      nowait = false,
-      buffer = nil
-    }
+  local gesture = info or {
+    name = "",
+    action = nil,
+    inputs = {},
+    nowait = false,
+    buffer = nil,
+  }
   if gesture.action == nil or gesture.inputs == {} then
     return
   end
@@ -55,7 +53,7 @@ local to_direction = function(direction, info)
     kind = "direction",
     value = direction,
     max_length = direction_info.max_length,
-    min_length = direction_info.min_length
+    min_length = direction_info.min_length,
   }
 end
 

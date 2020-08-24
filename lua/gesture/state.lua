@@ -32,17 +32,10 @@ local Point = function(x, y)
       length = length_y
     end
 
-    return {
-      length = length,
-      direction = direction
-    }
+    return {length = length, direction = direction}
   end
 
-  return {
-    x = x,
-    y = y,
-    line = line
-  }
+  return {x = x, y = y, line = line}
 end
 
 local update = function(state)
@@ -64,7 +57,7 @@ local update = function(state)
   local new_input = {
     kind = "direction",
     value = line.direction,
-    length = line.length
+    length = line.length,
   }
 
   if last_input == nil or (last_input ~= nil and last_input.value ~= line.direction) then
@@ -74,14 +67,11 @@ local update = function(state)
 
   local new_length = last_input.length + new_input.length
   table.remove(state.inputs, #state.inputs)
-  table.insert(
-    state.inputs,
-    {
-      kind = "direction",
-      value = line.direction,
-      length = new_length
-    }
-  )
+  table.insert(state.inputs, {
+    kind = "direction",
+    value = line.direction,
+    length = new_length,
+  })
 end
 
 local wrap = function(raw_state)
@@ -95,7 +85,7 @@ local wrap = function(raw_state)
     update = save_and_update,
     bufnr = raw_state.bufnr,
     inputs = raw_state.inputs,
-    window = raw_state.window
+    window = raw_state.window,
   }
 end
 
@@ -109,7 +99,7 @@ M.get_or_create = function()
     last_point = nil,
     inputs = {},
     bufnr = vim.fn.bufnr("%"),
-    window = nil
+    window = nil,
   }
   return wrap(raw_state), false
 end

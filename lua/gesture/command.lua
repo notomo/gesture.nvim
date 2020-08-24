@@ -44,13 +44,11 @@ local cmds = {
       return
     end
     view.close(state.window.id)
-  end
+  end,
 }
 
 M.parse_args = function(raw_args)
-  args = {
-    cmd = "draw"
-  }
+  args = {cmd = "draw"}
 
   if #raw_args == 0 then
     return args
@@ -77,7 +75,7 @@ M.main = function(...)
   return cmd(args)
 end
 
-local mouse = vim.api.nvim_eval('"\\<LeftMouse>"')
+local mouse = vim.api.nvim_eval("\"\\<LeftMouse>\"")
 
 M.click = function()
   vim.api.nvim_command("normal! " .. mouse)
