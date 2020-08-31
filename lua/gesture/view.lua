@@ -88,7 +88,7 @@ M.render_input = function(bufnr, inputs, gesture, has_forward_match)
     lines[i] = space .. line .. space
   end
 
-  local row = vim.o.lines / 2 - math.floor(#lines / 2 + 0.5) - 1
+  local row = math.floor(vim.o.lines / 2 - math.floor(#lines / 2 + 0.5) - 1)
   if row < 2 then
     row = 2
   end
