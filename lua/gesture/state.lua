@@ -54,11 +54,7 @@ local update = function(state)
   state.last_point = {point.x, point.y}
 
   local last_input = state.inputs[#state.inputs]
-  local new_input = {
-    kind = "direction",
-    value = line.direction,
-    length = line.length,
-  }
+  local new_input = {kind = "direction", value = line.direction, length = line.length}
 
   if last_input == nil or (last_input ~= nil and last_input.value ~= line.direction) then
     table.insert(state.inputs, new_input)
@@ -67,11 +63,7 @@ local update = function(state)
 
   local new_length = last_input.length + new_input.length
   table.remove(state.inputs, #state.inputs)
-  table.insert(state.inputs, {
-    kind = "direction",
-    value = line.direction,
-    length = new_length,
-  })
+  table.insert(state.inputs, {kind = "direction", value = line.direction, length = new_length})
 end
 
 local wrap = function(raw_state)
@@ -95,12 +87,7 @@ M.get_or_create = function()
     return state, true
   end
 
-  raw_state = {
-    last_point = nil,
-    inputs = {},
-    bufnr = vim.fn.bufnr("%"),
-    window = nil,
-  }
+  raw_state = {last_point = nil, inputs = {}, bufnr = vim.fn.bufnr("%"), window = nil}
   return wrap(raw_state), false
 end
 

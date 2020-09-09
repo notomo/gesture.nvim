@@ -1,13 +1,7 @@
 local M = {}
 
 M.register = function(info)
-  local gesture = info or {
-    name = "",
-    action = nil,
-    inputs = {},
-    nowait = false,
-    buffer = nil,
-  }
+  local gesture = info or {name = "", action = nil, inputs = {}, nowait = false, buffer = nil}
   if gesture.action == nil or gesture.inputs == {} then
     return
   end

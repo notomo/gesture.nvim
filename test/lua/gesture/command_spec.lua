@@ -9,10 +9,7 @@ describe("gesture.nvim", function()
 
   it("can register and execute a global gesture", function()
     local gesture = require("gesture")
-    gesture.register({
-      inputs = {gesture.down(), gesture.up()},
-      action = "normal! gg",
-    })
+    gesture.register({inputs = {gesture.down(), gesture.up()}, action = "normal! gg"})
 
     helper.set_lines([[
 hoge
@@ -39,10 +36,7 @@ foo]])
       action = "normal! $",
       buffer = "%",
     })
-    gesture.register({
-      inputs = {gesture.right(), gesture.left()},
-      action = "normal! 0",
-    })
+    gesture.register({inputs = {gesture.right(), gesture.left()}, action = "normal! 0"})
 
     helper.set_lines([[
 hoge         foo
@@ -61,15 +55,8 @@ hoge         foo
 
   it("can register and execute a nowait gesture", function()
     local gesture = require("gesture")
-    gesture.register({
-      inputs = {gesture.right()},
-      action = "normal! $",
-      nowait = true,
-    })
-    gesture.register({
-      inputs = {gesture.right(), gesture.left()},
-      action = "normal! 0",
-    })
+    gesture.register({inputs = {gesture.right()}, action = "normal! $", nowait = true})
+    gesture.register({inputs = {gesture.right(), gesture.left()}, action = "normal! 0"})
 
     helper.set_lines([[
 hoge         foo
@@ -85,17 +72,8 @@ hoge         foo
 
   it("can register and execute a nowait buffer local gesture", function()
     local gesture = require("gesture")
-    gesture.register({
-      inputs = {gesture.right()},
-      action = "normal! $",
-      nowait = true,
-      buffer = "%",
-    })
-    gesture.register({
-      inputs = {gesture.right()},
-      action = "normal! 0",
-      nowait = true,
-    })
+    gesture.register({inputs = {gesture.right()}, action = "normal! $", nowait = true, buffer = "%"})
+    gesture.register({inputs = {gesture.right()}, action = "normal! 0", nowait = true})
     gesture.register({
       inputs = {gesture.right(), gesture.left()},
       action = "normal! 0",
@@ -116,10 +94,7 @@ hoge         foo
 
   it("does nothing for non matched gesture", function()
     local gesture = require("gesture")
-    gesture.register({
-      inputs = {gesture.down(), gesture.up()},
-      action = "normal! G",
-    })
+    gesture.register({inputs = {gesture.down(), gesture.up()}, action = "normal! G"})
 
     helper.set_lines([[
 hoge
@@ -138,10 +113,7 @@ foo]])
 
   it("can register a gesture with max length", function()
     local gesture = require("gesture")
-    gesture.register({
-      inputs = {gesture.right({max_length = 10})},
-      action = "normal! $",
-    })
+    gesture.register({inputs = {gesture.right({max_length = 10})}, action = "normal! $"})
 
     helper.set_lines([[
 hoge         foo
@@ -158,10 +130,7 @@ hoge         foo
 
   it("can register a gesture with min length", function()
     local gesture = require("gesture")
-    gesture.register({
-      inputs = {gesture.right({min_length = 10})},
-      action = "normal! $",
-    })
+    gesture.register({inputs = {gesture.right({min_length = 10})}, action = "normal! $"})
 
     helper.set_lines([[
 hoge         foo
@@ -195,11 +164,7 @@ hoge         foo
 
   it("shows matched gesture name", function()
     local gesture = require("gesture")
-    gesture.register({
-      name = "to bottom",
-      inputs = {gesture.down()},
-      action = "normal! G",
-    })
+    gesture.register({name = "to bottom", inputs = {gesture.down()}, action = "normal! G"})
     gesture.register({
       name = "to top",
       inputs = {gesture.down(), gesture.up()},

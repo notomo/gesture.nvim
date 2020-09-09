@@ -13,6 +13,9 @@ local cmds = {
     end
     M.click()
 
+    if not vim.api.nvim_win_is_valid(window.id) then
+      return
+    end
     state.update(window)
 
     local inputs = state.inputs
