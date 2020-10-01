@@ -12,17 +12,7 @@ jobs:
     steps:
       - uses: actions/checkout@v2
       - uses: notomo/action-setup-nvim-lua@dev
-      - run: luarocks install busted
-
-      - name: Checkout vusted
-        uses: actions/checkout@v2
-        with:
-          repository: notomo/vusted
-          path: vusted
-
-      - name: Add vusted to path
-        run: |
-          echo "::add-path::./vusted/bin"
+      - run: luarocks install vusted
 
       - uses: rhysd/action-setup-vim@v1.2.3
         id: vim
