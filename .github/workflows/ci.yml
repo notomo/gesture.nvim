@@ -11,10 +11,10 @@ jobs:
 
     steps:
       - uses: actions/checkout@v2
-      - uses: notomo/action-setup-nvim-lua@dev
+      - uses: notomo/action-setup-nvim-lua@v1
       - run: luarocks install vusted
 
-      - uses: rhysd/action-setup-vim@v1.2.3
+      - uses: rhysd/action-setup-vim@v1
         id: vim
         with:
           neovim: true
