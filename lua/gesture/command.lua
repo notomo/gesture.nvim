@@ -28,6 +28,7 @@ local cmds = {
     local gesture = mapper.match(state.bufnr, inputs)
     local has_forward_match = mapper.has_forward_match(state.bufnr, inputs)
     view.render_input(window.bufnr, inputs, gesture, has_forward_match)
+    view.render_line(window.bufnr, state.points)
   end,
   finish = function(_)
     local state = states.get()
