@@ -32,14 +32,8 @@ M.open = function()
   -- NOTE: show and move cursor to the window by <LeftDrag>
   vim.api.nvim_command("redraw")
 
-  local on_win_leave = ("autocmd WinLeave <buffer=%s> ++once lua require 'gesture/view'.close(%s)"):format(bufnr, window_id)
-  vim.api.nvim_command(on_win_leave)
-
-  local on_tab_leave = ("autocmd TabLeave <buffer=%s> ++once lua require 'gesture/view'.close(%s)"):format(bufnr, window_id)
-  vim.api.nvim_command(on_tab_leave)
-
-  local on_buf_leave = ("autocmd BufLeave <buffer=%s> ++once lua require 'gesture/view'.close(%s)"):format(bufnr, window_id)
-  vim.api.nvim_command(on_buf_leave)
+  local on_leave = ("autocmd WinLeave,TabLeave,BufLeave <buffer=%s> ++once lua require 'gesture/view'.close(%s)"):format(bufnr, window_id)
+  vim.api.nvim_command(on_leave)
 
   return {id = window_id, bufnr = bufnr}
 end
