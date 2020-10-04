@@ -122,15 +122,18 @@ local update = function(state)
   local raw_point = {point.x, point.y}
   if state.last_point == nil then
     state.last_point = raw_point
-    state.points = {raw_point}
+    state.all_points = {raw_point}
+    state.new_points = {raw_point}
+  else
+    local last_raw_point = state.all_points[#state.all_points]
+    local points = get_points(last_raw_point, raw_point)
+    for _, p in ipairs(points) do
+      table.insert(state.all_points, p)
+    end
+    state.new_points = points
   end
 
   local last_point = Point(unpack(state.last_point))
-  local last_raw_point = state.points[#state.points]
-  local points = get_points(last_raw_point, raw_point)
-  for _, p in ipairs(points) do
-    table.insert(state.points, p)
-  end
   local line = last_point.line(point)
   if line.direction == nil or line.length < get_length_threshold(line.direction) then
     return
@@ -158,7 +161,8 @@ M.get_or_create = function()
 
   local new_state = {
     last_point = nil,
-    points = {},
+    new_points = {},
+    all_points = {},
     inputs = {},
     bufnr = vim.fn.bufnr("%"),
     window = nil,

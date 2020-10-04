@@ -121,14 +121,27 @@ M.render_input = function(bufnr, inputs, gesture, has_forward_match)
     vim.api.nvim_buf_add_highlight(bufnr, ns, highlight_group, r, start_column, end_column)
   end
   vim.api.nvim_buf_add_highlight(bufnr, ns, "GestureActionLabel", row + #lines - 1, start_column, end_column)
+
+  local updated_range = {row + 1, row + #lines}
+  return updated_range
 end
 
-M.render_line = function(bufnr, points)
+M.render_line = function(bufnr, new_points, all_points, updated_range)
   local ns = vim.api.nvim_create_namespace("gesture-line")
-  vim.api.nvim_buf_clear_namespace(bufnr, ns, 0, -1)
 
-  for _, p in ipairs(points) do
+  for _, p in ipairs(new_points) do
     vim.api.nvim_buf_add_highlight(bufnr, ns, "GesturePoint", p[2] - 1, p[1] - 1, p[1])
+  end
+  if updated_range == nil then
+    return
+  end
+
+  vim.api.nvim_buf_clear_namespace(bufnr, ns, updated_range[1], updated_range[2])
+  for _, p in ipairs(all_points) do
+    local y = p[2]
+    if updated_range[1] <= y and y <= updated_range[2] then
+      vim.api.nvim_buf_add_highlight(bufnr, ns, "GesturePoint", y - 1, p[1] - 1, p[1])
+    end
   end
 end
 
