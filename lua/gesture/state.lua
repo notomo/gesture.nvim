@@ -1,3 +1,5 @@
+local repository = require("gesture/repository")
+
 local M = {}
 
 M.x_length_threshold = 5
@@ -8,6 +10,81 @@ local get_length_threshold = function(direction)
     return M.y_length_threshold
   end
   return M.x_length_threshold
+end
+
+local L = function(p1, p2)
+  local x1 = p1[1]
+  local y1 = p1[2]
+  local x2 = p2[1]
+  local y2 = p2[2]
+
+  local b = (x1 * y2 - x2 * y1) / (x1 - x2)
+  local a = (y1 - b) / x1
+  return function(x)
+    return a * x + b
+  end, nil
+end
+
+local get_points = function(point1, point2)
+  if point1[1] == point2[1] and point1[2] == point2[2] then
+    return {}
+  end
+
+  local points = {}
+  if point1[1] == point2[1] then
+    local p1 = point1
+    local p2 = point2
+    local reverse = false
+    if point1[2] > point2[2] then
+      p1 = point2
+      p2 = point1
+      table.insert(points, p1)
+      reverse = true
+    end
+
+    local x = p1[1]
+    local y = p1[2] + 1
+    while y < p2[2] do
+      table.insert(points, {x, y})
+      y = y + 1
+    end
+
+    if reverse then
+      return vim.fn.reverse(points)
+    end
+    table.insert(points, p2)
+    return points
+  end
+
+  local p1 = point1
+  local p2 = point2
+  local reverse = false
+  if point1[1] > point2[1] then
+    p1 = point2
+    p2 = point1
+    reverse = true
+  end
+  table.insert(points, p1)
+
+  local offset = 0.1
+  local x = p1[1] + offset
+  local get_y = L(p1, p2)
+  while x < p2[1] do
+    local y = math.floor(get_y(x) + 0.5)
+    local new = {math.floor(x + 0.5), y}
+    local last = points[#points]
+    if last[1] ~= new[1] or last[2] ~= new[2] then
+      table.insert(points, new)
+    end
+    x = x + offset
+  end
+
+  if reverse then
+    return vim.fn.reverse(points)
+  end
+  table.remove(points, 1)
+  table.insert(points, p2)
+  return points
 end
 
 local Point = function(x, y)
@@ -42,8 +119,18 @@ local update = function(state)
   local x = vim.fn.wincol()
   local y = vim.fn.winline()
   local point = Point(x, y)
+  local raw_point = {point.x, point.y}
   if state.last_point == nil then
-    state.last_point = {point.x, point.y}
+    state.last_point = raw_point
+    state.all_points = {raw_point}
+    state.new_points = {raw_point}
+  else
+    local last_raw_point = state.all_points[#state.all_points]
+    local points = get_points(last_raw_point, raw_point)
+    for _, p in ipairs(points) do
+      table.insert(state.all_points, p)
+    end
+    state.new_points = points
   end
 
   local last_point = Point(unpack(state.last_point))
@@ -66,37 +153,31 @@ local update = function(state)
   table.insert(state.inputs, {kind = "direction", value = line.direction, length = new_length})
 end
 
-local wrap = function(raw_state)
-  local save_and_update = function(window)
-    raw_state.window = window
-    update(raw_state)
-    vim.api.nvim_win_set_var(window.id, "_gesture_state", raw_state)
-  end
-
-  return {
-    update = save_and_update,
-    bufnr = raw_state.bufnr,
-    inputs = raw_state.inputs,
-    window = raw_state.window,
-  }
-end
-
 M.get_or_create = function()
   local state = M.get()
   if state ~= nil then
     return state, true
   end
 
-  raw_state = {last_point = nil, inputs = {}, bufnr = vim.fn.bufnr("%"), window = nil}
-  return wrap(raw_state), false
+  local new_state = {
+    last_point = nil,
+    new_points = {},
+    all_points = {},
+    inputs = {},
+    bufnr = vim.fn.bufnr("%"),
+    window = nil,
+  }
+  new_state.update = function(window)
+    new_state.window = window
+    repository.set(window.id, new_state)
+    update(new_state)
+  end
+
+  return new_state, false
 end
 
 M.get = function()
-  local raw_state = vim.w._gesture_state
-  if raw_state == nil then
-    return nil
-  end
-  return wrap(raw_state)
+  return repository.get(vim.api.nvim_get_current_win())
 end
 
 return M

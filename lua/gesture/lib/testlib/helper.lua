@@ -23,7 +23,7 @@ M.after_each = function()
 
   vim.api.nvim_set_current_dir(M.root)
 
-  require("gesture/cleanup")("gesture")
+  require("gesture/lib/cleanup")()
 end
 
 M.buffer_log = function()
