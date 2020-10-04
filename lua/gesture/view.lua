@@ -139,4 +139,32 @@ M.render_line = function(bufnr, new_points, all_points, updated_range)
   end
 end
 
+local highlights = require("gesture/lib/highlight")
+local blend = 0
+highlights.default("GestureInput", {
+  ctermfg = {"NormalFloat", "fg", "cterm", 230},
+  guifg = {"NormalFloat", "fg", "gui", "#fffeeb"},
+  ctermbg = {"NormalFloat", "bg", "cterm", 235},
+  guibg = {"NormalFloat", "bg", "gui", "#3a4b5c"},
+  blend = blend,
+})
+highlights.default("GestureNoAction", {
+  ctermfg = {"Comment", "fg", "cterm", 103},
+  guifg = {"Comment", "fg", "gui", "#8d9eb2"},
+  ctermbg = {"NormalFloat", "bg", "cterm", 235},
+  guibg = {"NormalFloat", "bg", "gui", "#3a4b5c"},
+  blend = blend,
+})
+highlights.default("GestureActionLabel", {
+  gui = "bold",
+  ctermfg = {"Statement", "fg", "cterm", 153},
+  guifg = {"Statement", "fg", "gui", "#a8d2eb"},
+  blend = blend,
+})
+highlights.default("GestureLine", {
+  ctermbg = {"Statement", "fg", "cterm", 153},
+  guibg = {"Statement", "fg", "gui", "#a8d2eb"},
+  blend = blend,
+})
+
 return M
