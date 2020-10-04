@@ -1,3 +1,5 @@
+local repository = require("gesture/repository")
+
 local M = {}
 
 M.x_length_threshold = 5
@@ -148,38 +150,30 @@ local update = function(state)
   table.insert(state.inputs, {kind = "direction", value = line.direction, length = new_length})
 end
 
-local wrap = function(raw_state)
-  local save_and_update = function(window)
-    raw_state.window = window
-    update(raw_state)
-    vim.api.nvim_win_set_var(window.id, "_gesture_state", raw_state)
-  end
-
-  return {
-    update = save_and_update,
-    bufnr = raw_state.bufnr,
-    inputs = raw_state.inputs,
-    points = raw_state.points,
-    window = raw_state.window,
-  }
-end
-
 M.get_or_create = function()
   local state = M.get()
   if state ~= nil then
     return state, true
   end
 
-  raw_state = {last_point = nil, points = {}, inputs = {}, bufnr = vim.fn.bufnr("%"), window = nil}
-  return wrap(raw_state), false
+  local new_state = {
+    last_point = nil,
+    points = {},
+    inputs = {},
+    bufnr = vim.fn.bufnr("%"),
+    window = nil,
+  }
+  new_state.update = function(window)
+    new_state.window = window
+    repository.set(window.id, new_state)
+    update(new_state)
+  end
+
+  return new_state, false
 end
 
 M.get = function()
-  local raw_state = vim.w._gesture_state
-  if raw_state == nil then
-    return nil
-  end
-  return wrap(raw_state)
+  return repository.get(vim.api.nvim_get_current_win())
 end
 
 return M

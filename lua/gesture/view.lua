@@ -1,3 +1,5 @@
+local repository = require("gesture/repository")
+
 local M = {}
 
 M.open = function()
@@ -50,6 +52,7 @@ M.close = function(window_id)
     return
   end
   vim.api.nvim_win_close(window_id, true)
+  repository.delete(window_id)
 end
 
 M.render_input = function(bufnr, inputs, gesture, has_forward_match)
