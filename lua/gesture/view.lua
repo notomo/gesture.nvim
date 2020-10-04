@@ -130,7 +130,7 @@ M.render_line = function(bufnr, new_points, all_points, updated_range)
   local ns = vim.api.nvim_create_namespace("gesture-line")
 
   for _, p in ipairs(new_points) do
-    vim.api.nvim_buf_add_highlight(bufnr, ns, "GesturePoint", p[2] - 1, p[1] - 1, p[1])
+    vim.api.nvim_buf_add_highlight(bufnr, ns, "GestureLine", p[2] - 1, p[1] - 1, p[1])
   end
   if updated_range == nil then
     return
@@ -140,7 +140,7 @@ M.render_line = function(bufnr, new_points, all_points, updated_range)
   for _, p in ipairs(all_points) do
     local y = p[2]
     if updated_range[1] <= y and y <= updated_range[2] then
-      vim.api.nvim_buf_add_highlight(bufnr, ns, "GesturePoint", y - 1, p[1] - 1, p[1])
+      vim.api.nvim_buf_add_highlight(bufnr, ns, "GestureLine", y - 1, p[1] - 1, p[1])
     end
   end
 end
