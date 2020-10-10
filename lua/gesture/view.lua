@@ -66,7 +66,10 @@ M._add_view_ranges = function(ranges, view_ranges)
     return vim.deepcopy(view_ranges)
   end
 
-  for i, range in ipairs(ranges) do
+  local new_ranges = vim.tbl_filter(function(r)
+    return r[3] ~= nil and r[3] == "GestureLine"
+  end, ranges)
+  for i, range in ipairs(new_ranges) do
     if modified_start == 0 and first_x <= range[1] then
       modified_start = i
     end
@@ -76,11 +79,9 @@ M._add_view_ranges = function(ranges, view_ranges)
     end
   end
 
-  local new_ranges = vim.deepcopy(ranges)
-
   local remove_start = modified_end
   if modified_start ~= 0 then
-    local frist_target = ranges[modified_start]
+    local frist_target = new_ranges[modified_start]
     remove_start = modified_start + 1
     if first_x <= frist_target[1] then
       remove_start = modified_start
@@ -107,6 +108,10 @@ M._add_view_ranges = function(ranges, view_ranges)
 
   for i = remove_end, remove_start, -1 do
     table.remove(new_ranges, i)
+  end
+
+  if insert > #new_ranges + 1 then
+    insert = #new_ranges + 1
   end
 
   for _, view_range in ipairs(vim.fn.reverse(view_ranges)) do
@@ -146,17 +151,10 @@ M.render_input = function(bufnr, inputs, gesture, has_forward_match, new_points,
     table.insert(lines, "")
   end
 
-  for i, line in ipairs(lines) do
-    local remaining = (width - #line) / 2
-    local space = (" "):rep(remaining)
-    lines[i] = space .. line
-  end
-
   local row = math.floor(vim.o.lines / 2 - math.floor(#lines / 2 + 0.5) - 1)
   if row < 2 then
     row = 2
   end
-  local ns = vim.api.nvim_create_namespace("gesture")
 
   local half_width = math.floor(width / 2 + 0.5)
   local half_view_width = math.floor(view_width / 2 + 0.5)
@@ -178,7 +176,22 @@ M.render_input = function(bufnr, inputs, gesture, has_forward_match, new_points,
   for i, line in ipairs(lines) do
     local y = row + i
     local store = mark_store[y] or {}
-    local view_ranges = {{start_column, end_column, hl_group}}
+
+    local view_padding = math.floor((view_width - #line) / 2)
+    local space = (" "):rep(view_padding)
+
+    local view_ranges = {
+      {start_column, start_column + view_padding - 1, hl_group, space},
+      {start_column + view_padding + #line, end_column, hl_group, space},
+    }
+    if line ~= "" then
+      table.insert(view_ranges, 2, {
+        start_column + view_padding,
+        start_column + view_padding + #line,
+        hl_group,
+        line,
+      })
+    end
     local new_ranges = M._add_view_ranges(store.ranges or {}, view_ranges)
     view_ranges_map[y] = new_ranges
   end
