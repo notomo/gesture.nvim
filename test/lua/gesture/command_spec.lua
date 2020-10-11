@@ -155,10 +155,10 @@ hoge         foo
     command("normal! 10k")
     command("Gesture draw")
 
-    assert.exists_pattern("RIGHT")
-    assert.exists_pattern("DOWN")
-    assert.exists_pattern("LEFT")
-    assert.exists_pattern("UP")
+    assert.shown_in_view("RIGHT")
+    assert.shown_in_view("DOWN")
+    assert.shown_in_view("LEFT")
+    assert.shown_in_view("UP")
   end)
 
   it("shows matched gesture name", function()
@@ -174,14 +174,24 @@ hoge         foo
     command("normal! 10j")
     command("Gesture draw")
 
-    assert.exists_pattern("DOWN")
-    assert.exists_pattern("to bottom")
+    assert.shown_in_view("DOWN")
+    assert.shown_in_view("to bottom")
 
     command("normal! 10k")
     command("Gesture draw")
 
-    assert.exists_pattern("UP")
-    assert.exists_pattern("to top")
+    assert.shown_in_view("UP")
+    assert.shown_in_view("to top")
+  end)
+
+  it("raises no error with many gestures", function()
+    for _ = 0, 100, 1 do
+      command("Gesture draw")
+      command("normal! 10j")
+      command("Gesture draw")
+      command("normal! 10k")
+    end
+    assert.shown_in_view("UP")
   end)
 
 end)

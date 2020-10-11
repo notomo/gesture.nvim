@@ -122,15 +122,10 @@ local update = function(state)
   local raw_point = {point.x, point.y}
   if state.last_point == nil then
     state.last_point = raw_point
-    state.all_points = {raw_point}
     state.new_points = {raw_point}
   else
-    local last_raw_point = state.all_points[#state.all_points]
-    local points = get_points(last_raw_point, raw_point)
-    for _, p in ipairs(points) do
-      table.insert(state.all_points, p)
-    end
-    state.new_points = points
+    local last_raw_point = state.new_points[#state.new_points] or state.last_point
+    state.new_points = get_points(last_raw_point, raw_point)
   end
 
   local last_point = Point(unpack(state.last_point))
@@ -162,10 +157,11 @@ M.get_or_create = function()
   local new_state = {
     last_point = nil,
     new_points = {},
-    all_points = {},
+    mark_store = {},
     inputs = {},
     bufnr = vim.fn.bufnr("%"),
     window = nil,
+    virtualedit = vim.o.virtualedit,
   }
   new_state.update = function(window)
     new_state.window = window

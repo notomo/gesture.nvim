@@ -9,7 +9,7 @@ local cmds = {
     local state, ok = states.get_or_create()
     local window = state.window
     if not ok then
-      window = view.open()
+      window = view.open(state.virtualedit)
     end
     M.click()
 
@@ -21,21 +21,20 @@ local cmds = {
     local inputs = state.inputs
     local nowait_gesture = mapper.nowait_match(state.bufnr, inputs)
     if nowait_gesture ~= nil then
-      view.close(state.window.id)
+      view.close(state.window.id, state.virtualedit)
       return nowait_gesture.execute()
     end
 
     local gesture = mapper.match(state.bufnr, inputs)
     local has_forward_match = mapper.has_forward_match(state.bufnr, inputs)
-    local updated_range = view.render_input(window.bufnr, inputs, gesture, has_forward_match)
-    view.render_line(window.bufnr, state.new_points, state.all_points, updated_range)
+    view.render_input(window.bufnr, inputs, gesture, has_forward_match, state.new_points, state.mark_store)
   end,
   finish = function(_)
     local state = states.get()
     if state == nil then
       return
     end
-    view.close(state.window.id)
+    view.close(state.window.id, state.virtualedit)
 
     local gesture = mapper.match(state.bufnr, state.inputs)
     if gesture ~= nil then
@@ -47,7 +46,7 @@ local cmds = {
     if state == nil then
       return
     end
-    view.close(state.window.id)
+    view.close(state.window.id, state.virtualedit)
   end,
 }
 
