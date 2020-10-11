@@ -50,42 +50,9 @@ M.close = function(window_id, virtualedit)
   repository.delete(window_id)
 end
 
-M._add_view_ranges = function(ranges, view_ranges)
-  if #view_ranges == 0 then
-    return vim.deepcopy(ranges)
-  end
-
-  local first_x = view_ranges[1][1]
-  local last_x = view_ranges[#view_ranges][2]
-
-  local new_ranges = vim.tbl_filter(function(r)
-    return r[3] ~= nil and r[3] == "GestureLine" and not (first_x <= r[1] and r[2] <= last_x)
-  end, ranges)
-
-  new_ranges = vim.tbl_map(function(r)
-    if r[1] < first_x and first_x <= r[2] then
-      return {r[1], first_x - 1, r[3]}
-    end
-    if r[1] <= last_x and last_x < r[2] then
-      return {last_x + 1, r[2], r[3]}
-    end
-    return r
-  end, new_ranges)
-
-  for _, view_range in ipairs(view_ranges) do
-    table.insert(new_ranges, view_range)
-  end
-
-  table.sort(new_ranges, function(a, b)
-    return a[1] < b[1]
-  end)
-
-  return new_ranges
-end
-
 M.render_input = function(bufnr, inputs, gesture, has_forward_match, new_points, mark_store)
   if #inputs == 0 then
-    M._set_marks(bufnr, new_points, mark_store, {})
+    M._draw_view(bufnr, new_points, mark_store, {})
     return
   end
 
@@ -170,7 +137,40 @@ M.render_input = function(bufnr, inputs, gesture, has_forward_match, new_points,
     view_ranges_map[y] = new_ranges
   end
 
-  M._set_marks(bufnr, new_points, mark_store, view_ranges_map)
+  M._draw_view(bufnr, new_points, mark_store, view_ranges_map)
+end
+
+M._add_view_ranges = function(ranges, view_ranges)
+  if #view_ranges == 0 then
+    return vim.deepcopy(ranges)
+  end
+
+  local first_x = view_ranges[1][1]
+  local last_x = view_ranges[#view_ranges][2]
+
+  local new_ranges = vim.tbl_filter(function(r)
+    return r[3] ~= nil and r[3] == "GestureLine" and not (first_x <= r[1] and r[2] <= last_x)
+  end, ranges)
+
+  new_ranges = vim.tbl_map(function(r)
+    if r[1] < first_x and first_x <= r[2] then
+      return {r[1], first_x - 1, r[3]}
+    end
+    if r[1] <= last_x and last_x < r[2] then
+      return {last_x + 1, r[2], r[3]}
+    end
+    return r
+  end, new_ranges)
+
+  for _, view_range in ipairs(view_ranges) do
+    table.insert(new_ranges, view_range)
+  end
+
+  table.sort(new_ranges, function(a, b)
+    return a[1] < b[1]
+  end)
+
+  return new_ranges
 end
 
 M._to_chunks = function(ranges)
@@ -197,7 +197,7 @@ M._to_chunks = function(ranges)
   return chunks
 end
 
-M._line_point = function(ranges, x)
+M._to_line_point = function(ranges, x)
   local p = {x, x, "GestureLine"}
 
   local last = ranges[#ranges]
@@ -223,14 +223,14 @@ M._line_point = function(ranges, x)
 end
 
 M._add_line_point = function(ranges, x)
-  local new, index = M._line_point(ranges, x)
+  local new, index = M._to_line_point(ranges, x)
   if new ~= nil then
     table.insert(ranges, index, new)
   end
   return ranges
 end
 
-M._set_marks = function(bufnr, new_points, mark_store, view_ranges_map)
+M._draw_view = function(bufnr, new_points, mark_store, view_ranges_map)
   local ns = vim.api.nvim_create_namespace("gesture")
   local ys = {}
   for _, p in ipairs(new_points) do
