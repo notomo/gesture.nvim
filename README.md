@@ -7,6 +7,7 @@ gesture.nvim is a mouse gesture plugin for Neovim.
 ## Usage
 
 ```vim
+set mouse=a
 nnoremap <silent> <LeftDrag> :<C-u>Gesture draw<CR>
 nnoremap <silent> <LeftRelease> :<C-u>Gesture finish<CR>
 ```
