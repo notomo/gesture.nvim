@@ -55,74 +55,37 @@ M._add_view_ranges = function(ranges, view_ranges)
     return vim.deepcopy(ranges)
   end
 
-  local first = view_ranges[1]
-  local first_x = first[1]
-  local last = view_ranges[#view_ranges]
-  local last_x = last[2]
-
-  local modified_start = 0
-  local modified_end = #ranges
-  if modified_end == 0 then
-    return vim.deepcopy(view_ranges)
-  end
+  local first_x = view_ranges[1][1]
+  local last_x = view_ranges[#view_ranges][2]
 
   local new_ranges = vim.tbl_filter(function(r)
-    return r[3] ~= nil and r[3] == "GestureLine"
+    return r[3] ~= nil and r[3] == "GestureLine" and not (first_x <= r[1] and r[2] <= last_x)
   end, ranges)
-  for i, range in ipairs(new_ranges) do
-    if modified_start == 0 and first_x <= range[1] then
-      modified_start = i
+
+  new_ranges = vim.tbl_map(function(r)
+    if r[1] < first_x and first_x <= r[2] then
+      return {r[1], first_x - 1, r[3]}
     end
-    if last_x <= range[2] then
-      modified_end = i
-      break
+    if r[1] <= last_x and last_x < r[2] then
+      return {last_x + 1, r[2], r[3]}
     end
+    return r
+  end, new_ranges)
+
+  for _, view_range in ipairs(view_ranges) do
+    table.insert(new_ranges, view_range)
   end
 
-  local remove_start = modified_end
-  if modified_start ~= 0 then
-    local frist_target = new_ranges[modified_start]
-    remove_start = modified_start + 1
-    if first_x <= frist_target[1] then
-      remove_start = modified_start
-    else
-      new_ranges[modified_start] = {frist_target[1], first_x, frist_target[3]}
-    end
-  end
-
-  local last_target = new_ranges[modified_end]
-  local remove_end = modified_end - 1
-  local insert = modified_end
-  if last_target ~= nil then
-    if first_x <= last_target[1] and last_target[2] <= last_x then
-      remove_end = modified_end
-    elseif last_target[1] < first_x and first_x < last_target[2] then
-      new_ranges[modified_end] = {last_target[1], first_x - 1, last_target[3]}
-      insert = insert + 1
-    elseif last_target[1] < last_x and last_x < last_target[2] then
-      new_ranges[modified_end] = {last_x + 1, last_target[2], last_target[3]}
-    elseif last_target[2] < first_x then
-      insert = insert + 1
-    end
-  end
-
-  for i = remove_end, remove_start, -1 do
-    table.remove(new_ranges, i)
-  end
-
-  if insert > #new_ranges + 1 then
-    insert = #new_ranges + 1
-  end
-
-  for _, view_range in ipairs(vim.fn.reverse(view_ranges)) do
-    table.insert(new_ranges, insert, view_range)
-  end
+  table.sort(new_ranges, function(a, b)
+    return a[1] < b[1]
+  end)
 
   return new_ranges
 end
 
 M.render_input = function(bufnr, inputs, gesture, has_forward_match, new_points, mark_store)
   if #inputs == 0 then
+    M._set_marks(bufnr, new_points, mark_store, {})
     return
   end
 
@@ -150,6 +113,7 @@ M.render_input = function(bufnr, inputs, gesture, has_forward_match, new_points,
   else
     table.insert(lines, "")
   end
+  table.insert(lines, 1, "")
 
   local row = math.floor(vim.o.lines / 2 - math.floor(#lines / 2 + 0.5) - 1)
   if row < 2 then
@@ -172,19 +136,29 @@ M.render_input = function(bufnr, inputs, gesture, has_forward_match, new_points,
     hl_group = "GestureNoAction"
   end
 
+  local height = vim.api.nvim_win_get_height(0)
   local view_ranges_map = {}
   for i, line in ipairs(lines) do
     local y = row + i
+    if y > height then
+      break
+    end
     local store = mark_store[y] or {}
 
     local view_padding = math.floor((view_width - #line) / 2)
-    local space = (" "):rep(view_padding)
 
     local view_ranges = {
-      {start_column, start_column + view_padding - 1, hl_group, space},
-      {start_column + view_padding + #line, end_column, hl_group, space},
+      {start_column, start_column + view_padding - 1, hl_group},
+      {start_column + view_padding + #line, end_column, hl_group},
     }
-    if line ~= "" then
+    if gesture ~= nil and line == gesture.name then
+      table.insert(view_ranges, 2, {
+        start_column + view_padding,
+        start_column + view_padding + #line,
+        "GestureActionLabel",
+        line,
+      })
+    elseif line ~= "" then
       table.insert(view_ranges, 2, {
         start_column + view_padding,
         start_column + view_padding + #line,
@@ -290,6 +264,7 @@ highlights.default("GestureInput", {
   ctermbg = {"NormalFloat", "bg", "cterm", 235},
   guibg = {"NormalFloat", "bg", "gui", "#3a4b5c"},
   blend = blend,
+  gui = "bold",
 })
 highlights.default("GestureNoAction", {
   ctermfg = {"Comment", "fg", "cterm", 103},

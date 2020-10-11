@@ -57,10 +57,23 @@ asserts.create("window_count"):register_eq(function()
   return vim.fn.tabpagewinnr(vim.fn.tabpagenr(), "$")
 end)
 
-asserts.create("exists_pattern"):register(function(self)
+asserts.create("shown_in_view"):register(function(self)
   return function(_, args)
+    local marks = vim.api.nvim_buf_get_extmarks(0, vim.api.nvim_create_namespace("gesture"), 0, -1, {
+      details = true,
+    })
+    local lines = {}
+    for _, mark in ipairs(marks) do
+      local texts = vim.tbl_map(function(chunk)
+        return chunk[1]
+      end, mark[4].virt_text or {})
+      local line = table.concat(texts, "")
+      table.insert(lines, line)
+    end
+    local content = table.concat(lines, "\n")
+
     local pattern = args[1]
-    local result = vim.fn.search(pattern, "n")
+    local result = vim.fn.stridx(content, pattern)
     self:set_positive(("`%s` not found"):format(pattern))
     self:set_negative(("`%s` found"):format(pattern))
     return result ~= 0

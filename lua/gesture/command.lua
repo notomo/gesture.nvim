@@ -21,7 +21,7 @@ local cmds = {
     local inputs = state.inputs
     local nowait_gesture = mapper.nowait_match(state.bufnr, inputs)
     if nowait_gesture ~= nil then
-      view.close(state.window.id)
+      view.close(state.window.id, state.virtualedit)
       return nowait_gesture.execute()
     end
 
