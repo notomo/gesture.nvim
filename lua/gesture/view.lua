@@ -162,6 +162,18 @@ M._add_view_ranges = function(ranges, view_ranges)
     return r
   end, new_ranges)
 
+  local included = {}
+  for i, r in ipairs(new_ranges) do
+    if r[1] <= first_x and last_x <= r[2] then
+      table.insert(included, i)
+    end
+  end
+  for _, index in ipairs(included) do
+    local r = new_ranges[index]
+    table.insert(new_ranges, index + 1, {last_x + 1, r[2], r[3]})
+    new_ranges[index] = {r[1], first_x - 1, r[3]}
+  end
+
   for _, view_range in ipairs(view_ranges) do
     table.insert(new_ranges, view_range)
   end
