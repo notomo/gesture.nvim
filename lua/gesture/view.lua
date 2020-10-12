@@ -1,5 +1,7 @@
 local repository = require("gesture/repository")
 
+local vim = vim
+
 local M = {}
 
 M.open = function(virtualedit)
@@ -225,8 +227,7 @@ M._to_line_point = function(ranges, x)
 
     if x < s then
       return p, i
-    end
-    if s <= x and x <= e then
+    elseif s <= x and x <= e then
       return nil
     end
   end
@@ -242,8 +243,10 @@ M._add_line_point = function(ranges, x)
   return ranges
 end
 
+local set_extmark = vim.api.nvim_buf_set_extmark
+local ns = vim.api.nvim_create_namespace("gesture")
+
 M._draw_view = function(bufnr, new_points, mark_store, view_ranges_map)
-  local ns = vim.api.nvim_create_namespace("gesture")
   local ys = {}
   for _, p in ipairs(new_points) do
     local x = p[1]
@@ -252,17 +255,14 @@ M._draw_view = function(bufnr, new_points, mark_store, view_ranges_map)
     local store = mark_store[y] or {}
     local ranges = M._add_line_point(view_ranges_map[y] or store.ranges or {}, x)
     local chunks = M._to_chunks(ranges)
-    local id = vim.api.nvim_buf_set_extmark(bufnr, ns, y - 1, 0, {virt_text = chunks, id = store.id})
+    local id = set_extmark(bufnr, ns, y - 1, 0, {virt_text = chunks, id = store.id})
     mark_store[y] = {ranges = ranges, id = id}
   end
   for y, view_ranges in pairs(view_ranges_map) do
     if not vim.tbl_contains(ys, y) then
       local store = mark_store[y] or {}
       local chunks = M._to_chunks(view_ranges)
-      local id = vim.api.nvim_buf_set_extmark(bufnr, ns, y - 1, 0, {
-        virt_text = chunks,
-        id = store.id,
-      })
+      local id = set_extmark(bufnr, ns, y - 1, 0, {virt_text = chunks, id = store.id})
       mark_store[y] = {ranges = view_ranges, id = id}
     end
   end
