@@ -254,7 +254,11 @@ M._draw_view = function(bufnr, new_points, mark_store, view_ranges_map)
     local y = p[2]
     table.insert(ys, y)
     local store = mark_store[y] or {}
+
     local ranges = M._add_line_point(view_ranges_map[y] or store.ranges or {}, x)
+    -- NOTE: for making the vertical line thicker
+    ranges = M._add_line_point(ranges, x - 1)
+
     local chunks = M._to_chunks(ranges)
     local id = set_extmark(bufnr, ns, y - 1, 0, {virt_text = chunks, id = store.id})
     mark_store[y] = {ranges = ranges, id = id}
