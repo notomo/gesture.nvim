@@ -1,4 +1,4 @@
-local gestures = require "gesture"
+local gestures = require("gesture")
 
 local M = {}
 

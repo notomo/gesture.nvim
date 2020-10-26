@@ -1,6 +1,6 @@
-local view = require "gesture/view"
-local mapper = require "gesture/mapper"
-local states = require "gesture/state"
+local view = require("gesture/view")
+local mapper = require("gesture/mapper")
+local states = require("gesture/state")
 
 local M = {}
 

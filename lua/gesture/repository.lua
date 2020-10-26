@@ -1,4 +1,4 @@
-local persist = require("gesture/lib/_persist")("repository")
+local persist = {}
 
 local M = {}
 
