@@ -213,6 +213,9 @@ M._to_chunks = function(ranges)
 end
 
 M._to_line_point = function(ranges, x)
+  if x == 0 then
+    return nil
+  end
   local p = {x, x, "GestureLine"}
 
   local last = ranges[#ranges]
