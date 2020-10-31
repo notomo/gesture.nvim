@@ -131,7 +131,7 @@ local update = function(state)
   local last_point = Point(unpack(state.last_point))
   local line = last_point.line(point)
   if line.direction == nil or line.length < get_length_threshold(line.direction) then
-    return
+    return state
   end
   state.last_point = {point.x, point.y}
 
@@ -140,12 +140,14 @@ local update = function(state)
 
   if last_input == nil or (last_input ~= nil and last_input.value ~= line.direction) then
     table.insert(state.inputs, new_input)
-    return
+    return state
   end
 
   local new_length = last_input.length + new_input.length
   table.remove(state.inputs, #state.inputs)
   table.insert(state.inputs, {kind = "direction", value = line.direction, length = new_length})
+
+  return state
 end
 
 M.get_or_create = function()
@@ -166,7 +168,7 @@ M.get_or_create = function()
   new_state.update = function(window)
     new_state.window = window
     repository.set(window.id, new_state)
-    update(new_state)
+    return update(new_state)
   end
 
   return new_state, false

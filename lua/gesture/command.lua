@@ -16,7 +16,7 @@ local cmds = {
     if not vim.api.nvim_win_is_valid(window.id) then
       return
     end
-    state.update(window)
+    state = state.update(window)
 
     local inputs = state.inputs
     local nowait_gesture = mapper.nowait_match(state.bufnr, inputs)
@@ -75,7 +75,14 @@ M.main = function(...)
     return vim.api.nvim_err_write("not found command: args=" .. vim.inspect(args) .. "\n")
   end
 
-  return cmd(args)
+  local f = function()
+    return cmd(args)
+  end
+  local ok, result = xpcall(f, debug.traceback)
+  if not ok then
+    error(result)
+  end
+  return result
 end
 
 local mouse = vim.api.nvim_eval("\"\\<LeftMouse>\"")
