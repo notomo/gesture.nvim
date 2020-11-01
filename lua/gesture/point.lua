@@ -1,25 +1,6 @@
+local Line = require("gesture/line").Line
+
 local M = {}
-
-M.x_length_threshold = 5
-M.y_length_threshold = 5
-
-local Line = {}
-Line.__index = Line
-
-function Line.new(direction, length)
-  local tbl = {direction = direction, length = length}
-  return setmetatable(tbl, Line)
-end
-
-function Line.is_short(self)
-  local length_threshold
-  if self.direction == "UP" or self.direction == "DOWN" then
-    length_threshold = M.y_length_threshold
-  else
-    length_threshold = M.x_length_threshold
-  end
-  return self.length < length_threshold
-end
 
 local Point = {}
 Point.__index = Point
@@ -49,9 +30,17 @@ function Point.line_to(self, point)
   return Line.new(direction, length)
 end
 
-M.new = function(x, y)
+function Point.new(x, y)
   local tbl = {x = x, y = y}
   return setmetatable(tbl, Point)
 end
+
+function Point.from_window()
+  local x = vim.fn.wincol()
+  local y = vim.fn.winline()
+  return Point.new(x, y)
+end
+
+M.Point = Point
 
 return M

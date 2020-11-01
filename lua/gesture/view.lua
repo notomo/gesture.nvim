@@ -277,8 +277,8 @@ local ns = vim.api.nvim_create_namespace("gesture")
 M._draw_view = function(bufnr, new_points, mark_store, view_ranges_map)
   local ys = {}
   for _, p in ipairs(new_points) do
-    local x = p[1]
-    local y = p[2]
+    local x = p.x
+    local y = p.y
     table.insert(ys, y)
     local store = mark_store[y] or {}
 
