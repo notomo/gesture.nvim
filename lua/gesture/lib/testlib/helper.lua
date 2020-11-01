@@ -11,7 +11,7 @@ M.command = function(cmd)
 end
 
 M.before_each = function()
-  require("gesture/command").click = function()
+  require("gesture/state").click = function()
   end
 end
 

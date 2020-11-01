@@ -4,7 +4,27 @@ local vim = vim
 
 local M = {}
 
-M.open = function(virtualedit)
+local View = {}
+View.__index = View
+
+function View.validate(self)
+  return vim.api.nvim_win_is_valid(self.window_id)
+end
+
+function View.close(self)
+  if not vim.api.nvim_win_is_valid(self.window_id) then
+    return
+  end
+  vim.api.nvim_win_close(self.window_id, true)
+  vim.o.virtualedit = self._virtualedit
+  repository.delete(self.window_id)
+end
+
+function View.render_input(self, inputs, gesture, has_forward_match)
+  return M._render_input(self.bufnr, inputs, gesture, has_forward_match, self._new_points, self._mark_store)
+end
+
+M.open = function()
   local bufnr = vim.api.nvim_create_buf(false, true)
 
   local width = vim.o.columns
@@ -30,30 +50,34 @@ M.open = function(virtualedit)
 
   vim.api.nvim_win_set_option(window_id, "scrolloff", 0)
   vim.api.nvim_win_set_option(window_id, "sidescrolloff", 0)
+  local virtualedit = vim.o.virtualedit
   vim.api.nvim_set_option("virtualedit", "all")
 
   -- NOTE: show and move cursor to the window by <LeftDrag>
   vim.api.nvim_command("redraw")
 
-  local on_leave = ("autocmd WinLeave,TabLeave,BufLeave <buffer=%s> ++once lua require 'gesture/view'.close(%s, '%s')"):format(bufnr, window_id, virtualedit)
+  local on_leave = ("autocmd WinLeave,TabLeave,BufLeave <buffer=%s> ++once lua require 'gesture/view'.close(%s)"):format(bufnr, window_id)
   vim.api.nvim_command(on_leave)
 
-  return {id = window_id, bufnr = bufnr}
+  local tbl = {
+    bufnr = bufnr,
+    window_id = window_id,
+    _virtualedit = virtualedit,
+    _new_points = {},
+    _mark_store = {},
+  }
+  return setmetatable(tbl, View)
 end
 
-M.close = function(window_id, virtualedit)
-  if window_id == "" then
+M.close = function(window_id)
+  local state = repository.get(window_id)
+  if state == nil then
     return
   end
-  if not vim.api.nvim_win_is_valid(window_id) then
-    return
-  end
-  vim.api.nvim_win_close(window_id, true)
-  vim.o.virtualedit = virtualedit
-  repository.delete(window_id)
+  state.view:close()
 end
 
-M.render_input = function(bufnr, inputs, gesture, has_forward_match, new_points, mark_store)
+M._render_input = function(bufnr, inputs, gesture, has_forward_match, new_points, mark_store)
   if #inputs == 0 then
     M._draw_view(bufnr, new_points, mark_store, {})
     return

@@ -1,4 +1,3 @@
-local view = require("gesture/view")
 local mapper = require("gesture/mapper")
 local states = require("gesture/state")
 
@@ -6,37 +5,32 @@ local M = {}
 
 local cmds = {
   draw = function(_)
-    local state, ok = states.get_or_create()
-    local window = state.window
-    if not ok then
-      window = view.open(state.virtualedit)
-    end
-    M.click()
-
-    if not vim.api.nvim_win_is_valid(window.id) then
+    local state = states.get_or_create()
+    local valid = state:update()
+    if not valid then
       return
     end
-    state = state.update(window)
 
     local inputs = state.inputs
-    local nowait_gesture = mapper.nowait_match(state.bufnr, inputs)
+    local bufnr = state.source_bufnr
+    local nowait_gesture = mapper.nowait_match(bufnr, inputs)
     if nowait_gesture ~= nil then
-      view.close(state.window.id, state.virtualedit)
+      state.view:close()
       return nowait_gesture.execute()
     end
 
-    local gesture = mapper.match(state.bufnr, inputs)
-    local has_forward_match = mapper.has_forward_match(state.bufnr, inputs)
-    view.render_input(window.bufnr, inputs, gesture, has_forward_match, state.new_points, state.mark_store)
+    local gesture = mapper.match(bufnr, inputs)
+    local has_forward_match = mapper.has_forward_match(bufnr, inputs)
+    state.view:render_input(inputs, gesture, has_forward_match)
   end,
   finish = function(_)
     local state = states.get()
     if state == nil then
       return
     end
-    view.close(state.window.id, state.virtualedit)
+    state.view:close()
 
-    local gesture = mapper.match(state.bufnr, state.inputs)
+    local gesture = mapper.match(state.source_bufnr, state.inputs)
     if gesture ~= nil then
       return gesture.execute()
     end
@@ -46,7 +40,7 @@ local cmds = {
     if state == nil then
       return
     end
-    view.close(state.window.id, state.virtualedit)
+    state.view:close()
   end,
 }
 
@@ -83,12 +77,6 @@ M.main = function(...)
     error(result)
   end
   return result
-end
-
-local mouse = vim.api.nvim_eval("\"\\<LeftMouse>\"")
-
-M.click = function()
-  vim.api.nvim_command("normal! " .. mouse)
 end
 
 vim.api.nvim_command("doautocmd User GestureSourceLoad")

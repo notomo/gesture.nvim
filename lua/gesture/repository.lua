@@ -2,12 +2,8 @@ local persist = {}
 
 local M = {}
 
-M.set = function(key, values)
-  local new_values = {}
-  for k, v in pairs(values) do
-    new_values[k] = v
-  end
-  persist[key] = new_values
+M.set = function(key, value)
+  persist[key] = value
 end
 
 M.get = function(key)

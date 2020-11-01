@@ -1,4 +1,5 @@
 local repository = require("gesture/repository")
+local views = require("gesture/view")
 
 local M = {}
 
@@ -115,67 +116,82 @@ local Point = function(x, y)
   return {x = x, y = y, line = line}
 end
 
-local update = function(state)
+M.new_point = function()
+  local x = vim.fn.wincol()
+  local y = vim.fn.winline()
+  return Point(x, y)
+end
+
+local State = {}
+State.__index = State
+
+function State.update(self)
+  M.click()
+
+  if not self.view:validate() then
+    return false
+  end
+
   local x = vim.fn.wincol()
   local y = vim.fn.winline()
   local point = Point(x, y)
   local raw_point = {point.x, point.y}
-  if state.last_point == nil then
-    state.last_point = raw_point
-    state.new_points = {raw_point}
+  if self._last_point == nil then
+    self._last_point = raw_point
+    self.view._new_points = {raw_point}
   else
-    local last_raw_point = state.new_points[#state.new_points] or state.last_point
-    state.new_points = get_points(last_raw_point, raw_point)
+    local last_raw_point = self.view._new_points[#self.view._new_points] or self._last_point
+    self.view._new_points = get_points(last_raw_point, raw_point)
   end
 
-  local last_point = Point(unpack(state.last_point))
+  local last_point = Point(unpack(self._last_point))
   local line = last_point.line(point)
   if line.direction == nil or line.length < get_length_threshold(line.direction) then
-    return state
+    return true
   end
-  state.last_point = {point.x, point.y}
+  self._last_point = {point.x, point.y}
 
-  local last_input = state.inputs[#state.inputs]
+  local last_input = self.inputs[#self.inputs]
   local new_input = {kind = "direction", value = line.direction, length = line.length}
 
   if last_input == nil or (last_input ~= nil and last_input.value ~= line.direction) then
-    table.insert(state.inputs, new_input)
-    return state
+    table.insert(self.inputs, new_input)
+    return true
   end
 
   local new_length = last_input.length + new_input.length
-  table.remove(state.inputs, #state.inputs)
-  table.insert(state.inputs, {kind = "direction", value = line.direction, length = new_length})
+  table.remove(self.inputs, #self.inputs)
+  table.insert(self.inputs, {kind = "direction", value = line.direction, length = new_length})
 
-  return state
+  return true
 end
 
 M.get_or_create = function()
   local state = M.get()
   if state ~= nil then
-    return state, true
+    return state
   end
 
-  local new_state = {
-    last_point = nil,
-    new_points = {},
-    mark_store = {},
+  local tbl = {
+    _last_point = nil,
     inputs = {},
-    bufnr = vim.fn.bufnr("%"),
-    window = nil,
-    virtualedit = vim.o.virtualedit,
+    source_bufnr = vim.fn.bufnr("%"),
+    view = views.open(),
   }
-  new_state.update = function(window)
-    new_state.window = window
-    repository.set(window.id, new_state)
-    return update(new_state)
-  end
+  local self = setmetatable(tbl, State)
 
-  return new_state, false
+  repository.set(self.view.window_id, self)
+
+  return self
 end
 
 M.get = function()
   return repository.get(vim.api.nvim_get_current_win())
+end
+
+local mouse = vim.api.nvim_eval("\"\\<LeftMouse>\"")
+M.click = function()
+  vim.api.nvim_command("normal! " .. mouse)
 end
 
 return M
