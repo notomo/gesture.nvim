@@ -1,5 +1,6 @@
 local repository = require("gesture/repository")
 local views = require("gesture/view")
+local mappers = require("gesture/mapper")
 
 local M = {}
 
@@ -172,12 +173,8 @@ M.get_or_create = function()
     return state
   end
 
-  local tbl = {
-    _last_point = nil,
-    inputs = {},
-    source_bufnr = vim.fn.bufnr("%"),
-    view = views.open(),
-  }
+  local mapper = mappers.new(vim.fn.bufnr("%"))
+  local tbl = {_last_point = nil, inputs = {}, view = views.open(), mapper = mapper}
   local self = setmetatable(tbl, State)
 
   repository.set(self.view.window_id, self)
@@ -190,6 +187,7 @@ M.get = function()
 end
 
 local mouse = vim.api.nvim_eval("\"\\<LeftMouse>\"")
+-- replace on testing
 M.click = function()
   vim.api.nvim_command("normal! " .. mouse)
 end

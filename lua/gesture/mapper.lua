@@ -39,8 +39,16 @@ local filter_gesture_map = function(gesture_map, inputs, nowait)
   return nil
 end
 
-M.nowait_match = function(bufnr, inputs)
-  local buffer_gestures = gestures.buffer[bufnr]
+local Mapper = {}
+Mapper.__index = Mapper
+
+M.new = function(bufnr)
+  local tbl = {_bufnr = bufnr}
+  return setmetatable(tbl, Mapper)
+end
+
+function Mapper.nowait_match(self, inputs)
+  local buffer_gestures = gestures.buffer[self._bufnr]
   if buffer_gestures ~= nil then
     local gesture = filter_gesture_map(buffer_gestures, inputs, true)
     if gesture ~= nil then
@@ -50,8 +58,8 @@ M.nowait_match = function(bufnr, inputs)
   return filter_gesture_map(gestures.global, inputs, true)
 end
 
-M.match = function(bufnr, inputs)
-  local buffer_gestures = gestures.buffer[bufnr]
+function Mapper.match(self, inputs)
+  local buffer_gestures = gestures.buffer[self._bufnr]
   if buffer_gestures ~= nil then
     local gesture = filter_gesture_map(buffer_gestures, inputs, false)
     if gesture ~= nil then
@@ -61,9 +69,9 @@ M.match = function(bufnr, inputs)
   return filter_gesture_map(gestures.global, inputs, false)
 end
 
-M.has_forward_match = function(bufnr, inputs)
+function Mapper.has_forward_match(self, inputs)
   local lhs = gestures.to_lhs(inputs)
-  local buffer_gestures = gestures.buffer[bufnr]
+  local buffer_gestures = gestures.buffer[self._bufnr]
   if buffer_gestures ~= nil then
     for key in pairs(buffer_gestures) do
       if vim.startswith(key, lhs) then

@@ -1,4 +1,3 @@
-local mapper = require("gesture/mapper")
 local states = require("gesture/state")
 
 local M = {}
@@ -13,15 +12,14 @@ function GesturePlugin.draw()
   end
 
   local inputs = state.inputs
-  local bufnr = state.source_bufnr
-  local nowait_gesture = mapper.nowait_match(bufnr, inputs)
+  local nowait_gesture = state.mapper:nowait_match(inputs)
   if nowait_gesture ~= nil then
     state.view:close()
     return nowait_gesture.execute()
   end
 
-  local gesture = mapper.match(bufnr, inputs)
-  local has_forward_match = mapper.has_forward_match(bufnr, inputs)
+  local gesture = state.mapper:match(inputs)
+  local has_forward_match = state.mapper:has_forward_match(inputs)
   state.view:render_input(inputs, gesture, has_forward_match)
 end
 
@@ -32,7 +30,7 @@ function GesturePlugin.finish()
   end
   state.view:close()
 
-  local gesture = mapper.match(state.source_bufnr, state.inputs)
+  local gesture = state.mapper:match(state.inputs)
   if gesture ~= nil then
     return gesture.execute()
   end
@@ -50,7 +48,7 @@ M.main = function(...)
   local cmd_name = ({...})[1] or "draw"
   local cmd = GesturePlugin[cmd_name]
   if cmd == nil then
-    return vim.api.nvim_err_write("not found command: cmd=" .. cmd_name .. "\n")
+    return vim.api.nvim_err_write("[gesture] not found command: " .. cmd_name .. "\n")
   end
 
   local ok, result = xpcall(cmd, debug.traceback)
