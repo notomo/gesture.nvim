@@ -16,12 +16,12 @@ end
 
 function Inputs.add(self, input)
   local last = self._inputs[#self._inputs]
-  if last == nil or (last ~= nil and last.value ~= input.value) then
+  if last == nil or last.value ~= input.value then
     table.insert(self._inputs, input)
     return
   end
 
-  self._inputs[#self._inputs].length = last.length + input.length
+  last.length = last.length + input.length
 end
 
 function Inputs.all(self)

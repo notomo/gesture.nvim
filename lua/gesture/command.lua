@@ -2,9 +2,9 @@ local states = require("gesture/state")
 
 local M = {}
 
-local GesturePlugin = {}
+local Command = {}
 
-function GesturePlugin.draw()
+function Command.draw()
   local state = states.get_or_create()
   local valid = state:update()
   if not valid then
@@ -23,7 +23,7 @@ function GesturePlugin.draw()
   state.view:render_input(inputs, gesture, has_forward_match)
 end
 
-function GesturePlugin.finish()
+function Command.finish()
   local state = states.get()
   if state == nil then
     return
@@ -36,7 +36,7 @@ function GesturePlugin.finish()
   end
 end
 
-function GesturePlugin.cancel()
+function Command.cancel()
   local state = states.get()
   if state == nil then
     return
@@ -46,7 +46,7 @@ end
 
 M.main = function(...)
   local cmd_name = ({...})[1] or "draw"
-  local cmd = GesturePlugin[cmd_name]
+  local cmd = Command[cmd_name]
   if cmd == nil then
     return vim.api.nvim_err_write("[gesture] not found command: " .. cmd_name .. "\n")
   end
