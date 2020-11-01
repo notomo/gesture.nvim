@@ -23,7 +23,7 @@ local filter_gestures = function(gesture, inputs, nowait)
 end
 
 local filter_gesture_map = function(gesture_map, inputs, nowait)
-  local lhs = gestures.to_lhs(inputs)
+  local lhs = inputs:identify()
   local gs = gesture_map[lhs]
   if gs == nil then
     return nil
@@ -70,7 +70,7 @@ function Mapper.match(self, inputs)
 end
 
 function Mapper.has_forward_match(self, inputs)
-  local lhs = gestures.to_lhs(inputs)
+  local lhs = inputs:identify()
   local buffer_gestures = gestures.buffer[self._bufnr]
   if buffer_gestures ~= nil then
     for key in pairs(buffer_gestures) do

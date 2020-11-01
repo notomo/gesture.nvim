@@ -2,6 +2,7 @@ local repository = require("gesture/repository")
 local views = require("gesture/view")
 local mappers = require("gesture/mapper")
 local Point = require("gesture/point")
+local Inputs = require("gesture/input").Inputs
 
 local M = {}
 
@@ -109,17 +110,8 @@ function State.update(self)
   end
   self._last_point = {point.x, point.y}
 
-  local last_input = self.inputs[#self.inputs]
   local new_input = {kind = "direction", value = line.direction, length = line.length}
-
-  if last_input == nil or (last_input ~= nil and last_input.value ~= line.direction) then
-    table.insert(self.inputs, new_input)
-    return true
-  end
-
-  local new_length = last_input.length + new_input.length
-  table.remove(self.inputs, #self.inputs)
-  table.insert(self.inputs, {kind = "direction", value = line.direction, length = new_length})
+  self.inputs:add(new_input)
 
   return true
 end
@@ -131,7 +123,7 @@ M.get_or_create = function()
   end
 
   local mapper = mappers.new(vim.fn.bufnr("%"))
-  local tbl = {_last_point = nil, inputs = {}, view = views.open(), mapper = mapper}
+  local tbl = {_last_point = nil, inputs = Inputs.new(), view = views.open(), mapper = mapper}
   local self = setmetatable(tbl, State)
 
   repository.set(self.view.window_id, self)

@@ -78,7 +78,7 @@ M.close = function(window_id)
 end
 
 M._render_input = function(bufnr, inputs, gesture, has_forward_match, new_points, mark_store)
-  if #inputs == 0 then
+  if inputs:is_empty() then
     M._draw_view(bufnr, new_points, mark_store, {})
     return
   end
@@ -90,7 +90,7 @@ M._render_input = function(bufnr, inputs, gesture, has_forward_match, new_points
   local view_width = width / 4
 
   local lines = {}
-  for _, input in ipairs(inputs) do
+  for _, input in inputs:all() do
     local str = input.value
     local last = table.remove(lines, #lines)
     if last == nil then
