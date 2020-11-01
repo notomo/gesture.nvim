@@ -1,18 +1,9 @@
 local repository = require("gesture/repository")
 local views = require("gesture/view")
 local mappers = require("gesture/mapper")
+local Point = require("gesture/point")
 
 local M = {}
-
-M.x_length_threshold = 5
-M.y_length_threshold = 5
-
-local get_length_threshold = function(direction)
-  if direction == "UP" or direction == "DOWN" then
-    return M.y_length_threshold
-  end
-  return M.x_length_threshold
-end
 
 local L = function(p1, p2)
   local x1 = p1[1]
@@ -89,53 +80,19 @@ local get_points = function(point1, point2)
   return points
 end
 
-local Point = function(x, y)
-  local line = function(point)
-    local x1 = x
-    local x2 = point.x
-    local diff_x = x2 - x1
-    local length_x = math.abs(diff_x)
-
-    local y1 = y
-    local y2 = point.y
-    local diff_y = y2 - y1
-    local length_y = math.abs(diff_y)
-
-    local direction = nil
-    local length = 0
-    if length_x > length_y then
-      direction = diff_x > 0 and "RIGHT" or "LEFT"
-      length = length_x
-    elseif length_y >= length_x and length_y > 0 then
-      direction = diff_y > 0 and "DOWN" or "UP"
-      length = length_y
-    end
-
-    return {length = length, direction = direction}
-  end
-
-  return {x = x, y = y, line = line}
-end
-
-M.new_point = function()
-  local x = vim.fn.wincol()
-  local y = vim.fn.winline()
-  return Point(x, y)
-end
-
 local State = {}
 State.__index = State
 
 function State.update(self)
   M.click()
 
-  if not self.view:validate() then
+  if not self.view:is_valid() then
     return false
   end
 
   local x = vim.fn.wincol()
   local y = vim.fn.winline()
-  local point = Point(x, y)
+  local point = Point.new(x, y)
   local raw_point = {point.x, point.y}
   if self._last_point == nil then
     self._last_point = raw_point
@@ -145,9 +102,9 @@ function State.update(self)
     self.view._new_points = get_points(last_raw_point, raw_point)
   end
 
-  local last_point = Point(unpack(self._last_point))
-  local line = last_point.line(point)
-  if line.direction == nil or line.length < get_length_threshold(line.direction) then
+  local last_point = Point.new(unpack(self._last_point))
+  local line = last_point:line_to(point)
+  if line == nil or line:is_short() then
     return true
   end
   self._last_point = {point.x, point.y}

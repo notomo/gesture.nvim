@@ -7,7 +7,7 @@ local M = {}
 local View = {}
 View.__index = View
 
-function View.validate(self)
+function View.is_valid(self)
   return vim.api.nvim_win_is_valid(self.window_id)
 end
 
