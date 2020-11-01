@@ -41,8 +41,9 @@ end
 
 local Mapper = {}
 Mapper.__index = Mapper
+M.Mapper = Mapper
 
-M.new = function(bufnr)
+function Mapper.new(bufnr)
   local tbl = {_bufnr = bufnr}
   return setmetatable(tbl, Mapper)
 end

@@ -102,12 +102,6 @@ function Point.new(x, y)
   return setmetatable(tbl, Point)
 end
 
-function Point.from_window()
-  local x = vim.fn.wincol()
-  local y = vim.fn.winline()
-  return Point.new(x, y)
-end
-
 M.Point = Point
 
 return M

@@ -1,7 +1,6 @@
 local repository = require("gesture/repository")
-local views = require("gesture/view")
-local mappers = require("gesture/mapper")
-local Point = require("gesture/point").Point
+local View = require("gesture/view").View
+local Mapper = require("gesture/mapper").Mapper
 local Inputs = require("gesture/input").Inputs
 
 local M = {}
@@ -10,15 +9,10 @@ local State = {}
 State.__index = State
 
 function State.update(self)
-  M.click()
-
-  if not self.view:is_valid() then
+  local point = self.view:focus(self.last_point)
+  if point == nil then
     return false
   end
-
-  local point = Point.from_window()
-  local last = self.view._new_points[#self.view._new_points] or self.last_point
-  self.view._new_points = last:interpolate(point)
 
   local line = self.last_point:line_to(point)
   if line == nil or line:is_short() then
@@ -38,12 +32,11 @@ M.get_or_create = function()
     return current_state
   end
 
-  local mapper = mappers.new(vim.fn.bufnr("%"))
-  local view = views.open()
-  M.click()
-
+  local source_bufnr = vim.fn.bufnr("%")
+  local mapper = Mapper.new(source_bufnr)
+  local view = View.open()
   local tbl = {
-    last_point = Point.from_window(),
+    last_point = view.current_point(),
     inputs = Inputs.new(),
     view = view,
     mapper = mapper,
@@ -57,12 +50,6 @@ end
 
 M.get = function()
   return repository.get(vim.api.nvim_get_current_win())
-end
-
-local mouse = vim.api.nvim_eval("\"\\<LeftMouse>\"")
--- replace on testing
-M.click = function()
-  vim.api.nvim_command("normal! " .. mouse)
 end
 
 return M

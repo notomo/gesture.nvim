@@ -1,4 +1,5 @@
 local repository = require("gesture/repository")
+local Point = require("gesture/point").Point
 
 local vim = vim
 
@@ -6,9 +7,26 @@ local M = {}
 
 local View = {}
 View.__index = View
+M.View = View
 
-function View.is_valid(self)
-  return vim.api.nvim_win_is_valid(self.window_id)
+function View.current_point()
+  local x = vim.fn.wincol()
+  local y = vim.fn.winline()
+  return Point.new(x, y)
+end
+
+function View.focus(self, last_point)
+  M.click()
+
+  if not vim.api.nvim_win_is_valid(self.window_id) then
+    return
+  end
+
+  local point = self.current_point()
+  local last = self._new_points[#self._new_points] or last_point
+  self._new_points = last:interpolate(point)
+
+  return point
 end
 
 function View.close(self)
@@ -21,10 +39,10 @@ function View.close(self)
 end
 
 function View.render_input(self, inputs, gesture, has_forward_match)
-  return M._render_input(self.bufnr, inputs, gesture, has_forward_match, self._new_points, self._mark_store)
+  return M._render_input(self._bufnr, inputs, gesture, has_forward_match, self._new_points, self._mark_store)
 end
 
-M.open = function()
+function View.open()
   local bufnr = vim.api.nvim_create_buf(false, true)
 
   local width = vim.o.columns
@@ -55,13 +73,14 @@ M.open = function()
 
   -- NOTE: show and move cursor to the window by <LeftDrag>
   vim.api.nvim_command("redraw")
+  M.click()
 
   local on_leave = ("autocmd WinLeave,TabLeave,BufLeave <buffer=%s> ++once lua require 'gesture/view'.close(%s)"):format(bufnr, window_id)
   vim.api.nvim_command(on_leave)
 
   local tbl = {
-    bufnr = bufnr,
     window_id = window_id,
+    _bufnr = bufnr,
     _virtualedit = virtualedit,
     _new_points = {},
     _mark_store = {},
@@ -298,6 +317,12 @@ M._draw_view = function(bufnr, new_points, mark_store, view_ranges_map)
       mark_store[y] = {ranges = view_ranges, id = id}
     end
   end
+end
+
+local mouse = vim.api.nvim_eval("\"\\<LeftMouse>\"")
+-- replace on testing
+M.click = function()
+  vim.api.nvim_command("normal! " .. mouse)
 end
 
 local highlights = require("gesture/lib/highlight")

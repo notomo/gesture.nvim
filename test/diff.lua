@@ -1,7 +1,7 @@
 local scenario = function(ctx)
   vim.o.termguicolors = true
   vim.o.background = "dark"
-  require("gesture/state").click = function()
+  require("gesture/view").click = function()
   end
 
   local width = vim.o.columns
