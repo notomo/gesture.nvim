@@ -15,10 +15,6 @@ local L = function(p1, p2)
 end
 
 local get_points = function(point1, point2)
-  if point1.x == point2.x and point1.y == point2.y then
-    return {}
-  end
-
   local points = {}
   if point1.x == point2.x then
     local p1 = point1
@@ -87,12 +83,6 @@ function State.update(self)
   end
 
   local point = Point.from_window()
-  if self._last_point == nil then
-    self._last_point = point
-    self.view._new_points = {point}
-    return true
-  end
-
   local last = self.view._new_points[#self.view._new_points] or self._last_point
   self.view._new_points = get_points(last, point)
 
@@ -109,18 +99,26 @@ function State.update(self)
 end
 
 M.get_or_create = function()
-  local state = M.get()
-  if state ~= nil then
-    return state
+  local current_state = M.get()
+  if current_state ~= nil then
+    return current_state
   end
 
   local mapper = mappers.new(vim.fn.bufnr("%"))
-  local tbl = {_last_point = nil, inputs = Inputs.new(), view = views.open(), mapper = mapper}
-  local self = setmetatable(tbl, State)
+  local view = views.open()
+  M.click()
 
-  repository.set(self.view.window_id, self)
+  local tbl = {
+    _last_point = Point.from_window(),
+    inputs = Inputs.new(),
+    view = view,
+    mapper = mapper,
+  }
+  local state = setmetatable(tbl, State)
 
-  return self
+  repository.set(state.view.window_id, state)
+
+  return state
 end
 
 M.get = function()
