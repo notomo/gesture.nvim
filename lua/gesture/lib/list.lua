@@ -9,4 +9,18 @@ M.reverse = function(tbl)
   return new_tbl
 end
 
+M.wrap = function(strs, width, separator)
+  separator = separator or " "
+  local wrapped = {}
+  for _, str in ipairs(strs) do
+    local last = wrapped[#wrapped]
+    if last == nil or #last + #separator + #str > width then
+      table.insert(wrapped, str)
+    else
+      wrapped[#wrapped] = table.concat({last, str}, separator)
+    end
+  end
+  return wrapped
+end
+
 return M

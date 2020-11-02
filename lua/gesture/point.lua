@@ -7,14 +7,10 @@ local Point = {}
 Point.__index = Point
 
 function Point.line_to(self, point)
-  local x1 = self.x
-  local x2 = point.x
-  local diff_x = x2 - x1
+  local diff_x = point.x - self.x
   local length_x = math.abs(diff_x)
 
-  local y1 = self.y
-  local y2 = point.y
-  local diff_y = y2 - y1
+  local diff_y = point.y - self.y
   local length_y = math.abs(diff_y)
 
   local direction, length

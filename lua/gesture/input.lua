@@ -25,8 +25,10 @@ function Inputs.add(self, input)
   last.length = last.length + input.length
 end
 
-function Inputs.all(self)
-  return ipairs(self._inputs)
+function Inputs.values(self)
+  return vim.tbl_map(function(input)
+    return input.value
+  end, self._inputs)
 end
 
 function Inputs.is_empty(self)

@@ -1,12 +1,17 @@
+local listlib = require("gesture/lib/list")
+local vim = vim
+
 local M = {}
 
 local GestureBoard = {}
 GestureBoard.__index = GestureBoard
 M.GestureBoard = GestureBoard
 
-local sep = " "
-local padding = 3
-local both_padding = padding * 2
+local one_padding = 3
+local both_padding = one_padding * 2
+local round = function(x)
+  return math.floor(x + 0.5)
+end
 
 function GestureBoard._new(range_map)
   local tbl = {range_map = range_map or {}}
@@ -18,44 +23,22 @@ function GestureBoard.create(inputs, gesture, has_forward_match)
     return GestureBoard._new()
   end
 
-  local width = vim.o.columns
-  local view_width = width / 4
+  local editor_width = vim.o.columns
+  local width = editor_width / 4
 
-  local lines = {}
-  for _, input in inputs:all() do
-    local str = input.value
-    local last = table.remove(lines, #lines)
-    if last == nil then
-      table.insert(lines, str)
-    elseif #last + #sep + #str + both_padding > view_width then
-      table.insert(lines, last)
-      table.insert(lines, str)
-    else
-      table.insert(lines, last .. sep .. str)
-    end
-  end
+  local texts = listlib.wrap(inputs:values(), width - both_padding)
+  local lines = {"", unpack(texts)}
   if gesture ~= nil then
     table.insert(lines, gesture.name)
   else
     table.insert(lines, "")
   end
-  table.insert(lines, 1, "")
 
-  local row = math.floor(vim.o.lines / 2 - math.floor(#lines / 2 + 0.5) - 1)
-  if row < 2 then
-    row = 2
-  end
-
-  local half_width = math.floor(width / 2 + 0.5)
-  local half_view_width = math.floor(view_width / 2 + 0.5)
-  local start_column = half_width - half_view_width
-  local end_column = half_width + half_view_width
-  if start_column < 0 then
-    start_column = 0
-  end
-  if end_column > width then
-    end_column = width
-  end
+  local row = math.max(2, math.floor(vim.o.lines / 2 - round(#lines / 2) - 1))
+  local center = round(editor_width / 2)
+  local half_width = round(width / 2)
+  local start_col = math.max(0, center - half_width)
+  local end_col = math.min(center + half_width, editor_width)
 
   local hl_group = "GestureInput"
   if not has_forward_match then
@@ -70,27 +53,22 @@ function GestureBoard.create(inputs, gesture, has_forward_match)
       break
     end
 
-    local view_padding = math.floor((view_width - #line) / 2)
-
+    local padding = math.floor((width - #line) / 2)
     local ranges = {
-      {start_column, start_column + view_padding - 1, hl_group},
-      {start_column + view_padding + #line, end_column, hl_group},
+      {start_col, start_col + padding - 1, hl_group},
+      {start_col + padding + #line, end_col, hl_group},
     }
     if gesture ~= nil and line == gesture.name then
       table.insert(ranges, 2, {
-        start_column + view_padding,
-        start_column + view_padding + #line,
+        start_col + padding,
+        start_col + padding + #line,
         "GestureActionLabel",
         line,
       })
     elseif line ~= "" then
-      table.insert(ranges, 2, {
-        start_column + view_padding,
-        start_column + view_padding + #line,
-        hl_group,
-        line,
-      })
+      table.insert(ranges, 2, {start_col + padding, start_col + padding + #line, hl_group, line})
     end
+
     range_map[y] = ranges
   end
 

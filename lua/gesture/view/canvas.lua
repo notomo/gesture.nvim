@@ -4,6 +4,7 @@ local Canvas = {}
 Canvas.__index = Canvas
 M.Canvas = Canvas
 
+local vim = vim
 local set_extmark = vim.api.nvim_buf_set_extmark
 local ns = vim.api.nvim_create_namespace("gesture")
 
