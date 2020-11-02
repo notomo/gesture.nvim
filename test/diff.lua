@@ -4,6 +4,13 @@ local scenario = function(ctx)
   require("gesture/view").click = function()
   end
 
+  local gesture = require("gesture")
+  gesture.register({
+    name = "example name",
+    inputs = {gesture.right(), gesture.down()},
+    action = "normal! gg",
+  })
+
   local width = vim.o.columns
 
   vim.api.nvim_command("Gesture draw")
@@ -16,6 +23,7 @@ local scenario = function(ctx)
   vim.api.nvim_command("Gesture draw")
   vim.api.nvim_command("normal! 10j")
   vim.api.nvim_command("Gesture draw")
+  ctx:screenshot()
   vim.api.nvim_command(("normal! %dh"):format(width))
   vim.api.nvim_command("Gesture draw")
   ctx:screenshot()

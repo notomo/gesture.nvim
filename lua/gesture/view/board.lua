@@ -55,18 +55,18 @@ function GestureBoard.create(inputs, gesture, has_forward_match)
 
     local padding = math.floor((width - #line) / 2)
     local ranges = {
-      {start_col, start_col + padding - 1, hl_group},
-      {start_col + padding + #line, end_col, hl_group},
+      {start_col, start_col + padding, hl_group},
+      {start_col + padding + #line + 1, end_col, hl_group},
     }
+
+    local hl
     if gesture ~= nil and line == gesture.name then
-      table.insert(ranges, 2, {
-        start_col + padding,
-        start_col + padding + #line,
-        "GestureActionLabel",
-        line,
-      })
+      hl = "GestureActionLabel"
     elseif line ~= "" then
-      table.insert(ranges, 2, {start_col + padding, start_col + padding + #line, hl_group, line})
+      hl = hl_group
+    end
+    if hl ~= nil then
+      table.insert(ranges, 2, {start_col + padding + 1, start_col + padding + #line, hl, line})
     end
 
     range_map[y] = ranges

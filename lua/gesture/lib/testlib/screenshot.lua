@@ -94,10 +94,12 @@ function Test.diff(self, result_a, result_b)
       f:write(("\" diff found: %s %s\n"):format(file_path_a, file_path_b))
 
       f:write("tabedit | terminal\n")
+      f:write("setlocal bufhidden=wipe\n")
       f:write(("call chansend(&channel, \"cat %s\\n\")\n"):format(file_path_a))
       f:write(("file %s_%s\n"):format(vim.fn.fnamemodify(result_a.dir_path, ":t"), name_a))
 
       f:write("tabedit | terminal\n")
+      f:write("setlocal bufhidden=wipe\n")
       f:write(("call chansend(&channel, \"cat %s\\n\")\n"):format(file_path_b))
       f:write(("file %s_%s\n"):format(vim.fn.fnamemodify(result_b.dir_path, ":t"), name_b))
 
