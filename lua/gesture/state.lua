@@ -1,4 +1,4 @@
-local repository = require("gesture/repository")
+local repository = require("gesture/lib/repository")
 local View = require("gesture/view").View
 local Mapper = require("gesture/mapper").Mapper
 local Inputs = require("gesture/input").Inputs
@@ -9,16 +9,16 @@ local State = {}
 State.__index = State
 
 function State.update(self)
-  local point = self.view:focus(self.last_point)
+  local point = self.view:focus(self._last_point)
   if point == nil then
     return false
   end
 
-  local line = self.last_point:line_to(point)
+  local line = self._last_point:line_to(point)
   if line == nil or line:is_short() then
     return true
   end
-  self.last_point = point
+  self._last_point = point
 
   local new_input = {kind = "direction", value = line.direction, length = line.length}
   self.inputs:add(new_input)
@@ -36,7 +36,7 @@ M.get_or_create = function()
   local mapper = Mapper.new(source_bufnr)
   local view = View.open()
   local tbl = {
-    last_point = view.current_point(),
+    _last_point = view.current_point(),
     inputs = Inputs.new(),
     view = view,
     mapper = mapper,

@@ -67,8 +67,8 @@ function Canvas._add_ranges(self, y, ranges)
     new_ranges[index] = {r[1], first_x - 1, r[3]}
   end
 
-  for _, view_range in ipairs(ranges) do
-    table.insert(new_ranges, view_range)
+  for _, range in ipairs(ranges) do
+    table.insert(new_ranges, range)
   end
 
   table.sort(new_ranges, function(a, b)
@@ -156,5 +156,12 @@ function Canvas._to_virtual_texts(ranges)
   end
   return virtual_texts
 end
+
+local highlights = require("gesture/lib/highlight")
+highlights.default("GestureLine", {
+  ctermbg = {"Statement", "fg", "cterm", 153},
+  guibg = {"Statement", "fg", "gui", "#a8d2eb"},
+  blend = 0,
+})
 
 return M
