@@ -11,7 +11,7 @@ M.get = function(key)
 end
 
 M.delete = function(key)
-  persist[key] = nil
+  M.set(key, nil)
 end
 
 return M

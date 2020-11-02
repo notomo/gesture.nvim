@@ -44,6 +44,7 @@ Mapper.__index = Mapper
 M.Mapper = Mapper
 
 function Mapper.new(bufnr)
+  vim.validate({bufnr = {bufnr, "number"}})
   local tbl = {_bufnr = bufnr}
   return setmetatable(tbl, Mapper)
 end

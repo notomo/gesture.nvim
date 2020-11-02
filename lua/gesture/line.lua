@@ -7,6 +7,7 @@ local Line = {}
 Line.__index = Line
 
 function Line.new(direction, length)
+  vim.validate({direction = {direction, "string"}, length = {length, "number"}})
   local tbl = {direction = direction, length = length}
   return setmetatable(tbl, Line)
 end
