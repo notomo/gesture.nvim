@@ -1,14 +1,11 @@
 local M = {}
 
-M.find_root = function(root_dir_name)
-  local suffix = "/lua/%?.lua"
-  local target = ("%s%s$"):format(root_dir_name, suffix)
-  for _, path in ipairs(vim.split(package.path, ";")) do
-    if M.adjust_sep(path):find(target) then
-      return path:sub(1, #path - #suffix + 1), nil
-    end
+M.find_root = function(pattern)
+  local file = vim.api.nvim_get_runtime_file("lua/" .. pattern, false)[1]
+  if file == nil then
+    return nil, "project root directory not found by pattern: " .. pattern
   end
-  return nil, "project root directory not found"
+  return vim.split(file, "/lua/", true)[1], nil
 end
 
 if vim.fn.has("win32") == 1 then

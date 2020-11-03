@@ -1,6 +1,6 @@
 local M = {}
 
-local root, err = require("gesture/lib/path").find_root("gesture.nvim")
+local root, err = require("gesture/lib/path").find_root("gesture/*.lua")
 if err ~= nil then
   error(err)
 end
