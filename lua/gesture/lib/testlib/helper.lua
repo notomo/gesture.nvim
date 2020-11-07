@@ -7,7 +7,13 @@ end
 M.root = root
 
 M.command = function(cmd)
-  vim.api.nvim_command(cmd)
+  local _, cmderr = pcall(vim.api.nvim_command, cmd)
+  if cmderr then
+    local info = debug.getinfo(2)
+    local pos = ("%s:%d"):format(info.source, info.currentline)
+    local msg = ("on %s: failed excmd `%s`\n%s"):format(pos, cmd, cmderr)
+    error(msg)
+  end
 end
 
 M.before_each = function()

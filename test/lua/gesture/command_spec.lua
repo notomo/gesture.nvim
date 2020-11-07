@@ -194,4 +194,15 @@ hoge         foo
     assert.shown_in_view("UP")
   end)
 
+  it("avoid creating multiple gesture state", function()
+    command("tabedit")
+    command("Gesture draw")
+    command("noautocmd tabprevious")
+
+    command("Gesture draw")
+    command("tabnext")
+
+    assert.window_count(1)
+  end)
+
 end)

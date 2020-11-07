@@ -1,4 +1,5 @@
 local repository = require("gesture/lib/repository")
+local windowlib = require("gesture/lib/window")
 local Point = require("gesture/point").Point
 local Canvas = require("gesture/view/canvas").Canvas
 local GestureBoard = require("gesture/view/board").GestureBoard
@@ -32,12 +33,9 @@ function View.focus(self, last_point)
 end
 
 function View.close(self)
-  if not vim.api.nvim_win_is_valid(self.window_id) then
-    return
-  end
-  vim.api.nvim_win_close(self.window_id, true)
   vim.o.virtualedit = self._virtualedit
   repository.delete(self.window_id)
+  windowlib.close(self.window_id)
 end
 
 function View.open()
@@ -62,7 +60,12 @@ function View.open()
   vim.api.nvim_buf_set_option(bufnr, "bufhidden", "wipe")
   vim.api.nvim_buf_set_option(bufnr, "filetype", "gesture")
   vim.api.nvim_buf_set_option(bufnr, "modifiable", false)
-  vim.api.nvim_buf_set_name(bufnr, "gesture://GESTURE")
+
+  local before_window_id = windowlib.by_pattern("\\v^gesture://\\d+/GESTURE$")
+  if before_window_id ~= nil then
+    M.close(before_window_id)
+  end
+  vim.api.nvim_buf_set_name(bufnr, ("gesture://%d/GESTURE"):format(bufnr))
 
   vim.api.nvim_win_set_option(window_id, "scrolloff", 0)
   vim.api.nvim_win_set_option(window_id, "sidescrolloff", 0)
