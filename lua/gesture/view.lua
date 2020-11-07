@@ -61,7 +61,7 @@ function View.open()
   vim.api.nvim_buf_set_option(bufnr, "filetype", "gesture")
   vim.api.nvim_buf_set_option(bufnr, "modifiable", false)
 
-  local before_window_id = windowlib.by_pattern("\\v^gesture://\\d+/GESTURE$")
+  local before_window_id = windowlib.by_pattern("^gesture://")
   if before_window_id ~= nil then
     M.close(before_window_id)
   end
