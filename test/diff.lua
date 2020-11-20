@@ -2,6 +2,7 @@ local scenario = function(ctx)
   vim.o.termguicolors = true
   vim.o.background = "dark"
   require("gesture/view").click = function()
+    vim.api.nvim_command("redraw!")
   end
 
   local gesture = require("gesture")
@@ -32,25 +33,22 @@ local scenario = function(ctx)
   ctx:screenshot()
 end
 
-local main = function(compare_hash, result_path)
+local main = function(comparison, result_dir)
   vim.o.runtimepath = vim.fn.getcwd() .. "," .. vim.o.runtimepath
   vim.api.nvim_command("runtime! plugin/*.vim")
 
-  local test = require("gesture/lib/testlib/screenshot").setup({
+  local test = require("virtes/screenshot").setup({
     scenario = scenario,
-    quit_on_err = true,
-    result_path = result_path,
+    result_dir = result_dir,
     cleanup = function()
-      vim.api.nvim_command("tabedit")
-      vim.api.nvim_command("tabonly!")
       vim.api.nvim_command("silent! %bwipeout!")
       require("gesture/lib/cleanup")()
     end,
   })
-  local before = test:run({hash = compare_hash})
+  local before = test:run({hash = comparison})
   local after = test:run({hash = nil})
 
-  test:diff(before, after)
+  before:diff(after):write_replay_script()
 end
 
 return main
