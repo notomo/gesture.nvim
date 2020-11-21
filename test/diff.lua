@@ -37,7 +37,7 @@ local main = function(comparison, result_dir)
   vim.o.runtimepath = vim.fn.getcwd() .. "," .. vim.o.runtimepath
   vim.api.nvim_command("runtime! plugin/*.vim")
 
-  local test = require("virtes/screenshot").setup({
+  local test = require("virtes").setup({
     scenario = scenario,
     result_dir = result_dir,
     cleanup = function()
