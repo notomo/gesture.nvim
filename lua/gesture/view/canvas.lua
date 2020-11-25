@@ -160,8 +160,8 @@ end
 
 local highlights = require("gesture/lib/highlight")
 highlights.default("GestureLine", {
-  ctermbg = {"Statement", "fg", "cterm", 153},
-  guibg = {"Statement", "fg", "gui", "#a8d2eb"},
+  ctermbg = {"Statement", 153},
+  guibg = {"Statement", "#a8d2eb"},
   blend = 0,
 })
 

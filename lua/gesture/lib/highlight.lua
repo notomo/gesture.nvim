@@ -1,11 +1,18 @@
 local M = {}
 
+local attrs = {
+  ctermfg = {"fg", "cterm"},
+  guifg = {"fg", "gui"},
+  ctermbg = {"bg", "cterm"},
+  guibg = {"bg", "gui"},
+}
 M.default = function(name, attributes)
   local attr = ""
   for key, v in pairs(attributes) do
     local value
     if type(v) == "table" then
-      local hl_group, attr_key, mode, default = unpack(v)
+      local hl_group, default = unpack(v)
+      local attr_key, mode = unpack(attrs[key])
       local id = vim.api.nvim_get_hl_id_by_name(hl_group)
       local attr_value = vim.fn.synIDattr(id, attr_key, mode)
       if attr_value ~= "" then
