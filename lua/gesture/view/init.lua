@@ -36,13 +36,14 @@ function View.close(self)
   vim.o.virtualedit = self._virtualedit
   repository.delete(self.window_id)
   windowlib.close(self.window_id)
+  vim.api.nvim_set_decoration_provider(vim.api.nvim_create_namespace("gesture"), {})
 end
 
 function View.open()
   local bufnr = vim.api.nvim_create_buf(false, true)
 
   local width = vim.o.columns
-  local height = vim.o.lines
+  local height = vim.o.lines - 1
 
   local window_id = vim.api.nvim_open_win(bufnr, true, {
     width = width,
@@ -86,7 +87,18 @@ function View.open()
     _canvas = Canvas.new(bufnr),
     _new_points = {},
   }
-  return setmetatable(tbl, View)
+  local view = setmetatable(tbl, View)
+
+  vim.api.nvim_set_decoration_provider(vim.api.nvim_create_namespace("gesture"), {
+    on_win = function(_, _, buf, topline)
+      if topline == 0 or buf ~= bufnr or not vim.api.nvim_win_is_valid(window_id) then
+        return false
+      end
+      vim.fn.winrestview({topline = 0, leftcol = 0})
+    end,
+  })
+
+  return view
 end
 
 M.close = function(window_id)

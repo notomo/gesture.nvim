@@ -205,4 +205,15 @@ hoge         foo
     assert.window_count(1)
   end)
 
+  it("reset scroll on scrolled", function()
+    command("Gesture draw")
+    command("normal! G")
+    command("normal! zz")
+
+    -- NOTE: zz may not fire callback in headless mode.
+    command("redraw")
+
+    assert.window_first_row(1)
+  end)
+
 end)

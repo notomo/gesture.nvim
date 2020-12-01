@@ -63,6 +63,10 @@ asserts.create("window_count"):register_eq(function()
   return vim.fn.tabpagewinnr(vim.fn.tabpagenr(), "$")
 end)
 
+asserts.create("window_first_row"):register_eq(function()
+  return vim.fn.line("w0")
+end)
+
 asserts.create("shown_in_view"):register(function(self)
   return function(_, args)
     local marks = vim.api.nvim_buf_get_extmarks(0, vim.api.nvim_create_namespace("gesture"), 0, -1, {
