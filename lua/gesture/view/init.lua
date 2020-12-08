@@ -1,6 +1,6 @@
 local repository = require("gesture/lib/repository")
 local windowlib = require("gesture/lib/window")
-local Point = require("gesture/point").Point
+local Point = require("gesture/model/point").Point
 local Canvas = require("gesture/view/canvas").Canvas
 local GestureBoard = require("gesture/view/board").GestureBoard
 

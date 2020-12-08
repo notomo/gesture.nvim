@@ -1,4 +1,4 @@
-local Inputs = require("gesture/input").Inputs
+local Inputs = require("gesture/model/input").Inputs
 
 local M = {}
 

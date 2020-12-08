@@ -1,6 +1,6 @@
-local Direction = require("gesture/direction").Direction
-local Gesture = require("gesture/gesture").Gesture
-local GestureMap = require("gesture/gesture").GestureMap
+local Direction = require("gesture/model/direction").Direction
+local Gesture = require("gesture/model/gesture").Gesture
+local GestureMap = require("gesture/model/gesture").GestureMap
 
 local M = {}
 

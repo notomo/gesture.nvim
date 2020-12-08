@@ -1,7 +1,7 @@
 local repository = require("gesture/lib/repository")
 local View = require("gesture/view").View
 local Mapper = require("gesture/mapper").Mapper
-local Inputs = require("gesture/input").Inputs
+local Inputs = require("gesture/model/input").Inputs
 
 local M = {}
 
