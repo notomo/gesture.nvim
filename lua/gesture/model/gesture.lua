@@ -120,6 +120,7 @@ function GestureMap.add(self, gesture)
 end
 
 function GestureMap.get(self, bufnr)
+  vim.validate({bufnr = {bufnr, "number"}})
   local buffer_gestures = self._buffer_local[bufnr]
   if buffer_gestures ~= nil then
     return buffer_gestures

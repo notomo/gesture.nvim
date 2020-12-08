@@ -1,6 +1,6 @@
 local repository = require("gesture/lib/repository")
 local View = require("gesture/view").View
-local Mapper = require("gesture/mapper").Mapper
+local Matcher = require("gesture/matcher").Matcher
 local Inputs = require("gesture/model/input").Inputs
 
 local M = {}
@@ -32,14 +32,13 @@ M.get_or_create = function()
     return current_state
   end
 
-  local source_bufnr = vim.fn.bufnr("%")
-  local mapper = Mapper.new(source_bufnr)
+  local matcher = Matcher.new(vim.api.nvim_get_current_buf())
   local view = View.open()
   local tbl = {
     _last_point = view.current_point(),
     inputs = Inputs.new(),
     view = view,
-    mapper = mapper,
+    matcher = matcher,
   }
   local state = setmetatable(tbl, State)
 

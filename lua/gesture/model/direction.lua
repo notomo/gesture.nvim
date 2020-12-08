@@ -17,8 +17,12 @@ function Direction._new(typ, opts)
     },
     opts = {opts, "table", true},
   }
-
   opts = opts or {}
+  vim.validate({
+    max_length = {opts.max_length, "number", true},
+    min_length = {opts.min_length, "number", true},
+  })
+
   local tbl = {
     kind = "direction",
     value = typ,
