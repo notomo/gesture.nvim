@@ -31,6 +31,10 @@ function Inputs.values(self)
   end, self._inputs)
 end
 
+function Inputs.iter(self)
+  return next, self._inputs, nil
+end
+
 function Inputs.is_empty(self)
   return #self._inputs == 0
 end

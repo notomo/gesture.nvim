@@ -15,7 +15,7 @@ function Command.draw()
   local nowait_gesture = state.mapper:nowait_match(inputs)
   if nowait_gesture ~= nil then
     state.view:close()
-    return nowait_gesture.execute()
+    return nowait_gesture:execute()
   end
 
   local gesture = state.mapper:match(inputs)
@@ -32,7 +32,7 @@ function Command.finish()
 
   local gesture = state.mapper:match(state.inputs)
   if gesture ~= nil then
-    return gesture.execute()
+    return gesture:execute()
   end
 end
 
@@ -45,10 +45,10 @@ function Command.cancel()
 end
 
 M.main = function(...)
-  local cmd_name = ({...})[1] or "draw"
-  local cmd = Command[cmd_name]
+  local name = ({...})[1] or "draw"
+  local cmd = Command[name]
   if cmd == nil then
-    return vim.api.nvim_err_write("[gesture] not found command: " .. cmd_name .. "\n")
+    return vim.api.nvim_err_write("[gesture] not found command: " .. name .. "\n")
   end
 
   local ok, result = xpcall(cmd, debug.traceback)
