@@ -52,10 +52,31 @@ hoge         foo
     assert.current_word("foo")
   end)
 
+  it("can execute a global gesture with matched buffer local gesture", function()
+    local gesture = require("gesture")
+    gesture.register({
+      inputs = {gesture.right({min_length = 10})},
+      action = "normal! $",
+      buffer = "%",
+    })
+    gesture.register({inputs = {gesture.right()}, action = "normal! G"})
+
+    helper.set_lines([[
+hoge         foo
+bar]])
+
+    command("Gesture draw")
+    command("normal! 8l")
+    command("Gesture draw")
+    command("Gesture finish")
+
+    assert.window_count(1)
+    assert.current_word("bar")
+  end)
+
   it("can register and execute a nowait gesture", function()
     local gesture = require("gesture")
     gesture.register({inputs = {gesture.right()}, action = "normal! $", nowait = true})
-    gesture.register({inputs = {gesture.right(), gesture.left()}, action = "normal! 0"})
 
     helper.set_lines([[
 hoge         foo

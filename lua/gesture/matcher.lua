@@ -13,15 +13,15 @@ function Matcher.new(bufnr)
 end
 
 function Matcher.nowait_match(self, inputs)
-  return gestures.map:get(self._bufnr):match(inputs, true)
+  return gestures.map:match(self._bufnr, inputs, true)
 end
 
 function Matcher.match(self, inputs)
-  return gestures.map:get(self._bufnr):match(inputs, false)
+  return gestures.map:match(self._bufnr, inputs, false)
 end
 
 function Matcher.has_forward_match(self, inputs)
-  return gestures.map:get(self._bufnr):has_forward_match(inputs)
+  return gestures.map:has_forward_match(self._bufnr, inputs)
 end
 
 return M

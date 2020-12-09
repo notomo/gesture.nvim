@@ -119,13 +119,22 @@ function GestureMap.add(self, gesture)
   end
 end
 
-function GestureMap.get(self, bufnr)
-  vim.validate({bufnr = {bufnr, "number"}})
-  local buffer_gestures = self._buffer_local[bufnr]
-  if buffer_gestures ~= nil then
-    return buffer_gestures
+function GestureMap.match(self, bufnr, inputs, nowait)
+  vim.validate({bufnr = {bufnr, "number"}, nowait = {nowait, "boolean"}})
+  local gestures = self._buffer_local[bufnr]
+  if gestures ~= nil then
+    return gestures:match(inputs, nowait) or self._global:match(inputs, nowait)
   end
-  return self._global
+  return self._global:match(inputs, nowait)
+end
+
+function GestureMap.has_forward_match(self, bufnr, inputs)
+  vim.validate({bufnr = {bufnr, "number"}})
+  local gestures = self._buffer_local[bufnr]
+  if gestures ~= nil then
+    return gestures:has_forward_match(inputs) or self._global:has_forward_match(inputs)
+  end
+  return self._global:has_forward_match(inputs)
 end
 
 return M
