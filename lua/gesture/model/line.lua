@@ -5,6 +5,7 @@ M.y_length_threshold = 5
 
 local Line = {}
 Line.__index = Line
+M.Line = Line
 
 function Line.new(direction, length)
   vim.validate({direction = {direction, "string"}, length = {length, "number"}})
@@ -21,7 +22,5 @@ function Line.is_short(self)
   end
   return self.length < threshold
 end
-
-M.Line = Line
 
 return M

@@ -17,6 +17,7 @@ Inputs.__index = function(self, k)
   end
   return Inputs[k]
 end
+M.Inputs = Inputs
 
 function Inputs.new(inputs)
   vim.validate({inputs = {inputs, "table", true}})
@@ -55,7 +56,5 @@ function Inputs.identify(self)
   end, self._inputs)
   return table.concat(ids, "-")
 end
-
-M.Inputs = Inputs
 
 return M

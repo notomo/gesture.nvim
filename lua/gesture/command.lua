@@ -2,8 +2,8 @@ local messagelib = require("gesture/lib/message")
 local State = require("gesture/state").State
 
 local M = {}
-
 local Command = {}
+M.Command = Command
 
 function Command.draw()
   local state = State.get_or_create()
@@ -37,11 +37,8 @@ function Command.finish()
   end
 end
 
-function Command.cancel()
-  M.close()
-end
-
-M.close = function(window_id)
+function Command.cancel(window_id)
+  vim.validate({window_id = {window_id, "number", true}})
   local state = State.get(window_id)
   if state == nil then
     return

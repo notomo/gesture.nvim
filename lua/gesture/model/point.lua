@@ -5,6 +5,7 @@ local M = {}
 
 local Point = {}
 Point.__index = Point
+M.Point = Point
 
 function Point.line_to(self, point)
   local diff_x = point.x - self.x
@@ -97,7 +98,5 @@ function Point.new(x, y)
   local tbl = {x = x, y = y}
   return setmetatable(tbl, Point)
 end
-
-M.Point = Point
 
 return M

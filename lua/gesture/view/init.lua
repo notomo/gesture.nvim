@@ -62,7 +62,7 @@ function View.open()
 
   local before_window_id = windowlib.by_pattern("^gesture://")
   if before_window_id ~= nil then
-    vim.api.nvim_command(("lua require 'gesture/command'.close(%s)"):format(before_window_id)) -- HACk
+    require("gesture/command").Command.cancel(before_window_id)
   end
   vim.api.nvim_buf_set_name(bufnr, ("gesture://%d/GESTURE"):format(bufnr))
 
@@ -70,13 +70,13 @@ function View.open()
   vim.wo[window_id].sidescrolloff = 0
 
   local virtualedit = vim.o.virtualedit
-  vim.api.nvim_set_option("virtualedit", "all")
+  vim.o.virtualedit = "all"
 
   -- NOTE: show and move cursor to the window by <LeftDrag>
   vim.api.nvim_command("redraw")
   M.click()
 
-  local on_leave = ("autocmd WinLeave,TabLeave,BufLeave <buffer=%s> ++once lua require 'gesture/command'.close(%s)"):format(bufnr, window_id)
+  local on_leave = ("autocmd WinLeave,TabLeave,BufLeave <buffer=%s> ++once lua require('gesture/command').Command.cancel(%s)"):format(bufnr, window_id)
   vim.api.nvim_command(on_leave)
 
   local tbl = {
