@@ -1,4 +1,3 @@
-local repository = require("gesture/lib/repository")
 local windowlib = require("gesture/lib/window")
 local Point = require("gesture/model/point").Point
 local Canvas = require("gesture/view/canvas").Canvas
@@ -34,7 +33,6 @@ end
 
 function View.close(self)
   vim.o.virtualedit = self._virtualedit
-  repository.delete(self.window_id)
   windowlib.close(self.window_id)
   vim.api.nvim_set_decoration_provider(vim.api.nvim_create_namespace("gesture"), {})
 end
@@ -54,22 +52,22 @@ function View.open()
     external = false,
     style = "minimal",
   })
-  vim.api.nvim_win_set_option(window_id, "winblend", 100)
+  vim.wo[window_id].winblend = 100
 
   local lines = vim.fn["repeat"]({""}, height)
   vim.api.nvim_buf_set_lines(bufnr, 0, -1, false, lines)
-  vim.api.nvim_buf_set_option(bufnr, "bufhidden", "wipe")
-  vim.api.nvim_buf_set_option(bufnr, "filetype", "gesture")
-  vim.api.nvim_buf_set_option(bufnr, "modifiable", false)
+  vim.bo[bufnr].bufhidden = "wipe"
+  vim.bo[bufnr].filetype = "gesture"
+  vim.bo[bufnr].modifiable = false
 
   local before_window_id = windowlib.by_pattern("^gesture://")
   if before_window_id ~= nil then
-    M.close(before_window_id)
+    vim.api.nvim_command(("lua require 'gesture/command'.close(%s)"):format(before_window_id)) -- HACk
   end
   vim.api.nvim_buf_set_name(bufnr, ("gesture://%d/GESTURE"):format(bufnr))
 
-  vim.api.nvim_win_set_option(window_id, "scrolloff", 0)
-  vim.api.nvim_win_set_option(window_id, "sidescrolloff", 0)
+  vim.wo[window_id].scrolloff = 0
+  vim.wo[window_id].sidescrolloff = 0
 
   local virtualedit = vim.o.virtualedit
   vim.api.nvim_set_option("virtualedit", "all")
@@ -78,7 +76,7 @@ function View.open()
   vim.api.nvim_command("redraw")
   M.click()
 
-  local on_leave = ("autocmd WinLeave,TabLeave,BufLeave <buffer=%s> ++once lua require 'gesture/view'.close(%s)"):format(bufnr, window_id)
+  local on_leave = ("autocmd WinLeave,TabLeave,BufLeave <buffer=%s> ++once lua require 'gesture/command'.close(%s)"):format(bufnr, window_id)
   vim.api.nvim_command(on_leave)
 
   local tbl = {
@@ -99,14 +97,6 @@ function View.open()
   })
 
   return view
-end
-
-M.close = function(window_id)
-  local state = repository.get(window_id)
-  if state == nil then
-    return
-  end
-  state.view:close()
 end
 
 function View.render_input(self, inputs, gesture, has_forward_match)

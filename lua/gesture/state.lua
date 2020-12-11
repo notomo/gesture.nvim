@@ -2,11 +2,13 @@ local repository = require("gesture/lib/repository")
 local View = require("gesture/view").View
 local Matcher = require("gesture/matcher").Matcher
 local Inputs = require("gesture/model/input").Inputs
+local Input = require("gesture/model/input").Input
 
 local M = {}
 
 local State = {}
 State.__index = State
+M.State = State
 
 function State.update(self)
   local point = self.view:focus(self._last_point)
@@ -20,14 +22,18 @@ function State.update(self)
   end
   self._last_point = point
 
-  local new_input = {kind = "direction", value = line.direction, length = line.length}
-  self.inputs:add(new_input)
+  self.inputs:add(Input.direction(line.direction, line.length))
 
   return true
 end
 
-M.get_or_create = function()
-  local current_state = M.get()
+function State.close(self)
+  repository.delete(self.view.window_id)
+  self.view:close()
+end
+
+function State.get_or_create()
+  local current_state = State.get()
   if current_state ~= nil then
     return current_state
   end
@@ -47,8 +53,8 @@ M.get_or_create = function()
   return state
 end
 
-M.get = function()
-  return repository.get(vim.api.nvim_get_current_win())
+function State.get(window_id)
+  return repository.get(window_id or vim.api.nvim_get_current_win())
 end
 
 return M

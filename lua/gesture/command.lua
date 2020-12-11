@@ -1,12 +1,12 @@
 local messagelib = require("gesture/lib/message")
-local states = require("gesture/state")
+local State = require("gesture/state").State
 
 local M = {}
 
 local Command = {}
 
 function Command.draw()
-  local state = states.get_or_create()
+  local state = State.get_or_create()
   local valid = state:update()
   if not valid then
     return
@@ -15,7 +15,7 @@ function Command.draw()
   local inputs = state.inputs
   local nowait_gesture = state.matcher:nowait_match(inputs)
   if nowait_gesture ~= nil then
-    state.view:close()
+    state:close()
     return nowait_gesture:execute()
   end
 
@@ -25,11 +25,11 @@ function Command.draw()
 end
 
 function Command.finish()
-  local state = states.get()
+  local state = State.get()
   if state == nil then
     return
   end
-  state.view:close()
+  state:close()
 
   local gesture = state.matcher:match(state.inputs)
   if gesture ~= nil then
@@ -38,11 +38,15 @@ function Command.finish()
 end
 
 function Command.cancel()
-  local state = states.get()
+  M.close()
+end
+
+M.close = function(window_id)
+  local state = State.get(window_id)
   if state == nil then
     return
   end
-  state.view:close()
+  state:close()
 end
 
 M.main = function(...)
