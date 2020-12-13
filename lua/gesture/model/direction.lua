@@ -48,4 +48,8 @@ function Direction.left(opts)
   return Direction._new(types.LEFT, opts)
 end
 
+function Direction.__eq(a, b)
+  return a.kind == b.kind and a.value == b.value and a.max_length == b.max_length and a.min_length == b.min_length
+end
+
 return M

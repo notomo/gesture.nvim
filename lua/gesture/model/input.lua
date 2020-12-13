@@ -57,4 +57,16 @@ function Inputs.identify(self)
   return table.concat(ids, "-")
 end
 
+function Inputs.__eq(a, b)
+  if a:identify() ~= b:identify() then
+    return false
+  end
+  for i, input in a:iter() do
+    if input ~= b[i] then
+      return false
+    end
+  end
+  return true
+end
+
 return M

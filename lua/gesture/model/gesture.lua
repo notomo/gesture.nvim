@@ -24,14 +24,28 @@ function Gesture.new(info)
       end,
       "not empty",
     },
+    nowait = {info.nowait, "boolean", true},
+    buffer = {
+      info.buffer,
+      function(buffer)
+        local typ = type(buffer)
+        return typ == "nil" or typ == "string" or typ == "number"
+      end,
+      "nil or string or number",
+    },
   })
+
+  local bufnr = nil
+  if info.buffer then
+    bufnr = vim.fn.bufnr(info.buffer)
+  end
 
   local tbl = {
     name = info.name or "",
     action = info.action,
     inputs = Inputs.new(info.inputs),
     nowait = info.nowait or false,
-    buffer = info.buffer,
+    buffer = bufnr,
   }
   return setmetatable(tbl, Gesture)
 end
@@ -62,6 +76,10 @@ function Gesture.match(self, inputs, nowait)
   return true
 end
 
+function Gesture.__eq(a, b)
+  return a.inputs == b.inputs and a.nowait == b.nowait and a.buffer == b.buffer
+end
+
 local Gestures = {}
 Gestures.__index = Gestures
 M.Gestures = Gestures
@@ -75,6 +93,12 @@ function Gestures.add(self, gesture)
   local lhs = gesture.inputs:identify()
   if self._gestures[lhs] == nil then
     self._gestures[lhs] = {}
+  end
+  for i, g in ipairs(self._gestures[lhs]) do
+    if gesture == g then
+      self._gestures[lhs][i] = gesture
+      return
+    end
   end
   table.insert(self._gestures[lhs], gesture)
 end

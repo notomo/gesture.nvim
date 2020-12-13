@@ -264,4 +264,44 @@ hoge         foo
     assert.window_first_row(1)
   end)
 
+  it("overwrites the same gesture", function()
+    local gesture = require("gesture")
+    gesture.register({inputs = {gesture.right(), gesture.left()}, action = "normal! w"})
+    gesture.register({inputs = {gesture.right(), gesture.left()}, action = "normal! 2w"})
+
+    helper.set_lines([[hoge foo bar]])
+
+    command("Gesture draw")
+    command("normal! 10l")
+    command("Gesture draw")
+    command("normal! 10h")
+    command("Gesture draw")
+    command("Gesture finish")
+
+    assert.current_word("bar")
+  end)
+
+  it("does not overwrite gesture has the different attribute", function()
+    local gesture = require("gesture")
+    gesture.register({
+      inputs = {gesture.right({max_length = 20}), gesture.left()},
+      action = "normal! w",
+    })
+    gesture.register({
+      inputs = {gesture.right({min_length = 20}), gesture.left()},
+      action = "normal! 2w",
+    })
+
+    helper.set_lines([[hoge foo bar]])
+
+    command("Gesture draw")
+    command("normal! 10l")
+    command("Gesture draw")
+    command("normal! 10h")
+    command("Gesture draw")
+    command("Gesture finish")
+
+    assert.current_word("foo")
+  end)
+
 end)
