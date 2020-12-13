@@ -2,26 +2,34 @@
 
 [![ci](https://github.com/notomo/gesture.nvim/workflows/ci/badge.svg?branch=master)](https://github.com/notomo/gesture.nvim/actions?query=workflow%3Aci+branch%3Amaster)
 
-gesture.nvim is a mouse gesture plugin for Neovim.
+gesture.nvim is a mouse gesture plugin for Neovim (nightly).
+
+<img src="https://raw.github.com/wiki/notomo/gesture.nvim/images/gesture.gif" width="1280">
 
 ## Usage
 
 ```vim
 set mouse=a
-nnoremap <silent> <LeftDrag> :<C-u>Gesture draw<CR>
-nnoremap <silent> <LeftRelease> :<C-u>Gesture finish<CR>
-```
-
-```lua
+nnoremap <silent> <LeftDrag> <Cmd>Gesture draw<CR>
+nnoremap <silent> <LeftRelease> <Cmd>Gesture finish<CR>
+lua << EOF
 local gesture = require('gesture')
 gesture.register({
-    name = "scroll to bottom",
-    inputs = { gesture.up(), gesture.down() },
-    action = "normal! G"
+  name = "scroll to bottom",
+  inputs = { gesture.up(), gesture.down() },
+  action = "normal! G"
 })
 gesture.register({
-    name = "scroll to top",
-    inputs = { gesture.down(), gesture.up() },
-    action = "normal! gg"
+  name = "next tab",
+  inputs = { gesture.right() },
+  action = "tabnext"
 })
+gesture.register({
+  name = "previous tab",
+  inputs = { gesture.left() },
+  action = function() -- also can use function
+    vim.cmd("tabprevious")
+  end,
+})
+EOF
 ```

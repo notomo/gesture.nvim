@@ -52,6 +52,33 @@ hoge         foo
     assert.current_word("foo")
   end)
 
+  it("can use function as action", function()
+    local gesture = require("gesture")
+    gesture.register({
+      inputs = {gesture.down(), gesture.up()},
+      action = function()
+        vim.cmd("normal! gg")
+      end,
+    })
+
+    helper.set_lines([[
+hoge
+
+
+foo]])
+    command("normal! G")
+
+    command("Gesture draw")
+    command("normal! 10j")
+    command("Gesture draw")
+    command("normal! 10k")
+    command("Gesture draw")
+    command("Gesture finish")
+
+    assert.window_count(1)
+    assert.current_line("hoge")
+  end)
+
   it("can execute a global gesture with matched buffer local gesture", function()
     local gesture = require("gesture")
     gesture.register({

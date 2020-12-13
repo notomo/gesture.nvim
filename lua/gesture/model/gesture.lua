@@ -9,7 +9,14 @@ M.Gesture = Gesture
 function Gesture.new(info)
   vim.validate({info = {info, "table"}})
   vim.validate({
-    action = {info.action, "string"},
+    action = {
+      info.action,
+      function(action)
+        local typ = type(action)
+        return typ == "string" or typ == "function"
+      end,
+      "string or function",
+    },
     inputs = {
       info.inputs,
       function(inputs)
@@ -30,7 +37,10 @@ function Gesture.new(info)
 end
 
 function Gesture.execute(self)
-  return vim.fn.execute(self.action)
+  if type(self.action) == "function" then
+    return self.action()
+  end
+  return vim.api.nvim_exec(self.action, true)
 end
 
 function Gesture.match(self, inputs, nowait)
