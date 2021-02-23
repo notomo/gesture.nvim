@@ -83,7 +83,11 @@ function Canvas._draw(self, y)
   local row = self._rows[y] or {}
   local ranges = row.ranges or {}
   local virtual_texts = self._to_virtual_texts(ranges)
-  local id = set_extmark(self._bufnr, ns, y - 1, 0, {virt_text = virtual_texts, id = row.id})
+  local id = set_extmark(self._bufnr, ns, y - 1, 0, {
+    virt_text = virtual_texts,
+    virt_text_pos = "overlay",
+    id = row.id,
+  })
   self._rows[y] = {ranges = ranges, id = id}
 end
 
@@ -95,7 +99,11 @@ function Canvas._draw_point(self, p)
   ranges = self:_add_point(ranges, p.x - 1)
 
   local virtual_texts = self._to_virtual_texts(ranges)
-  local id = set_extmark(self._bufnr, ns, p.y - 1, 0, {virt_text = virtual_texts, id = row.id})
+  local id = set_extmark(self._bufnr, ns, p.y - 1, 0, {
+    virt_text = virtual_texts,
+    virt_text_pos = "overlay",
+    id = row.id,
+  })
   self._rows[p.y] = {ranges = ranges, id = id}
 end
 
