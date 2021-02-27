@@ -1,6 +1,6 @@
 # gesture.nvim
 
-[![ci](https://github.com/notomo/gesture.nvim/workflows/ci/badge.svg?branch=master)](https://github.com/notomo/gesture.nvim/actions?query=workflow%3Aci+branch%3Amaster)
+[![ci](https://github.com/notomo/gesture.nvim/workflows/ci/badge.svg?branch=master)](https://github.com/notomo/gesture.nvim/actions/workflows/ci.yml?query=branch%3Amaster)
 
 gesture.nvim is a mouse gesture plugin for Neovim (nightly).
 
@@ -10,8 +10,15 @@ gesture.nvim is a mouse gesture plugin for Neovim (nightly).
 
 ```vim
 set mouse=a
+
 nnoremap <silent> <LeftDrag> <Cmd>Gesture draw<CR>
 nnoremap <silent> <LeftRelease> <Cmd>Gesture finish<CR>
+
+" or if you would like to use right click
+nnoremap <RightMouse> <Nop>
+nnoremap <silent> <RightDrag> <Cmd>Gesture draw<CR>
+nnoremap <silent> <RightRelease> <Cmd>Gesture finish<CR>
+
 lua << EOF
 local gesture = require('gesture')
 gesture.register({
