@@ -38,5 +38,11 @@ gesture.register({
     vim.cmd("tabprevious")
   end,
 })
+gesture.register({
+  name = "go back",
+  inputs = { gesture.right(), gesture.left() },
+  -- map to `<C-o>` keycode
+  action = [[lua vim.api.nvim_feedkeys(vim.api.nvim_replace_termcodes("<C-o>", true, false, true), "n", true)]]
+})
 EOF
 ```
