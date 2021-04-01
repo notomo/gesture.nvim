@@ -41,7 +41,7 @@ function View.open()
   local bufnr = vim.api.nvim_create_buf(false, true)
 
   local width = vim.o.columns
-  local height = vim.o.lines - 1
+  local height = vim.o.lines - vim.o.cmdheight
 
   local window_id = vim.api.nvim_open_win(bufnr, true, {
     width = width,
