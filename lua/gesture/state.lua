@@ -1,8 +1,8 @@
-local repository = require("gesture/lib/repository").Repository.new("state")
-local View = require("gesture/view").View
-local Matcher = require("gesture/model/matcher").Matcher
-local Inputs = require("gesture/model/input").Inputs
-local Input = require("gesture/model/input").Input
+local repository = require("gesture.lib.repository").Repository.new("state")
+local View = require("gesture.view").View
+local Matcher = require("gesture.model.matcher").Matcher
+local Inputs = require("gesture.model.input").Inputs
+local Input = require("gesture.model.input").Input
 
 local M = {}
 

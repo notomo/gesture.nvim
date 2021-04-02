@@ -1,4 +1,4 @@
-local listlib = require("gesture/lib/list")
+local listlib = require("gesture.lib.list")
 local vim = vim
 
 local M = {}
@@ -75,7 +75,7 @@ function GestureBoard.create(inputs, gesture, has_forward_match)
   return GestureBoard._new(range_map)
 end
 
-local highlights = require("gesture/lib/highlight")
+local highlights = require("gesture.lib.highlight")
 local blend = 0
 highlights.default("GestureInput", {
   ctermfg = {"NormalFloat", 230},

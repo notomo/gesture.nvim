@@ -1,13 +1,9 @@
 local M = {}
 
-local root, err = require("gesture/lib/path").find_root("gesture/*.lua")
-if err ~= nil then
-  error(err)
-end
-M.root = root
+M.root = require("gesture.lib.path").find_root()
 
-M.command = function(cmd)
-  local _, cmderr = pcall(vim.api.nvim_command, cmd)
+function M.command(cmd)
+  local _, cmderr = pcall(vim.cmd, cmd)
   if cmderr then
     local info = debug.getinfo(2)
     local pos = ("%s:%d"):format(info.source, info.currentline)
@@ -16,12 +12,12 @@ M.command = function(cmd)
   end
 end
 
-M.before_each = function()
-  require("gesture/view").click = function()
+function M.before_each()
+  require("gesture.view").click = function()
   end
 end
 
-M.after_each = function()
+function M.after_each()
   M.command("tabedit")
   M.command("tabonly!")
   M.command("silent! %bwipeout!")
@@ -29,21 +25,21 @@ M.after_each = function()
 
   vim.api.nvim_set_current_dir(M.root)
 
-  require("gesture/lib/cleanup")()
+  require("gesture.lib.cleanup")()
 end
 
-M.buffer_log = function()
+function M.buffer_log()
   local lines = vim.fn.getbufline("%", 1, "$")
   for _, line in ipairs(lines) do
     print(line)
   end
 end
 
-M.set_lines = function(lines)
+function M.set_lines(lines)
   vim.api.nvim_buf_set_lines(0, 0, -1, false, vim.split(lines, "\n"))
 end
 
-M.cursor = function()
+function M.cursor()
   return {vim.fn.line("."), vim.fn.col(".")}
 end
 

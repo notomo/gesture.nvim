@@ -166,7 +166,7 @@ function Canvas._to_virtual_texts(ranges)
   return virtual_texts
 end
 
-local highlights = require("gesture/lib/highlight")
+local highlights = require("gesture.lib.highlight")
 highlights.default("GestureLine", {
   ctermbg = {"Statement", 153},
   guibg = {"Statement", "#a8d2eb"},

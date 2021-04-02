@@ -6,7 +6,7 @@ local attrs = {
   ctermbg = {"bg", "cterm"},
   guibg = {"bg", "gui"},
 }
-M.default = function(name, attributes)
+function M.default(name, attributes)
   local attr = ""
   for key, v in pairs(attributes) do
     local value
@@ -27,7 +27,7 @@ M.default = function(name, attributes)
   end
 
   local cmd = ("highlight default %s %s"):format(name, attr)
-  vim.api.nvim_command(cmd)
+  vim.cmd(cmd)
 end
 
 return M

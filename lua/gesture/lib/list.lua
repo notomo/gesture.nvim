@@ -1,7 +1,7 @@
 local M = {}
 
 -- NOTE: keeps metatable unlike vim.fn.reverse(tbl)
-M.reverse = function(tbl)
+function M.reverse(tbl)
   local new_tbl = {}
   for i = #tbl, 1, -1 do
     table.insert(new_tbl, tbl[i])
@@ -9,7 +9,7 @@ M.reverse = function(tbl)
   return new_tbl
 end
 
-M.wrap = function(strs, width, separator)
+function M.wrap(strs, width, separator)
   separator = separator or " "
   local wrapped = {}
   for _, str in ipairs(strs) do

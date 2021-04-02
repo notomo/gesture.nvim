@@ -1,19 +1,22 @@
 local M = {}
 
-M.find_root = function(pattern)
-  local file = vim.api.nvim_get_runtime_file("lua/" .. pattern, false)[1]
+local plugin_name = vim.split((...):gsub("%.", "/"), "/", true)[1]
+
+function M.find_root()
+  local root_pattern = ("lua/%s/*.lua"):format(plugin_name)
+  local file = vim.api.nvim_get_runtime_file(root_pattern, false)[1]
   if file == nil then
-    return nil, "project root directory not found by pattern: " .. pattern
+    error("project root directory not found by pattern: " .. root_pattern)
   end
-  return vim.split(M.adjust_sep(file), "/lua/", true)[1], nil
+  return vim.split(M.adjust_sep(file), "/lua/", true)[1]
 end
 
 if vim.fn.has("win32") == 1 then
-  M.adjust_sep = function(path)
+  function M.adjust_sep(path)
     return path:gsub("\\", "/")
   end
 else
-  M.adjust_sep = function(path)
+  function M.adjust_sep(path)
     return path
   end
 end

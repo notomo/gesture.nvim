@@ -1,4 +1,4 @@
-local helper = require("gesture/lib/testlib/helper")
+local helper = require("gesture.lib.testlib.helper")
 local command = helper.command
 
 describe("gesture.nvim", function()

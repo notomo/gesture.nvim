@@ -1,5 +1,5 @@
-local messagelib = require("gesture/lib/message")
-local State = require("gesture/state").State
+local messagelib = require("gesture.lib.message")
+local State = require("gesture.state").State
 
 local M = {}
 local Command = {}
@@ -46,20 +46,20 @@ function Command.cancel(window_id)
   state:close()
 end
 
-M.main = function(...)
+function M.main(...)
   local name = ({...})[1] or "draw"
   local cmd = Command[name]
   if cmd == nil then
-    return messagelib.error("not found command: " .. name)
+    return messagelib.warn("not found command: " .. name)
   end
 
   local ok, result = xpcall(cmd, debug.traceback)
   if not ok then
-    error(result)
+    messagelib.error(result)
   end
   return result
 end
 
-vim.api.nvim_command("doautocmd User GestureSourceLoad")
+vim.cmd("doautocmd User GestureSourceLoad")
 
 return M

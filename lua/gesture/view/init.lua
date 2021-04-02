@@ -1,7 +1,7 @@
-local windowlib = require("gesture/lib/window")
-local Point = require("gesture/model/point").Point
-local Canvas = require("gesture/view/canvas").Canvas
-local GestureBoard = require("gesture/view/board").GestureBoard
+local windowlib = require("gesture.lib.window")
+local Point = require("gesture.model.point").Point
+local Canvas = require("gesture.view.canvas").Canvas
+local GestureBoard = require("gesture.view.board").GestureBoard
 
 local vim = vim
 
@@ -62,7 +62,7 @@ function View.open()
 
   local before_window_id = windowlib.by_pattern("^gesture://")
   if before_window_id ~= nil then
-    require("gesture/command").Command.cancel(before_window_id)
+    require("gesture.command").Command.cancel(before_window_id)
   end
   vim.api.nvim_buf_set_name(bufnr, ("gesture://%d/GESTURE"):format(bufnr))
 
@@ -73,11 +73,11 @@ function View.open()
   vim.o.virtualedit = "all"
 
   -- NOTE: show and move cursor to the window by <LeftDrag>
-  vim.api.nvim_command("redraw")
+  vim.cmd("redraw")
   M.click()
 
-  local on_leave = ("autocmd WinLeave,TabLeave,BufLeave <buffer=%s> ++once lua require('gesture/command').Command.cancel(%s)"):format(bufnr, window_id)
-  vim.api.nvim_command(on_leave)
+  local on_leave = ("autocmd WinLeave,TabLeave,BufLeave <buffer=%s> ++once lua require('gesture.command').Command.cancel(%s)"):format(bufnr, window_id)
+  vim.cmd(on_leave)
 
   local tbl = {
     window_id = window_id,
@@ -106,8 +106,8 @@ end
 
 local mouse = vim.api.nvim_eval("\"\\<LeftMouse>\"")
 -- replace on testing
-M.click = function()
-  vim.api.nvim_command("normal! " .. mouse)
+function M.click()
+  vim.cmd("normal! " .. mouse)
 end
 
 return M
