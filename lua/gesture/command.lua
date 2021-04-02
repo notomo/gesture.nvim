@@ -5,6 +5,19 @@ local M = {}
 local Command = {}
 M.Command = Command
 
+function Command.new(name, ...)
+  local args = {...}
+  local f = function()
+    return Command[name](unpack(args))
+  end
+
+  local ok, result = xpcall(f, debug.traceback)
+  if not ok then
+    return messagelib.error(result)
+  end
+  return result
+end
+
 function Command.draw()
   local state = State.get_or_create()
   local valid = state:update()
@@ -46,18 +59,15 @@ function Command.cancel(window_id)
   state:close()
 end
 
+-- Deprecated
 function M.main(...)
   local name = ({...})[1] or "draw"
   local cmd = Command[name]
   if cmd == nil then
     return messagelib.warn("not found command: " .. name)
   end
-
-  local ok, result = xpcall(cmd, debug.traceback)
-  if not ok then
-    messagelib.error(result)
-  end
-  return result
+  messagelib.warn(([[deprecated `Gesture` command, use require("gesture").%s()]]):format(name))
+  return Command.new(name)
 end
 
 vim.cmd("doautocmd User GestureSourceLoad")

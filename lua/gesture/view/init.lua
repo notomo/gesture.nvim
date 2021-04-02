@@ -62,7 +62,7 @@ function View.open()
 
   local before_window_id = windowlib.by_pattern("^gesture://")
   if before_window_id ~= nil then
-    require("gesture.command").Command.cancel(before_window_id)
+    require("gesture.command").Command.new("cancel", before_window_id)
   end
   vim.api.nvim_buf_set_name(bufnr, ("gesture://%d/GESTURE"):format(bufnr))
 
@@ -76,7 +76,7 @@ function View.open()
   vim.cmd("redraw")
   M.click()
 
-  local on_leave = ("autocmd WinLeave,TabLeave,BufLeave <buffer=%s> ++once lua require('gesture.command').Command.cancel(%s)"):format(bufnr, window_id)
+  local on_leave = ([[autocmd WinLeave,TabLeave,BufLeave <buffer=%s> ++once lua require('gesture.command').Command.new("cancel", %s)]]):format(bufnr, window_id)
   vim.cmd(on_leave)
 
   local tbl = {

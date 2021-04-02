@@ -11,13 +11,13 @@ gesture.nvim is a mouse gesture plugin for Neovim (nightly).
 ```vim
 set mouse=a
 
-nnoremap <silent> <LeftDrag> <Cmd>Gesture draw<CR>
-nnoremap <silent> <LeftRelease> <Cmd>Gesture finish<CR>
+nnoremap <silent> <LeftDrag> <Cmd>lua require("gesture").draw()<CR>
+nnoremap <silent> <LeftRelease> <Cmd>lua require("gesture").finish()<CR>
 
 " or if you would like to use right click
 nnoremap <RightMouse> <Nop>
-nnoremap <silent> <RightDrag> <Cmd>Gesture draw<CR>
-nnoremap <silent> <RightRelease> <Cmd>Gesture finish<CR>
+nnoremap <silent> <RightDrag> <Cmd>lua require("gesture").draw()<CR>
+nnoremap <silent> <RightRelease> <Cmd>lua require("gesture").finish()<CR>
 
 lua << EOF
 local gesture = require('gesture')

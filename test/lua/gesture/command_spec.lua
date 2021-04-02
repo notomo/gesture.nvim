@@ -1,4 +1,9 @@
 local helper = require("gesture.lib.testlib.helper")
+local gesture = setmetatable({}, {
+  __index = function(_, k)
+    return require("gesture")[k]
+  end,
+})
 local command = helper.command
 
 describe("gesture.nvim", function()
@@ -7,7 +12,6 @@ describe("gesture.nvim", function()
   after_each(helper.after_each)
 
   it("can register and execute a global gesture", function()
-    local gesture = require("gesture")
     gesture.register({inputs = {gesture.down(), gesture.up()}, action = "normal! gg"})
 
     helper.set_lines([[
@@ -17,19 +21,18 @@ hoge
 foo]])
     command("normal! G")
 
-    command("Gesture draw")
+    gesture.draw()
     command("normal! 10j")
-    command("Gesture draw")
+    gesture.draw()
     command("normal! 10k")
-    command("Gesture draw")
-    command("Gesture finish")
+    gesture.draw()
+    gesture.finish()
 
     assert.window_count(1)
     assert.current_line("hoge")
   end)
 
   it("can register and execute a buffer local gesture", function()
-    local gesture = require("gesture")
     gesture.register({
       inputs = {gesture.right(), gesture.left()},
       action = "normal! $",
@@ -41,19 +44,18 @@ foo]])
 hoge         foo
 ]])
 
-    command("Gesture draw")
+    gesture.draw()
     command("normal! 10l")
-    command("Gesture draw")
+    gesture.draw()
     command("normal! 10h")
-    command("Gesture draw")
-    command("Gesture finish")
+    gesture.draw()
+    gesture.finish()
 
     assert.window_count(1)
     assert.current_word("foo")
   end)
 
   it("can use function as action", function()
-    local gesture = require("gesture")
     gesture.register({
       inputs = {gesture.down(), gesture.up()},
       action = function()
@@ -68,19 +70,18 @@ hoge
 foo]])
     command("normal! G")
 
-    command("Gesture draw")
+    gesture.draw()
     command("normal! 10j")
-    command("Gesture draw")
+    gesture.draw()
     command("normal! 10k")
-    command("Gesture draw")
-    command("Gesture finish")
+    gesture.draw()
+    gesture.finish()
 
     assert.window_count(1)
     assert.current_line("hoge")
   end)
 
   it("can execute a global gesture with matched buffer local gesture", function()
-    local gesture = require("gesture")
     gesture.register({
       inputs = {gesture.right({min_length = 10})},
       action = "normal! $",
@@ -92,33 +93,31 @@ foo]])
 hoge         foo
 bar]])
 
-    command("Gesture draw")
+    gesture.draw()
     command("normal! 8l")
-    command("Gesture draw")
-    command("Gesture finish")
+    gesture.draw()
+    gesture.finish()
 
     assert.window_count(1)
     assert.current_word("bar")
   end)
 
   it("can register and execute a nowait gesture", function()
-    local gesture = require("gesture")
     gesture.register({inputs = {gesture.right()}, action = "normal! $", nowait = true})
 
     helper.set_lines([[
 hoge         foo
 ]])
 
-    command("Gesture draw")
+    gesture.draw()
     command("normal! 10l")
-    command("Gesture draw")
+    gesture.draw()
 
     assert.window_count(1)
     assert.current_word("foo")
   end)
 
   it("can register and execute a nowait buffer local gesture", function()
-    local gesture = require("gesture")
     gesture.register({inputs = {gesture.right()}, action = "normal! $", nowait = true, buffer = "%"})
     gesture.register({inputs = {gesture.right()}, action = "normal! 0", nowait = true})
     gesture.register({
@@ -131,16 +130,15 @@ hoge         foo
 hoge         foo
 ]])
 
-    command("Gesture draw")
+    gesture.draw()
     command("normal! 10l")
-    command("Gesture draw")
+    gesture.draw()
 
     assert.window_count(1)
     assert.current_word("foo")
   end)
 
   it("does nothing for non matched gesture", function()
-    local gesture = require("gesture")
     gesture.register({inputs = {gesture.down(), gesture.up()}, action = "normal! G"})
 
     helper.set_lines([[
@@ -149,59 +147,57 @@ hoge
 
 foo]])
 
-    command("Gesture draw")
+    gesture.draw()
     command("normal! 10j")
-    command("Gesture draw")
-    command("Gesture finish")
+    gesture.draw()
+    gesture.finish()
 
     assert.window_count(1)
     assert.current_line("hoge")
   end)
 
   it("can register a gesture with max length", function()
-    local gesture = require("gesture")
     gesture.register({inputs = {gesture.right({max_length = 10})}, action = "normal! $"})
 
     helper.set_lines([[
 hoge         foo
 ]])
 
-    command("Gesture draw")
+    gesture.draw()
     command("normal! 11l")
-    command("Gesture draw")
-    command("Gesture finish")
+    gesture.draw()
+    gesture.finish()
 
     assert.window_count(1)
     assert.current_word("hoge")
   end)
 
   it("can register a gesture with min length", function()
-    local gesture = require("gesture")
     gesture.register({inputs = {gesture.right({min_length = 10})}, action = "normal! $"})
 
     helper.set_lines([[
 hoge         foo
 ]])
 
-    command("Gesture draw")
+    gesture.draw()
     command("normal! 9l")
-    command("Gesture draw")
-    command("Gesture finish")
+    gesture.draw()
+    gesture.finish()
 
     assert.window_count(1)
     assert.current_word("hoge")
   end)
 
   it("shows input gestures", function()
-    command("Gesture draw")
+    gesture.draw()
     command("normal! 10l")
-    command("Gesture draw")
+    gesture.draw()
     command("normal! 10j")
-    command("Gesture draw")
+    gesture.draw()
     command("normal! 10h")
-    command("Gesture draw")
+    gesture.draw()
     command("normal! 10k")
-    command("Gesture draw")
+    gesture.draw()
 
     assert.shown_in_view("RIGHT")
     assert.shown_in_view("DOWN")
@@ -210,7 +206,6 @@ hoge         foo
   end)
 
   it("shows matched gesture name", function()
-    local gesture = require("gesture")
     gesture.register({name = "to bottom", inputs = {gesture.down()}, action = "normal! G"})
     gesture.register({
       name = "to top",
@@ -218,15 +213,15 @@ hoge         foo
       action = "normal! gg",
     })
 
-    command("Gesture draw")
+    gesture.draw()
     command("normal! 10j")
-    command("Gesture draw")
+    gesture.draw()
 
     assert.shown_in_view("DOWN")
     assert.shown_in_view("to bottom")
 
     command("normal! 10k")
-    command("Gesture draw")
+    gesture.draw()
 
     assert.shown_in_view("UP")
     assert.shown_in_view("to top")
@@ -234,9 +229,9 @@ hoge         foo
 
   it("raises no error with many gestures", function()
     for _ = 0, 100, 1 do
-      command("Gesture draw")
+      gesture.draw()
       command("normal! 10j")
-      command("Gesture draw")
+      gesture.draw()
       command("normal! 10k")
     end
     assert.shown_in_view("UP")
@@ -244,17 +239,17 @@ hoge         foo
 
   it("avoid creating multiple gesture state", function()
     command("tabedit")
-    command("Gesture draw")
+    gesture.draw()
     command("noautocmd tabprevious")
 
-    command("Gesture draw")
+    gesture.draw()
     command("tabnext")
 
     assert.window_count(1)
   end)
 
   it("reset scroll on scrolled", function()
-    command("Gesture draw")
+    gesture.draw()
     command("normal! G")
     command("normal! zz")
 
@@ -265,24 +260,22 @@ hoge         foo
   end)
 
   it("overwrites the same gesture", function()
-    local gesture = require("gesture")
     gesture.register({inputs = {gesture.right(), gesture.left()}, action = "normal! w"})
     gesture.register({inputs = {gesture.right(), gesture.left()}, action = "normal! 2w"})
 
     helper.set_lines([[hoge foo bar]])
 
-    command("Gesture draw")
+    gesture.draw()
     command("normal! 10l")
-    command("Gesture draw")
+    gesture.draw()
     command("normal! 10h")
-    command("Gesture draw")
-    command("Gesture finish")
+    gesture.draw()
+    gesture.finish()
 
     assert.current_word("bar")
   end)
 
   it("does not overwrite gesture has the different attribute", function()
-    local gesture = require("gesture")
     gesture.register({
       inputs = {gesture.right({max_length = 20}), gesture.left()},
       action = "normal! w",
@@ -294,14 +287,35 @@ hoge         foo
 
     helper.set_lines([[hoge foo bar]])
 
-    command("Gesture draw")
+    gesture.draw()
     command("normal! 10l")
-    command("Gesture draw")
+    gesture.draw()
     command("normal! 10h")
-    command("Gesture draw")
-    command("Gesture finish")
+    gesture.draw()
+    gesture.finish()
 
     assert.current_word("foo")
+  end)
+
+  it("can cancel gesture", function()
+    gesture.register({inputs = {gesture.down(), gesture.up()}, action = "normal! gg"})
+
+    helper.set_lines([[
+hoge
+
+
+foo]])
+    command("normal! G")
+
+    gesture.draw()
+    command("normal! 10j")
+    gesture.draw()
+    command("normal! 10k")
+    gesture.draw()
+    gesture.cancel()
+
+    assert.window_count(1)
+    assert.current_line("foo")
   end)
 
 end)

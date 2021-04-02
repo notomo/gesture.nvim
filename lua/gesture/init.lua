@@ -4,6 +4,18 @@ local GestureMap = require("gesture.model.gesture").GestureMap
 
 local M = {}
 
+function M.draw()
+  return require("gesture.command").Command.new("draw")
+end
+
+function M.finish()
+  return require("gesture.command").Command.new("finish")
+end
+
+function M.cancel()
+  return require("gesture.command").Command.new("cancel")
+end
+
 function M.register(info)
   M.map:add(Gesture.new(info))
 end
