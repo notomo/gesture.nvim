@@ -4,7 +4,6 @@ local gesture = setmetatable({}, {
     return require("gesture")[k]
   end,
 })
-local command = helper.command
 
 describe("gesture.nvim", function()
 
@@ -19,12 +18,12 @@ hoge
 
 
 foo]])
-    command("normal! G")
+    vim.cmd("normal! G")
 
     gesture.draw()
-    command("normal! 10j")
+    vim.cmd("normal! 10j")
     gesture.draw()
-    command("normal! 10k")
+    vim.cmd("normal! 10k")
     gesture.draw()
     gesture.finish()
 
@@ -45,9 +44,9 @@ hoge         foo
 ]])
 
     gesture.draw()
-    command("normal! 10l")
+    vim.cmd("normal! 10l")
     gesture.draw()
-    command("normal! 10h")
+    vim.cmd("normal! 10h")
     gesture.draw()
     gesture.finish()
 
@@ -68,12 +67,12 @@ hoge
 
 
 foo]])
-    command("normal! G")
+    vim.cmd("normal! G")
 
     gesture.draw()
-    command("normal! 10j")
+    vim.cmd("normal! 10j")
     gesture.draw()
-    command("normal! 10k")
+    vim.cmd("normal! 10k")
     gesture.draw()
     gesture.finish()
 
@@ -94,7 +93,7 @@ hoge         foo
 bar]])
 
     gesture.draw()
-    command("normal! 8l")
+    vim.cmd("normal! 8l")
     gesture.draw()
     gesture.finish()
 
@@ -110,7 +109,7 @@ hoge         foo
 ]])
 
     gesture.draw()
-    command("normal! 10l")
+    vim.cmd("normal! 10l")
     gesture.draw()
 
     assert.window_count(1)
@@ -131,7 +130,7 @@ hoge         foo
 ]])
 
     gesture.draw()
-    command("normal! 10l")
+    vim.cmd("normal! 10l")
     gesture.draw()
 
     assert.window_count(1)
@@ -148,7 +147,7 @@ hoge
 foo]])
 
     gesture.draw()
-    command("normal! 10j")
+    vim.cmd("normal! 10j")
     gesture.draw()
     gesture.finish()
 
@@ -164,7 +163,7 @@ hoge         foo
 ]])
 
     gesture.draw()
-    command("normal! 11l")
+    vim.cmd("normal! 11l")
     gesture.draw()
     gesture.finish()
 
@@ -180,7 +179,7 @@ hoge         foo
 ]])
 
     gesture.draw()
-    command("normal! 9l")
+    vim.cmd("normal! 9l")
     gesture.draw()
     gesture.finish()
 
@@ -190,13 +189,13 @@ hoge         foo
 
   it("shows input gestures", function()
     gesture.draw()
-    command("normal! 10l")
+    vim.cmd("normal! 10l")
     gesture.draw()
-    command("normal! 10j")
+    vim.cmd("normal! 10j")
     gesture.draw()
-    command("normal! 10h")
+    vim.cmd("normal! 10h")
     gesture.draw()
-    command("normal! 10k")
+    vim.cmd("normal! 10k")
     gesture.draw()
 
     assert.shown_in_view("RIGHT")
@@ -214,13 +213,13 @@ hoge         foo
     })
 
     gesture.draw()
-    command("normal! 10j")
+    vim.cmd("normal! 10j")
     gesture.draw()
 
     assert.shown_in_view("DOWN")
     assert.shown_in_view("to bottom")
 
-    command("normal! 10k")
+    vim.cmd("normal! 10k")
     gesture.draw()
 
     assert.shown_in_view("UP")
@@ -230,31 +229,31 @@ hoge         foo
   it("raises no error with many gestures", function()
     for _ = 0, 100, 1 do
       gesture.draw()
-      command("normal! 10j")
+      vim.cmd("normal! 10j")
       gesture.draw()
-      command("normal! 10k")
+      vim.cmd("normal! 10k")
     end
     assert.shown_in_view("UP")
   end)
 
   it("avoid creating multiple gesture state", function()
-    command("tabedit")
+    vim.cmd("tabedit")
     gesture.draw()
-    command("noautocmd tabprevious")
+    vim.cmd("noautocmd tabprevious")
 
     gesture.draw()
-    command("tabnext")
+    vim.cmd("tabnext")
 
     assert.window_count(1)
   end)
 
   it("reset scroll on scrolled", function()
     gesture.draw()
-    command("normal! G")
-    command("normal! zz")
+    vim.cmd("normal! G")
+    vim.cmd("normal! zz")
 
     -- NOTE: zz may not fire callback in headless mode.
-    command("redraw")
+    vim.cmd("redraw")
 
     assert.window_first_row(1)
   end)
@@ -266,9 +265,9 @@ hoge         foo
     helper.set_lines([[hoge foo bar]])
 
     gesture.draw()
-    command("normal! 10l")
+    vim.cmd("normal! 10l")
     gesture.draw()
-    command("normal! 10h")
+    vim.cmd("normal! 10h")
     gesture.draw()
     gesture.finish()
 
@@ -288,9 +287,9 @@ hoge         foo
     helper.set_lines([[hoge foo bar]])
 
     gesture.draw()
-    command("normal! 10l")
+    vim.cmd("normal! 10l")
     gesture.draw()
-    command("normal! 10h")
+    vim.cmd("normal! 10h")
     gesture.draw()
     gesture.finish()
 
@@ -305,12 +304,12 @@ hoge
 
 
 foo]])
-    command("normal! G")
+    vim.cmd("normal! G")
 
     gesture.draw()
-    command("normal! 10j")
+    vim.cmd("normal! 10j")
     gesture.draw()
-    command("normal! 10k")
+    vim.cmd("normal! 10k")
     gesture.draw()
     gesture.cancel()
 

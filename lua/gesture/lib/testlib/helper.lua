@@ -2,25 +2,15 @@ local M = {}
 
 M.root = require("gesture.lib.path").find_root()
 
-function M.command(cmd)
-  local _, cmderr = pcall(vim.cmd, cmd)
-  if cmderr then
-    local info = debug.getinfo(2)
-    local pos = ("%s:%d"):format(info.source, info.currentline)
-    local msg = ("on %s: failed excmd `%s`\n%s"):format(pos, cmd, cmderr)
-    error(msg)
-  end
-end
-
 function M.before_each()
   require("gesture.view").click = function()
   end
 end
 
 function M.after_each()
-  M.command("tabedit")
-  M.command("tabonly!")
-  M.command("silent! %bwipeout!")
+  vim.cmd("tabedit")
+  vim.cmd("tabonly!")
+  vim.cmd("silent! %bwipeout!")
   print(" ")
 
   vim.api.nvim_set_current_dir(M.root)
