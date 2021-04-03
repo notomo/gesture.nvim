@@ -42,7 +42,7 @@ function GestureBoard.create(inputs, gesture, has_forward_match)
 
   local hl_group = "GestureInput"
   if not has_forward_match then
-    hl_group = "GestureNoAction"
+    hl_group = "GestureInputNotMatched"
   end
 
   local height = vim.api.nvim_win_get_height(0)
