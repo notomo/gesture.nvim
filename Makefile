@@ -9,3 +9,9 @@ diff_screenshot:
 	cat ${RESULT_DIR}/replay.vim
 	test ! -s ${RESULT_DIR}/replay.vim
 .PHONY: diff_screenshot
+
+doc:
+	nvim --headless -i NONE -n +"lua dofile('./spec/lua/gesture/doc.lua')" +"quitall!"
+	cat ./doc/gesture.nvim.txt
+	cat README.md
+.PHONY: doc

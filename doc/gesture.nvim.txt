@@ -1,0 +1,108 @@
+*gesture.nvim.txt*
+
+==============================================================================
+Lua module: gesture                                     *gesture.nvim-gesture*
+
+draw()                                                        *gesture.draw()*
+  Draw a gesture line.
+
+finish()                                                    *gesture.finish()*
+  Finish the gesture and execute matched action.
+
+cancel()                                                    *gesture.cancel()*
+  Cancel the gesture.
+
+register({info})                                          *gesture.register()*
+  Register a gesture.
+
+  Parameters: ~
+    {info} (table) |gesture.nvim-gesture-info|
+
+clear()                                                      *gesture.clear()*
+  Clear the registered gestures.
+
+up({opts})                                                      *gesture.up()*
+  Up input
+
+  Parameters: ~
+    {opts} (table|nil) |gesture.nvim-input-opts|
+
+down({opts})                                                  *gesture.down()*
+  Down input
+
+  Parameters: ~
+    {opts} (table|nil) |gesture.nvim-input-opts|
+
+right({opts})                                                *gesture.right()*
+  Right input
+
+  Parameters: ~
+    {opts} (table|nil) |gesture.nvim-input-opts|
+
+left({opts})                                                  *gesture.left()*
+  Left input
+
+  Parameters: ~
+    {opts} (table|nil) |gesture.nvim-input-opts|
+
+==============================================================================
+PARAMETERS                                           *gesture.nvim-PARAMETERS*
+
+Gesture info                                       *gesture.nvim-gesture-info*
+
+- {name} (string|nil): a displayed name
+- {inputs} (table): inputs definition
+- {action} (string|function): an action executed on matched
+- {nowait} (boolean|nil): to define nowait gesture
+- {buffer} (string|number|nil): to define the buffer local gesture
+
+Input options                                        *gesture.nvim-input-opts*
+
+- {max_length} (number|nil) max length of the input line
+- {min_length} (number|nil) min length of the input line
+
+
+==============================================================================
+USAGE                                                     *gesture.nvim-USAGE*
+
+>
+  set mouse=a
+
+  nnoremap <silent> <LeftDrag> <Cmd>lua require("gesture").draw()<CR>
+  nnoremap <silent> <LeftRelease> <Cmd>lua require("gesture").finish()<CR>
+
+  " or if you would like to use right click
+  nnoremap <RightMouse> <Nop>
+  nnoremap <silent> <RightDrag> <Cmd>lua require("gesture").draw()<CR>
+  nnoremap <silent> <RightRelease> <Cmd>lua require("gesture").finish()<CR>
+
+  lua << EOF
+  local gesture = require('gesture')
+  gesture.register({
+    name = "scroll to bottom",
+    inputs = { gesture.up(), gesture.down() },
+    action = "normal! G"
+  })
+  gesture.register({
+    name = "next tab",
+    inputs = { gesture.right() },
+    action = "tabnext"
+  })
+  gesture.register({
+    name = "previous tab",
+    inputs = { gesture.left() },
+    action = function() -- also can use function
+      vim.cmd("tabprevious")
+    end,
+  })
+  gesture.register({
+    name = "go back",
+    inputs = { gesture.right(), gesture.left() },
+    -- map to `<C-o>` keycode
+    action = [[lua vim.api.nvim_feedkeys(vim.api.nvim_replace_termcodes("<C-o>", true, false, true), "n", true)]]
+  })
+  EOF
+<
+
+==============================================================================
+vim:tw=78:ts=8:ft=help
