@@ -77,26 +77,29 @@ end
 
 local highlights = require("gesture.lib.highlight")
 local blend = 0
-highlights.default("GestureInput", {
-  ctermfg = {"NormalFloat", 230},
-  guifg = {"NormalFloat", "#fffeeb"},
-  ctermbg = {"NormalFloat", 235},
-  guibg = {"NormalFloat", "#3a4b5c"},
-  blend = blend,
-  gui = "bold",
-})
-highlights.default("GestureNoAction", {
-  ctermfg = {"Comment", 103},
-  guifg = {"Comment", "#8d9eb2"},
-  ctermbg = {"NormalFloat", 235},
-  guibg = {"NormalFloat", "#3a4b5c"},
-  blend = blend,
-})
-highlights.default("GestureActionLabel", {
-  gui = "bold",
-  ctermfg = {"Statement", 153},
-  guifg = {"Statement", "#a8d2eb"},
-  blend = blend,
-})
+
+M.hl_groups = {
+  highlights.default("GestureInput", {
+    ctermfg = {"NormalFloat", 230},
+    guifg = {"NormalFloat", "#fffeeb"},
+    ctermbg = {"NormalFloat", 235},
+    guibg = {"NormalFloat", "#3a4b5c"},
+    blend = blend,
+    gui = "bold",
+  }),
+  highlights.default("GestureInputNotMatched", {
+    ctermfg = {"Comment", 103},
+    guifg = {"Comment", "#8d9eb2"},
+    ctermbg = {"NormalFloat", 235},
+    guibg = {"NormalFloat", "#3a4b5c"},
+    blend = blend,
+  }),
+  highlights.default("GestureActionLabel", {
+    gui = "bold",
+    ctermfg = {"Statement", 153},
+    guifg = {"Statement", "#a8d2eb"},
+    blend = blend,
+  }),
+}
 
 return M

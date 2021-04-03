@@ -110,4 +110,8 @@ function M.click()
   vim.cmd("normal! " .. mouse)
 end
 
+M.hl_groups = {}
+vim.list_extend(M.hl_groups, require("gesture.view.canvas").hl_groups)
+vim.list_extend(M.hl_groups, require("gesture.view.board").hl_groups)
+
 return M

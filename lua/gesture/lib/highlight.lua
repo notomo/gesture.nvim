@@ -28,6 +28,7 @@ function M.default(name, attributes)
 
   local cmd = ("highlight default %s %s"):format(name, attr)
   vim.cmd(cmd)
+  return name
 end
 
 return M

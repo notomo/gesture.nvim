@@ -61,6 +61,20 @@ Input options                                        *gesture.nvim-input-opts*
 - {max_length} (number|nil) max length of the input line
 - {min_length} (number|nil) min length of the input line
 
+==============================================================================
+HIGHLIGHT GROUPS                               *gesture.nvim-HIGHLIGHT-GROUPS*
+
+GestureLine                                                   *hl-GestureLine*
+  used for drawing gesture line
+
+GestureInput                                                 *hl-GestureInput*
+  used for input
+
+GestureInputNotMatched                             *hl-GestureInputNotMatched*
+  used for input if no matched gesture exists 
+
+GestureActionLabel                                     *hl-GestureActionLabel*
+  used for action label
 
 ==============================================================================
 USAGE                                                     *gesture.nvim-USAGE*

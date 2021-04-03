@@ -28,8 +28,31 @@ require("genvdoc").generate("gesture.nvim", {
 ]] .. util.help_tagged(ctx, "Input options", "gesture.nvim-input-opts") .. [[
 
 - {max_length} (number|nil) max length of the input line
-- {min_length} (number|nil) min length of the input line
-]]
+- {min_length} (number|nil) min length of the input line]]
+      end,
+    },
+    {
+      name = "HIGHLIGHT GROUPS",
+      body = function(ctx)
+        local descriptions = {
+          GestureLine = [[
+used for drawing gesture line
+]],
+          GestureInput = [[
+used for input
+]],
+          GestureInputNotMatched = [[
+used for input if no matched gesture exists 
+]],
+          GestureActionLabel = [[
+used for action label
+]],
+        }
+        local sections = {}
+        for _, hl_group in ipairs(require("gesture.view").hl_groups) do
+          table.insert(sections, util.help_tagged(ctx, hl_group, "hl-" .. hl_group) .. util.indent(descriptions[hl_group], 2))
+        end
+        return vim.trim(table.concat(sections, "\n"))
       end,
     },
     {
