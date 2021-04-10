@@ -59,17 +59,6 @@ function Command.cancel(window_id)
   state:close()
 end
 
--- Deprecated
-function M.main(...)
-  local name = ({...})[1] or "draw"
-  local cmd = Command[name]
-  if cmd == nil then
-    return messagelib.warn("not found command: " .. name)
-  end
-  messagelib.warn(([[deprecated `Gesture` command, use require("gesture").%s()]]):format(name))
-  return Command.new(name)
-end
-
 vim.cmd("doautocmd User GestureSourceLoad")
 
 return M

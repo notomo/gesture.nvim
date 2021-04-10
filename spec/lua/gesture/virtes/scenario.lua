@@ -14,22 +14,22 @@ local scenario = function(ctx)
 
   local width = vim.o.columns
 
-  vim.cmd("Gesture draw")
+  gesture.draw()
   ctx:screenshot()
 
   vim.cmd("normal! M")
   vim.cmd(("normal! %dl"):format(math.floor(width / 2)))
-  vim.cmd("Gesture draw")
+  gesture.draw()
   vim.cmd(("normal! %dl"):format(math.floor(width / 3)))
-  vim.cmd("Gesture draw")
+  gesture.draw()
   vim.cmd("normal! 10j")
-  vim.cmd("Gesture draw")
+  gesture.draw()
   ctx:screenshot()
   vim.cmd(("normal! %dh"):format(width))
-  vim.cmd("Gesture draw")
+  gesture.draw()
   ctx:screenshot()
 
-  vim.cmd("Gesture finish")
+  gesture.finish()
   ctx:screenshot()
 end
 
