@@ -54,7 +54,7 @@ function View.open()
   })
   vim.wo[window_id].winblend = 100
 
-  local lines = vim.fn["repeat"]({""}, height)
+  local lines = vim.fn["repeat"]({(" "):rep(width)}, height)
   vim.api.nvim_buf_set_lines(bufnr, 0, -1, false, lines)
   vim.bo[bufnr].bufhidden = "wipe"
   vim.bo[bufnr].filetype = "gesture"
