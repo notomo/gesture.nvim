@@ -1,20 +1,16 @@
 local M = {}
 
-function M.to_virtual_texts(ranges)
+function M.to_virtual_texts(cols, hl_group)
   local virtual_texts = {}
-  local col = 1
-  for _, range in ipairs(ranges) do
-    local s = range[1]
-    local e = range[2]
-    local before_space = s - col
-    if before_space > 0 then
-      local space = (" "):rep(before_space)
+  local index = 0
+  for _, col in ipairs(cols) do
+    local e = col - 1
+    local space = (" "):rep(e - index + 1)
+    if space ~= "" then
       table.insert(virtual_texts, {space})
     end
-    local hl_group = range[3]
-    local space = (" "):rep(e - s + 1)
-    table.insert(virtual_texts, {space, hl_group})
-    col = e + 1
+    table.insert(virtual_texts, {" ", hl_group})
+    index = col + 1
   end
   return virtual_texts
 end
