@@ -1,5 +1,5 @@
 test:
-	vusted --shuffle -v
+	vusted --shuffle
 .PHONY: test
 
 COMPARE_HASH := HEAD^

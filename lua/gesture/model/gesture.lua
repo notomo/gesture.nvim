@@ -51,6 +51,14 @@ function Gesture.new(info)
 end
 
 function Gesture.execute(self)
+  local ok, result = pcall(self._execute, self)
+  if not ok then
+    return nil, result
+  end
+  return result, nil
+end
+
+function Gesture._execute(self)
   if type(self.action) == "function" then
     return self.action()
   end

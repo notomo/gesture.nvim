@@ -11,9 +11,11 @@ function Command.new(name, ...)
     return Command[name](unpack(args))
   end
 
-  local ok, result = xpcall(f, debug.traceback)
+  local ok, result, err = xpcall(f, debug.traceback)
   if not ok then
     return messagelib.error(result)
+  elseif err then
+    return messagelib.user_error(err)
   end
   return result
 end

@@ -18,6 +18,14 @@ function M.after_each()
   require("gesture.lib.cleanup")()
 end
 
+function M.require(name)
+  return setmetatable({}, {
+    __index = function(_, k)
+      return require(name)[k]
+    end,
+  })
+end
+
 function M.buffer_log()
   local lines = vim.fn.getbufline("%", 1, "$")
   for _, line in ipairs(lines) do
@@ -33,9 +41,7 @@ function M.cursor()
   return {vim.fn.line("."), vim.fn.col(".")}
 end
 
-local vassert = require("vusted.assert")
-local asserts = vassert.asserts
-M.assert = vassert.assert
+local asserts = require("vusted.assert").asserts
 
 asserts.create("current_line"):register_eq(function()
   return vim.fn.getline(".")
@@ -73,6 +79,21 @@ asserts.create("shown_in_view"):register(function(self)
     self:set_positive(("`%s` not found"):format(pattern))
     self:set_negative(("`%s` found"):format(pattern))
     return result ~= 0
+  end
+end)
+
+asserts.create("exists_message"):register(function(self)
+  return function(_, args)
+    local expected = args[1]
+    self:set_positive(("`%s` not found message"):format(expected))
+    self:set_negative(("`%s` found message"):format(expected))
+    local messages = vim.split(vim.api.nvim_exec("messages", true), "\n")
+    for _, msg in ipairs(messages) do
+      if msg:match(expected) then
+        return true
+      end
+    end
+    return false
   end
 end)
 

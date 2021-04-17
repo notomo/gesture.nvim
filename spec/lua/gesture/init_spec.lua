@@ -1,9 +1,5 @@
 local helper = require("gesture.lib.testlib.helper")
-local gesture = setmetatable({}, {
-  __index = function(_, k)
-    return require("gesture")[k]
-  end,
-})
+local gesture = helper.require("gesture")
 
 describe("gesture.nvim", function()
 
@@ -315,6 +311,17 @@ foo]])
 
     assert.window_count(1)
     assert.current_line("foo")
+  end)
+
+  it("shows raw error", function()
+    gesture.register({inputs = {gesture.down()}, action = "invalid_command"})
+
+    gesture.draw()
+    vim.cmd("normal! 10j")
+    gesture.draw()
+    gesture.finish()
+
+    assert.exists_message("%[gesture%] Vim:E492: Not an editor command: invalid_command")
   end)
 
 end)
