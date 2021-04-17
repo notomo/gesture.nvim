@@ -19,16 +19,16 @@ require("genvdoc").generate("gesture.nvim", {
       body = function(ctx)
         return util.help_tagged(ctx, "Gesture info", "gesture.nvim-gesture-info") .. [[
 
-- {name} (string|nil): a displayed name
+- {name} (string | nil): a displayed name
 - {inputs} (table): inputs definition
-- {action} (string|function): an action executed on matched
-- {nowait} (boolean|nil): to define nowait gesture
-- {buffer} (string|number|nil): to define the buffer local gesture
+- {action} (string | function): an action executed on matched
+- {nowait} (boolean | nil): to define nowait gesture
+- {buffer} (string | number | nil): to define the buffer local gesture
 
 ]] .. util.help_tagged(ctx, "Input options", "gesture.nvim-input-opts") .. [[
 
-- {max_length} (number|nil) max length of the input line
-- {min_length} (number|nil) min length of the input line]]
+- {max_length} (number | nil) max length of the input line
+- {min_length} (number | nil) min length of the input line]]
       end,
     },
     {

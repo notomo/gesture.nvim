@@ -11,7 +11,7 @@ diff_screenshot:
 .PHONY: diff_screenshot
 
 doc:
+	rm -f ./doc/gesture.nvim.txt ./README.md
 	nvim --headless -i NONE -n +"lua dofile('./spec/lua/gesture/doc.lua')" +"quitall!"
-	cat ./doc/gesture.nvim.txt
-	cat README.md
+	cat ./doc/gesture.nvim.txt README.md
 .PHONY: doc
