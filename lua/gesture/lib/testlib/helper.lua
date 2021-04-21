@@ -1,6 +1,7 @@
-local M = {}
+local plugin_name = vim.split((...):gsub("%.", "/"), "/", true)[1]
+local M = require("vusted.helper")
 
-M.root = require("gesture.lib.path").find_root()
+M.root = M.find_plugin_root(plugin_name)
 
 function M.before_each()
   require("gesture.view").click = function()
@@ -15,15 +16,7 @@ function M.after_each()
 
   vim.api.nvim_set_current_dir(M.root)
 
-  require("gesture.lib.cleanup")()
-end
-
-function M.require(name)
-  return setmetatable({}, {
-    __index = function(_, k)
-      return require(name)[k]
-    end,
-  })
+  M.cleanup_loaded_modules(plugin_name)
 end
 
 function M.buffer_log()
