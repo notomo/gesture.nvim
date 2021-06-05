@@ -37,14 +37,7 @@ local main = function(comparison, result_dir)
   vim.o.runtimepath = vim.fn.getcwd() .. "," .. vim.o.runtimepath
   vim.cmd("runtime! plugin/*.vim")
 
-  local test = require("virtes").setup({
-    scenario = scenario,
-    result_dir = result_dir,
-    cleanup = function()
-      vim.cmd("silent! %bwipeout!")
-      require("gesture.lib.cleanup")()
-    end,
-  })
+  local test = require("virtes").setup({scenario = scenario, result_dir = result_dir})
   local before = test:run({hash = comparison})
   before:write_replay_script()
 

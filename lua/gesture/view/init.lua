@@ -32,7 +32,6 @@ function View.focus(self, last_point)
 end
 
 function View.close(self)
-  vim.o.virtualedit = self._virtualedit
   windowlib.close(self.window_id)
   vim.api.nvim_set_decoration_provider(vim.api.nvim_create_namespace("gesture"), {})
 end
@@ -69,9 +68,6 @@ function View.open()
   vim.wo[window_id].scrolloff = 0
   vim.wo[window_id].sidescrolloff = 0
 
-  local virtualedit = vim.o.virtualedit
-  vim.o.virtualedit = "all"
-
   -- NOTE: show and move cursor to the window by <LeftDrag>
   vim.cmd("redraw")
   M.click()
@@ -79,12 +75,7 @@ function View.open()
   local on_leave = ([[autocmd WinLeave,TabLeave,BufLeave <buffer=%s> ++once lua require('gesture.command').Command.new("cancel", %s)]]):format(bufnr, window_id)
   vim.cmd(on_leave)
 
-  local tbl = {
-    window_id = window_id,
-    _virtualedit = virtualedit,
-    _canvas = Canvas.new(bufnr),
-    _new_points = {},
-  }
+  local tbl = {window_id = window_id, _canvas = Canvas.new(bufnr), _new_points = {}}
   local view = setmetatable(tbl, View)
 
   vim.api.nvim_set_decoration_provider(vim.api.nvim_create_namespace("gesture"), {
