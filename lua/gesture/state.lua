@@ -16,7 +16,7 @@ function State.get_or_create()
     return current_state
   end
 
-  local matcher = Matcher.new(require("gesture").map, vim.api.nvim_get_current_buf())
+  local matcher = Matcher.new(require("gesture.model.setting").map, vim.api.nvim_get_current_buf())
   local view = View.open()
   local tbl = {
     _last_point = view.current_point(),

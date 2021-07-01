@@ -1,6 +1,4 @@
 local Direction = require("gesture.model.direction").Direction
-local Gesture = require("gesture.model.gesture").Gesture
-local GestureMap = require("gesture.model.gesture").GestureMap
 
 local M = {}
 
@@ -22,14 +20,13 @@ end
 --- Register a gesture.
 --- @param info table: |gesture.nvim-gesture-info|
 function M.register(info)
-  M.map:add(Gesture.new(info))
+  return require("gesture.command").Command.new("register", info)
 end
 
 --- Clear the registered gestures.
 function M.clear()
-  M.map = GestureMap.new()
+  return require("gesture.command").Command.new("clear")
 end
-M.clear()
 
 --- Up input
 --- @param opts table|nil: |gesture.nvim-input-opts|

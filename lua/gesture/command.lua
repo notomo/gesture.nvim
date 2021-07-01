@@ -61,6 +61,12 @@ function Command.cancel(window_id)
   state:close()
 end
 
-vim.cmd("doautocmd User GestureSourceLoad")
+function Command.register(info)
+  require("gesture.model.setting").register(info)
+end
+
+function Command.clear()
+  require("gesture.model.setting").clear()
+end
 
 return M
