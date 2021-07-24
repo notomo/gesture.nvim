@@ -53,7 +53,7 @@ hoge         foo
   it("can use function as action", function()
     gesture.register({
       inputs = {gesture.down(), gesture.up()},
-      action = function()
+      action = function(param)
         vim.cmd("normal! gg")
       end,
     })
@@ -74,6 +74,26 @@ foo]])
 
     assert.window_count(1)
     assert.current_line("hoge")
+  end)
+
+  it("can use action context", function()
+    local ctx
+    gesture.register({
+      inputs = {gesture.right(), gesture.down()},
+      action = function(param)
+        ctx = param
+      end,
+      nowait = true,
+    })
+
+    gesture.draw()
+    vim.cmd("normal! 20l")
+    gesture.draw()
+    vim.cmd("normal! 10j")
+    gesture.draw()
+
+    assert.equals(ctx.last_position[1], 11)
+    assert.equals(ctx.last_position[2], 21)
   end)
 
   it("can execute a global gesture with matched buffer local gesture", function()
