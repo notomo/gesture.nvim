@@ -50,17 +50,17 @@ function Gesture.new(info)
   return setmetatable(tbl, Gesture)
 end
 
-function Gesture.execute(self)
-  local ok, result = pcall(self._execute, self)
+function Gesture.execute(self, param)
+  local ok, result = pcall(self._execute, self, param)
   if not ok then
     return nil, result
   end
   return result, nil
 end
 
-function Gesture._execute(self)
+function Gesture._execute(self, param)
   if type(self.action) == "function" then
-    return self.action()
+    return self.action(param)
   end
   return vim.api.nvim_exec(self.action, true)
 end

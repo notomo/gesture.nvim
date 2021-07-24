@@ -21,9 +21,15 @@ require("genvdoc").generate("gesture.nvim", {
 
 - {name} (string | nil): a displayed name
 - {inputs} (table): inputs definition
-- {action} (string | function): an action executed on matched
+- {action} (string | function(ctx)): an action executed on matched.
+    function can use |gesture.nvim-action-context| as an argument.
 - {nowait} (boolean | nil): to define nowait gesture
 - {buffer} (string | number | nil): to define the buffer local gesture
+
+]] .. util.help_tagged(ctx, "Action context", "gesture.nvim-action-context") .. [[
+
+- {ctx} (table): gesture context
+  - {last_position} (table): tha last position drawn by gesture
 
 ]] .. util.help_tagged(ctx, "Input options", "gesture.nvim-input-opts") .. [[
 

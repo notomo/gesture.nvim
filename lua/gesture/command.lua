@@ -31,7 +31,7 @@ function Command.draw()
   local nowait_gesture = state.matcher:nowait_match(inputs)
   if nowait_gesture ~= nil then
     state:close()
-    return nowait_gesture:execute()
+    return nowait_gesture:execute(state:action_param())
   end
 
   local gesture = state.matcher:match(inputs)
@@ -48,7 +48,7 @@ function Command.finish()
 
   local gesture = state.matcher:match(state.inputs)
   if gesture ~= nil then
-    return gesture:execute()
+    return gesture:execute(state:action_param())
   end
 end
 

@@ -57,4 +57,8 @@ function State.close(self)
   self.view:close()
 end
 
+function State.action_param(self)
+  return {last_position = self._last_point}
+end
+
 return M
