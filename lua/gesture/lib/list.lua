@@ -14,7 +14,7 @@ function M.wrap(strs, width, separator)
   local wrapped = {}
   for _, str in ipairs(strs) do
     local last = wrapped[#wrapped]
-    if last == nil or #last + #separator + #str > width then
+    if not last or #last + #separator + #str > width then
       table.insert(wrapped, str)
     else
       wrapped[#wrapped] = table.concat({last, str}, separator)

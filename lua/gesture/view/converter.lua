@@ -20,7 +20,7 @@ function M.board_to_virtual_texts(ranges)
   for _, range in ipairs(ranges) do
     local hl_group = range[3]
     local text = range[4]
-    if text ~= nil then
+    if text then
       table.insert(virtual_texts, {text, hl_group})
     else
       local s = range[1]

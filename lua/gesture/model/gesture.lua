@@ -1,4 +1,5 @@
 local Inputs = require("gesture.model.input").Inputs
+local vim = vim
 
 local M = {}
 
@@ -73,10 +74,10 @@ function Gesture.match(self, inputs, nowait)
   local i = 1
   for _, def in self.inputs:iter() do
     local input = inputs[i]
-    if def.max_length ~= nil and def.max_length < input.length then
+    if def.max_length and def.max_length < input.length then
       return false
     end
-    if def.min_length ~= nil and def.min_length > input.length then
+    if def.min_length and def.min_length > input.length then
       return false
     end
   end
@@ -99,7 +100,7 @@ end
 
 function Gestures.add(self, gesture)
   local lhs = gesture.inputs:identify()
-  if self._gestures[lhs] == nil then
+  if not self._gestures[lhs] then
     self._gestures[lhs] = {}
   end
   for i, g in ipairs(self._gestures[lhs]) do
@@ -124,7 +125,7 @@ end
 function Gestures.match(self, inputs, nowait)
   local lhs = inputs:identify()
   local gs = self._gestures[lhs]
-  if gs == nil then
+  if not gs then
     return nil
   end
 
@@ -149,10 +150,10 @@ end
 function GestureMap.add(self, gesture)
   vim.validate({gesture = {gesture, "table"}})
 
-  if gesture.buffer ~= nil then
+  if gesture.buffer then
     local bufnr = vim.fn.bufnr(gesture.buffer)
     local buffer_gestures = self._buffer_local[bufnr]
-    if buffer_gestures == nil then
+    if not buffer_gestures then
       self._buffer_local[bufnr] = Gestures.new()
     end
     self._buffer_local[bufnr]:add(gesture)
@@ -164,7 +165,7 @@ end
 function GestureMap.match(self, bufnr, inputs, nowait)
   vim.validate({bufnr = {bufnr, "number"}, nowait = {nowait, "boolean"}})
   local gestures = self._buffer_local[bufnr]
-  if gestures ~= nil then
+  if gestures then
     return gestures:match(inputs, nowait) or self._global:match(inputs, nowait)
   end
   return self._global:match(inputs, nowait)
@@ -173,7 +174,7 @@ end
 function GestureMap.has_forward_match(self, bufnr, inputs)
   vim.validate({bufnr = {bufnr, "number"}})
   local gestures = self._buffer_local[bufnr]
-  if gestures ~= nil then
+  if gestures then
     return gestures:has_forward_match(inputs) or self._global:has_forward_match(inputs)
   end
   return self._global:has_forward_match(inputs)

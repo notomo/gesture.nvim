@@ -29,9 +29,8 @@ function Command.draw()
 
   local inputs = state.inputs
   local nowait_gesture = state.matcher:nowait_match(inputs)
-  if nowait_gesture ~= nil then
-    local param = state:action_param()
-    state:close()
+  if nowait_gesture then
+    local param = state:close()
     return nowait_gesture:execute(param)
   end
 
@@ -42,14 +41,13 @@ end
 
 function Command.finish()
   local state = State.get()
-  if state == nil then
+  if not state then
     return
   end
-  local param = state:action_param()
-  state:close()
 
+  local param = state:close()
   local gesture = state.matcher:match(state.inputs)
-  if gesture ~= nil then
+  if gesture then
     return gesture:execute(param)
   end
 end
@@ -57,7 +55,7 @@ end
 function Command.cancel(window_id)
   vim.validate({window_id = {window_id, "number", true}})
   local state = State.get(window_id)
-  if state == nil then
+  if not state then
     return
   end
   state:close()

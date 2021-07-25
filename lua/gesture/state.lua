@@ -11,9 +11,9 @@ State.__index = State
 M.State = State
 
 function State.get_or_create()
-  local current_state = State.get()
-  if current_state ~= nil then
-    return current_state
+  local current = State.get()
+  if current then
+    return current
   end
 
   local matcher = Matcher.new(require("gesture.model.setting").map, vim.api.nvim_get_current_buf())
@@ -24,11 +24,11 @@ function State.get_or_create()
     view = view,
     matcher = matcher,
   }
-  local state = setmetatable(tbl, State)
+  local self = setmetatable(tbl, State)
 
-  repository:set(state.view.window_id, state)
+  repository:set(self.view.window_id, self)
 
-  return state
+  return self
 end
 
 function State.get(window_id)
@@ -37,12 +37,12 @@ end
 
 function State.update(self)
   local point = self.view:focus(self._last_point)
-  if point == nil then
+  if not point then
     return false
   end
 
   local line = self._last_point:line_to(point)
-  if line == nil or line:is_short() then
+  if not line or line:is_short() then
     return true
   end
 
@@ -53,11 +53,15 @@ function State.update(self)
 end
 
 function State.close(self)
+  local param = self:_action_param()
+
   repository:delete(self.view.window_id)
   self.view:close()
+
+  return param
 end
 
-function State.action_param(self)
+function State._action_param(self)
   local point = self.view.current_point()
   return {last_position = {point.y, point.x}}
 end

@@ -1,5 +1,3 @@
-local Direction = require("gesture.model.direction").Direction
-
 local M = {}
 
 --- Draw a gesture line.
@@ -31,25 +29,25 @@ end
 --- Up input
 --- @param opts table|nil: |gesture.nvim-input-opts|
 function M.up(opts)
-  return Direction.up(opts)
+  return require("gesture.model.direction").Direction.up(opts)
 end
 
 --- Down input
 --- @param opts table|nil: |gesture.nvim-input-opts|
 function M.down(opts)
-  return Direction.down(opts)
+  return require("gesture.model.direction").Direction.down(opts)
 end
 
 --- Right input
 --- @param opts table|nil: |gesture.nvim-input-opts|
 function M.right(opts)
-  return Direction.right(opts)
+  return require("gesture.model.direction").Direction.right(opts)
 end
 
 --- Left input
 --- @param opts table|nil: |gesture.nvim-input-opts|
 function M.left(opts)
-  return Direction.left(opts)
+  return require("gesture.model.direction").Direction.left(opts)
 end
 
 return M

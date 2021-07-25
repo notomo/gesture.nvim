@@ -8,7 +8,7 @@ require("genvdoc").generate("gesture.nvim", {
         return "Lua module: " .. group
       end,
       group = function(node)
-        if node.declaration == nil then
+        if not node.declaration then
           return nil
         end
         return node.declaration.module

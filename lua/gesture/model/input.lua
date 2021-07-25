@@ -1,3 +1,5 @@
+local vim = vim
+
 local M = {}
 
 local Input = {}
@@ -28,7 +30,7 @@ end
 function Inputs.add(self, input)
   vim.validate({input = {input, "table"}})
   local last = self._inputs[#self._inputs]
-  if last == nil or last.value ~= input.value then
+  if not last or last.value ~= input.value then
     table.insert(self._inputs, input)
     return
   end

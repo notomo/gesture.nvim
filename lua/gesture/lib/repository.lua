@@ -7,7 +7,7 @@ Repository.__index = Repository
 M.Repository = Repository
 
 function Repository.new(name)
-  if persist[name] ~= nil then
+  if persist[name] then
     return persist[name]
   end
   local self = setmetatable({}, Repository)

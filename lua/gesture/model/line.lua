@@ -14,13 +14,10 @@ function Line.new(direction, length)
 end
 
 function Line.is_short(self)
-  local threshold
   if self.direction == "UP" or self.direction == "DOWN" then
-    threshold = M.y_length_threshold
-  else
-    threshold = M.x_length_threshold
+    return self.length < M.y_length_threshold
   end
-  return self.length < threshold
+  return self.length < M.x_length_threshold
 end
 
 return M

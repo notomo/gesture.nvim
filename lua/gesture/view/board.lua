@@ -28,7 +28,7 @@ function GestureBoard.create(inputs, gesture, has_forward_match)
 
   local texts = listlib.wrap(inputs:values(), width - both_padding)
   local lines = {"", unpack(texts)}
-  if gesture ~= nil then
+  if gesture then
     table.insert(lines, gesture.name)
   else
     table.insert(lines, "")
@@ -60,12 +60,12 @@ function GestureBoard.create(inputs, gesture, has_forward_match)
     }
 
     local hl
-    if gesture ~= nil and line == gesture.name then
+    if gesture and line == gesture.name then
       hl = "GestureActionLabel"
     elseif line ~= "" then
       hl = hl_group
     end
-    if hl ~= nil then
+    if hl then
       table.insert(ranges, 2, {start_col + padding + 1, start_col + padding + #line, hl, line})
     end
 

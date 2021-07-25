@@ -11,7 +11,7 @@ function Direction._new(typ, opts)
     typ = {
       typ,
       function(t)
-        return types[t] ~= nil
+        return types[t]
       end,
       vim.inspect(types),
     },

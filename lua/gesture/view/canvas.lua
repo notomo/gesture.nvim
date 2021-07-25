@@ -8,10 +8,9 @@ M.Canvas = Canvas
 
 local vim = vim
 local set_extmark = vim.api.nvim_buf_set_extmark
-local ns = vim.api.nvim_create_namespace("gesture")
 
-function Canvas.new(bufnr)
-  local tbl = {_rows = {}, _board_rows = {}, _bufnr = bufnr}
+function Canvas.new(bufnr, ns)
+  local tbl = {_rows = {}, _board_rows = {}, _bufnr = bufnr, _ns = ns}
   return setmetatable(tbl, Canvas)
 end
 
@@ -29,7 +28,7 @@ local BOARD_PRIORITY = POINT_PRIORITY + 1
 function Canvas._draw_board(self, y, ranges)
   local row = self._board_rows[y] or {}
   local col, virtual_texts = converter.board_to_virtual_texts(ranges)
-  local id = set_extmark(self._bufnr, ns, y - 1, col, {
+  local id = set_extmark(self._bufnr, self._ns, y - 1, col, {
     virt_text = virtual_texts,
     virt_text_pos = "overlay",
     id = row.id,
@@ -55,7 +54,7 @@ function Canvas._draw_point(self, p)
   end)
 
   local virtual_texts = converter.to_virtual_texts(cols, "GestureLine")
-  local id = set_extmark(self._bufnr, ns, p.y - 1, 0, {
+  local id = set_extmark(self._bufnr, self._ns, p.y - 1, 0, {
     virt_text = virtual_texts,
     virt_text_pos = "overlay",
     id = row.id,
