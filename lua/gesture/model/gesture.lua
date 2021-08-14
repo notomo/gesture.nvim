@@ -13,8 +13,7 @@ function Gesture.new(info)
     action = {
       info.action,
       function(action)
-        local typ = type(action)
-        return typ == "string" or typ == "function"
+        return type(action) == "string" or vim.is_callable(action)
       end,
       "string or function",
     },
@@ -60,7 +59,7 @@ function Gesture.execute(self, param)
 end
 
 function Gesture._execute(self, param)
-  if type(self.action) == "function" then
+  if vim.is_callable(self.action) then
     return self.action(param)
   end
   return vim.api.nvim_exec(self.action, true)

@@ -52,8 +52,8 @@ Gesture info                                       *gesture.nvim-gesture-info*
 
 - {name} (string | nil): a displayed name
 - {inputs} (table): inputs definition
-- {action} (string | function(ctx)): an action executed on matched.
-    function can use |gesture.nvim-action-context| as an argument.
+- {action} (string | callable(ctx)): an action executed on matched.
+    callable can use |gesture.nvim-action-context| as an argument.
 - {nowait} (boolean | nil): to define nowait gesture
 - {buffer} (string | number | nil): to define the buffer local gesture
 
@@ -111,7 +111,7 @@ USAGE                                                     *gesture.nvim-USAGE*
   gesture.register({
     name = "previous tab",
     inputs = { gesture.left() },
-    action = function(ctx) -- also can use function
+    action = function(ctx) -- also can use callable
       vim.cmd("tabprevious")
     end,
   })

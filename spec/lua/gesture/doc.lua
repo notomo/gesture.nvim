@@ -21,8 +21,8 @@ require("genvdoc").generate("gesture.nvim", {
 
 - {name} (string | nil): a displayed name
 - {inputs} (table): inputs definition
-- {action} (string | function(ctx)): an action executed on matched.
-    function can use |gesture.nvim-action-context| as an argument.
+- {action} (string | callable(ctx)): an action executed on matched.
+    callable can use |gesture.nvim-action-context| as an argument.
 - {nowait} (boolean | nil): to define nowait gesture
 - {buffer} (string | number | nil): to define the buffer local gesture
 

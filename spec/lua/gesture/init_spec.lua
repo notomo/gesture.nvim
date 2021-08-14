@@ -76,6 +76,27 @@ foo]])
     assert.current_line("hoge")
   end)
 
+  it("can use callable as action", function()
+    local called = false
+    local action = setmetatable({}, {
+      __call = function()
+        called = true
+      end,
+    })
+
+    gesture.register({inputs = {gesture.down(), gesture.up()}, action = action})
+
+    gesture.draw()
+    vim.cmd("normal! 10j")
+    gesture.draw()
+    vim.cmd("normal! 10k")
+    gesture.draw()
+    gesture.finish()
+
+    assert.window_count(1)
+    assert.is_true(called)
+  end)
+
   it("can use action context", function()
     local ctx
     gesture.register({
