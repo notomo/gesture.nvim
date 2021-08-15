@@ -9,13 +9,24 @@ M.Gesture = Gesture
 
 function Gesture.new(info)
   vim.validate({info = {info, "table"}})
+
+  local is_callable = vim.is_callable(info.action)
+  local action
+  if is_callable then
+    action = info.action
+  else
+    action = function()
+      return vim.api.nvim_exec(info.action, true)
+    end
+  end
+
   vim.validate({
     action = {
       info.action,
-      function(action)
-        return type(action) == "string" or vim.is_callable(action)
+      function(x)
+        return type(x) == "string" or is_callable
       end,
-      "string or function",
+      "string or callable",
     },
     inputs = {
       info.inputs,
@@ -42,27 +53,20 @@ function Gesture.new(info)
 
   local tbl = {
     name = info.name or "",
-    action = info.action,
     inputs = Inputs.new(info.inputs),
     nowait = info.nowait or false,
     buffer = bufnr,
+    _action = action,
   }
   return setmetatable(tbl, Gesture)
 end
 
 function Gesture.execute(self, param)
-  local ok, result = pcall(self._execute, self, param)
+  local ok, result = pcall(self._action, param)
   if not ok then
     return nil, result
   end
   return result, nil
-end
-
-function Gesture._execute(self, param)
-  if vim.is_callable(self.action) then
-    return self.action(param)
-  end
-  return vim.api.nvim_exec(self.action, true)
 end
 
 function Gesture.match(self, inputs, nowait)
