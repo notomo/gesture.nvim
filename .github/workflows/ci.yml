@@ -12,6 +12,8 @@ jobs:
     steps:
       - uses: actions/checkout@v2
       - uses: notomo/action-setup-nvim-lua@v1
+        with:
+          luarocks-version: '3.5.0' # workaround for vusted
       - run: luarocks install vusted
 
       - uses: rhysd/action-setup-vim@v1
