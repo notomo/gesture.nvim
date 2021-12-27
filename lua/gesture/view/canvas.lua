@@ -18,8 +18,9 @@ function Canvas.draw(self, board, points)
   for y, ranges in pairs(board.range_map) do
     self:_draw_board(y, ranges)
   end
+  local hl_group = M._GestureLine()
   for _, p in ipairs(points) do
-    self:_draw_point(p)
+    self:_draw_point(p, hl_group)
   end
 end
 
@@ -37,7 +38,7 @@ function Canvas._draw_board(self, y, ranges)
   self._board_rows[y] = {id = id}
 end
 
-function Canvas._draw_point(self, p)
+function Canvas._draw_point(self, p, hl_group)
   local row = self._rows[p.y] or {}
   local col_map = row.col_map or {}
 
@@ -53,7 +54,7 @@ function Canvas._draw_point(self, p)
     return a < b
   end)
 
-  local virtual_texts = converter.to_virtual_texts(cols, "GestureLine")
+  local virtual_texts = converter.to_virtual_texts(cols, hl_group)
   local id = set_extmark(self._bufnr, self._ns, p.y - 1, 0, {
     virt_text = virtual_texts,
     virt_text_pos = "overlay",
@@ -63,13 +64,14 @@ function Canvas._draw_point(self, p)
   self._rows[p.y] = {col_map = col_map, id = id}
 end
 
-local highlights = require("gesture.lib.highlight")
-M.hl_groups = {
-  highlights.default("GestureLine", {
+local highlightlib = require("gesture.lib.highlight")
+M._GestureLine = highlightlib.Ensured.new("GestureLine", function(hl_group)
+  return highlightlib.default(hl_group, {
     ctermbg = {"Statement", 153},
     guibg = {"Statement", "#a8d2eb"},
     blend = 25,
-  }),
-}
+  })
+end)
+M.hl_groups = {M._GestureLine()}
 
 return M
