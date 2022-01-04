@@ -8,8 +8,8 @@ Line.__index = Line
 M.Line = Line
 
 function Line.new(direction, length)
-  vim.validate({direction = {direction, "string"}, length = {length, "number"}})
-  local tbl = {direction = direction, length = length}
+  vim.validate({ direction = { direction, "string" }, length = { length, "number" } })
+  local tbl = { direction = direction, length = length }
   return setmetatable(tbl, Line)
 end
 

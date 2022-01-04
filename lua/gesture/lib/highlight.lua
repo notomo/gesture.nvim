@@ -1,10 +1,10 @@
 local M = {}
 
 local attrs = {
-  ctermfg = {"fg", "cterm"},
-  guifg = {"fg", "gui"},
-  ctermbg = {"bg", "cterm"},
-  guibg = {"bg", "gui"},
+  ctermfg = { "fg", "cterm" },
+  guifg = { "fg", "gui" },
+  ctermbg = { "bg", "cterm" },
+  guibg = { "bg", "gui" },
 }
 function M.default(name, attributes)
   local attr = ""
@@ -36,7 +36,7 @@ Ensured.__index = Ensured
 M.Ensured = Ensured
 
 function Ensured.new(hl_group, define_hl)
-  local tbl = {_hl_group = hl_group, _define_hl = define_hl}
+  local tbl = { _hl_group = hl_group, _define_hl = define_hl }
   return setmetatable(tbl, Ensured)
 end
 

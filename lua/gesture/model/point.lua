@@ -95,7 +95,7 @@ function Point.interpolate(self, point)
 end
 
 function Point.new(x, y)
-  local tbl = {x = x, y = y}
+  local tbl = { x = x, y = y }
   return setmetatable(tbl, Point)
 end
 

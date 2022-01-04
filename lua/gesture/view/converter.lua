@@ -7,9 +7,9 @@ function M.to_virtual_texts(cols, hl_group)
     local e = col - 1
     local space = (" "):rep(e - index + 1)
     if space ~= "" then
-      table.insert(virtual_texts, {space})
+      table.insert(virtual_texts, { space })
     end
-    table.insert(virtual_texts, {" ", hl_group})
+    table.insert(virtual_texts, { " ", hl_group })
     index = col + 1
   end
   return virtual_texts
@@ -21,15 +21,15 @@ function M.board_to_virtual_texts(ranges)
     local hl_group = range[3]
     local text = range[4]
     if text then
-      table.insert(virtual_texts, {text, hl_group})
+      table.insert(virtual_texts, { text, hl_group })
     else
       local s = range[1]
       local e = range[2]
       local space = (" "):rep(e - s + 1)
-      table.insert(virtual_texts, {space, hl_group})
+      table.insert(virtual_texts, { space, hl_group })
     end
   end
-  local first = ranges[1] or {0, 0}
+  local first = ranges[1] or { 0, 0 }
   return first[1], virtual_texts
 end
 

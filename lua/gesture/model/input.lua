@@ -7,8 +7,8 @@ Input.__index = Input
 M.Input = Input
 
 function Input.direction(direction, length)
-  vim.validate({direction = {direction, "string"}, length = {length, "number"}})
-  local tbl = {kind = "direction", value = direction, length = length}
+  vim.validate({ direction = { direction, "string" }, length = { length, "number" } })
+  local tbl = { kind = "direction", value = direction, length = length }
   return setmetatable(tbl, Input)
 end
 
@@ -22,13 +22,13 @@ end
 M.Inputs = Inputs
 
 function Inputs.new(inputs)
-  vim.validate({inputs = {inputs, "table", true}})
-  local tbl = {_inputs = inputs or {}}
+  vim.validate({ inputs = { inputs, "table", true } })
+  local tbl = { _inputs = inputs or {} }
   return setmetatable(tbl, Inputs)
 end
 
 function Inputs.add(self, input)
-  vim.validate({input = {input, "table"}})
+  vim.validate({ input = { input, "table" } })
   local last = self._inputs[#self._inputs]
   if not last or last.value ~= input.value then
     table.insert(self._inputs, input)

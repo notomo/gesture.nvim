@@ -17,7 +17,7 @@ function M.wrap(strs, width, separator)
     if not last or #last + #separator + #str > width then
       table.insert(wrapped, str)
     else
-      wrapped[#wrapped] = table.concat({last, str}, separator)
+      wrapped[#wrapped] = table.concat({ last, str }, separator)
     end
   end
   return wrapped

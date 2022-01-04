@@ -8,7 +8,7 @@ Gesture.__index = Gesture
 M.Gesture = Gesture
 
 function Gesture.new(info)
-  vim.validate({info = {info, "table"}})
+  vim.validate({ info = { info, "table" } })
 
   local is_callable = vim.is_callable(info.action)
   local action
@@ -35,7 +35,7 @@ function Gesture.new(info)
       end,
       "not empty",
     },
-    nowait = {info.nowait, "boolean", true},
+    nowait = { info.nowait, "boolean", true },
     buffer = {
       info.buffer,
       function(buffer)
@@ -97,7 +97,7 @@ Gestures.__index = Gestures
 M.Gestures = Gestures
 
 function Gestures.new()
-  local tbl = {_gestures = {}}
+  local tbl = { _gestures = {} }
   return setmetatable(tbl, Gestures)
 end
 
@@ -146,12 +146,12 @@ GestureMap.__index = GestureMap
 M.GestureMap = GestureMap
 
 function GestureMap.new()
-  local tbl = {_global = Gestures.new(), _buffer_local = {}}
+  local tbl = { _global = Gestures.new(), _buffer_local = {} }
   return setmetatable(tbl, GestureMap)
 end
 
 function GestureMap.add(self, gesture)
-  vim.validate({gesture = {gesture, "table"}})
+  vim.validate({ gesture = { gesture, "table" } })
 
   if gesture.buffer then
     local bufnr = vim.fn.bufnr(gesture.buffer)
@@ -166,7 +166,7 @@ function GestureMap.add(self, gesture)
 end
 
 function GestureMap.match(self, bufnr, inputs, nowait)
-  vim.validate({bufnr = {bufnr, "number"}, nowait = {nowait, "boolean"}})
+  vim.validate({ bufnr = { bufnr, "number" }, nowait = { nowait, "boolean" } })
   local gestures = self._buffer_local[bufnr]
   if gestures then
     return gestures:match(inputs, nowait) or self._global:match(inputs, nowait)
@@ -175,7 +175,7 @@ function GestureMap.match(self, bufnr, inputs, nowait)
 end
 
 function GestureMap.has_forward_match(self, bufnr, inputs)
-  vim.validate({bufnr = {bufnr, "number"}})
+  vim.validate({ bufnr = { bufnr, "number" } })
   local gestures = self._buffer_local[bufnr]
   if gestures then
     return gestures:has_forward_match(inputs) or self._global:has_forward_match(inputs)

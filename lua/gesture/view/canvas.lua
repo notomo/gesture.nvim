@@ -10,7 +10,7 @@ local vim = vim
 local set_extmark = vim.api.nvim_buf_set_extmark
 
 function Canvas.new(bufnr, ns)
-  local tbl = {_rows = {}, _board_rows = {}, _bufnr = bufnr, _ns = ns}
+  local tbl = { _rows = {}, _board_rows = {}, _bufnr = bufnr, _ns = ns }
   return setmetatable(tbl, Canvas)
 end
 
@@ -35,7 +35,7 @@ function Canvas._draw_board(self, y, ranges)
     id = row.id,
     priority = BOARD_PRIORITY,
   })
-  self._board_rows[y] = {id = id}
+  self._board_rows[y] = { id = id }
 end
 
 function Canvas._draw_point(self, p, hl_group)
@@ -61,17 +61,17 @@ function Canvas._draw_point(self, p, hl_group)
     id = row.id,
     priority = POINT_PRIORITY,
   })
-  self._rows[p.y] = {col_map = col_map, id = id}
+  self._rows[p.y] = { col_map = col_map, id = id }
 end
 
 local highlightlib = require("gesture.lib.highlight")
 M._GestureLine = highlightlib.Ensured.new("GestureLine", function(hl_group)
   return highlightlib.default(hl_group, {
-    ctermbg = {"Statement", 153},
-    guibg = {"Statement", "#a8d2eb"},
+    ctermbg = { "Statement", 153 },
+    guibg = { "Statement", "#a8d2eb" },
     blend = 25,
   })
 end)
-M.hl_groups = {M._GestureLine()}
+M.hl_groups = { M._GestureLine() }
 
 return M

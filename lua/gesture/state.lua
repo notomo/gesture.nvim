@@ -63,7 +63,7 @@ end
 
 function State._action_param(self)
   local point = self.view.current_point()
-  return {last_position = {point.y, point.x}}
+  return { last_position = { point.y, point.x } }
 end
 
 return M

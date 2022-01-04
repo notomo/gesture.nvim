@@ -12,7 +12,7 @@ M.View = View
 
 function View.open()
   local background, window_id = Background.open(M.click)
-  local tbl = {window_id = window_id, _background = background, _new_points = {}}
+  local tbl = { window_id = window_id, _background = background, _new_points = {} }
   return setmetatable(tbl, View)
 end
 
@@ -45,7 +45,7 @@ function View.close(self)
   self._background:close()
 end
 
-local mouse = vim.api.nvim_eval("\"\\<LeftMouse>\"")
+local mouse = vim.api.nvim_eval('"\\<LeftMouse>"')
 -- replace on testing
 function M.click()
   vim.cmd("normal! " .. mouse)

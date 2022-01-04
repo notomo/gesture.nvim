@@ -8,7 +8,7 @@ Background.__index = Background
 M.Background = Background
 
 function Background.open(click)
-  vim.validate({click = {click, "function"}})
+  vim.validate({ click = { click, "function" } })
 
   local width = vim.o.columns
   local height = vim.o.lines - vim.o.cmdheight
@@ -27,7 +27,7 @@ function Background.open(click)
   vim.wo[window_id].scrolloff = 0
   vim.wo[window_id].sidescrolloff = 0
 
-  local lines = vim.fn["repeat"]({(" "):rep(width)}, height)
+  local lines = vim.fn["repeat"]({ (" "):rep(width) }, height)
   vim.api.nvim_buf_set_lines(bufnr, 0, -1, false, lines)
   vim.bo[bufnr].bufhidden = "wipe"
   vim.bo[bufnr].filetype = "gesture"
@@ -43,10 +43,15 @@ function Background.open(click)
   vim.cmd("redraw")
   click()
 
-  vim.cmd(([[autocmd WinLeave,TabLeave,BufLeave <buffer=%s> ++once lua require('gesture.command').Command.new("cancel", %s)]]):format(bufnr, window_id))
+  vim.cmd(
+    ([[autocmd WinLeave,TabLeave,BufLeave <buffer=%s> ++once lua require('gesture.command').Command.new("cancel", %s)]]):format(
+      bufnr,
+      window_id
+    )
+  )
 
   local ns = vim.api.nvim_create_namespace("gesture")
-  local tbl = {_window_id = window_id, _ns = ns, _canvas = Canvas.new(bufnr, ns)}
+  local tbl = { _window_id = window_id, _ns = ns, _canvas = Canvas.new(bufnr, ns) }
   local self = setmetatable(tbl, Background)
 
   vim.api.nvim_set_decoration_provider(self._ns, {
@@ -54,7 +59,7 @@ function Background.open(click)
       if topline == 0 or buf ~= bufnr or not self:is_valid() then
         return false
       end
-      vim.fn.winrestview({topline = 0, leftcol = 0})
+      vim.fn.winrestview({ topline = 0, leftcol = 0 })
     end,
   })
 

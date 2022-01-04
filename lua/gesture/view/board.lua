@@ -15,7 +15,7 @@ local round = function(x)
 end
 
 function GestureBoard._new(range_map)
-  local tbl = {range_map = range_map or {}}
+  local tbl = { range_map = range_map or {} }
   return setmetatable(tbl, GestureBoard)
 end
 
@@ -28,7 +28,7 @@ function GestureBoard.create(inputs, gesture, has_forward_match)
   local width = editor_width / 4
 
   local texts = listlib.wrap(inputs:values(), width - both_padding)
-  local lines = {"", unpack(texts)}
+  local lines = { "", unpack(texts) }
   if gesture then
     table.insert(lines, gesture.name)
   else
@@ -57,8 +57,8 @@ function GestureBoard.create(inputs, gesture, has_forward_match)
 
     local padding = math.floor((width - #line) / 2)
     local ranges = {
-      {start_col, start_col + padding, hl_group},
-      {start_col + padding + #line + 1, end_col, hl_group},
+      { start_col, start_col + padding, hl_group },
+      { start_col + padding + #line + 1, end_col, hl_group },
     }
 
     local hl
@@ -68,7 +68,7 @@ function GestureBoard.create(inputs, gesture, has_forward_match)
       hl = hl_group
     end
     if hl then
-      table.insert(ranges, 2, {start_col + padding + 1, start_col + padding + #line, hl, line})
+      table.insert(ranges, 2, { start_col + padding + 1, start_col + padding + #line, hl, line })
     end
 
     range_map[y] = ranges
@@ -81,10 +81,10 @@ local blend = 0
 
 M._GestureInput = highlightlib.Ensured.new("GestureInput", function(hl_group)
   return highlightlib.default(hl_group, {
-    ctermfg = {"NormalFloat", 230},
-    guifg = {"NormalFloat", "#fffeeb"},
-    ctermbg = {"NormalFloat", 235},
-    guibg = {"NormalFloat", "#3a4b5c"},
+    ctermfg = { "NormalFloat", 230 },
+    guifg = { "NormalFloat", "#fffeeb" },
+    ctermbg = { "NormalFloat", 235 },
+    guibg = { "NormalFloat", "#3a4b5c" },
     blend = blend,
     gui = "bold",
   })
@@ -92,10 +92,10 @@ end)
 
 M._GestureInputNotMatched = highlightlib.Ensured.new("GestureInputNotMatched", function(hl_group)
   return highlightlib.default(hl_group, {
-    ctermfg = {"Comment", 103},
-    guifg = {"Comment", "#8d9eb2"},
-    ctermbg = {"NormalFloat", 235},
-    guibg = {"NormalFloat", "#3a4b5c"},
+    ctermfg = { "Comment", 103 },
+    guifg = { "Comment", "#8d9eb2" },
+    ctermbg = { "NormalFloat", 235 },
+    guibg = { "NormalFloat", "#3a4b5c" },
     blend = blend,
   })
 end)
@@ -103,12 +103,12 @@ end)
 M._GestureActionLabel = highlightlib.Ensured.new("GestureActionLabel", function(hl_group)
   return highlightlib.default(hl_group, {
     gui = "bold",
-    ctermfg = {"Statement", 153},
-    guifg = {"Statement", "#a8d2eb"},
+    ctermfg = { "Statement", 153 },
+    guifg = { "Statement", "#a8d2eb" },
     blend = blend,
   })
 end)
 
-M.hl_groups = {M._GestureInput(), M._GestureInputNotMatched(), M._GestureActionLabel()}
+M.hl_groups = { M._GestureInput(), M._GestureInputNotMatched(), M._GestureActionLabel() }
 
 return M

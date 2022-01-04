@@ -4,10 +4,10 @@ local Direction = {}
 Direction.__index = Direction
 M.Direction = Direction
 
-local types = {UP = "UP", DOWN = "DOWN", RIGHT = "RIGHT", LEFT = "LEFT"}
+local types = { UP = "UP", DOWN = "DOWN", RIGHT = "RIGHT", LEFT = "LEFT" }
 
 function Direction._new(typ, opts)
-  vim.validate {
+  vim.validate({
     typ = {
       typ,
       function(t)
@@ -15,12 +15,12 @@ function Direction._new(typ, opts)
       end,
       vim.inspect(types),
     },
-    opts = {opts, "table", true},
-  }
+    opts = { opts, "table", true },
+  })
   opts = opts or {}
   vim.validate({
-    max_length = {opts.max_length, "number", true},
-    min_length = {opts.min_length, "number", true},
+    max_length = { opts.max_length, "number", true },
+    min_length = { opts.min_length, "number", true },
   })
 
   local tbl = {

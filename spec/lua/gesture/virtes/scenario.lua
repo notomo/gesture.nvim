@@ -8,7 +8,7 @@ local scenario = function(ctx)
   local gesture = require("gesture")
   gesture.register({
     name = "example name",
-    inputs = {gesture.right(), gesture.down()},
+    inputs = { gesture.right(), gesture.down() },
     action = "normal! gg",
   })
 
@@ -37,11 +37,11 @@ local main = function(comparison, result_dir)
   vim.o.runtimepath = vim.fn.getcwd() .. "," .. vim.o.runtimepath
   vim.cmd("runtime! plugin/*.vim")
 
-  local test = require("virtes").setup({scenario = scenario, result_dir = result_dir})
-  local before = test:run({hash = comparison})
+  local test = require("virtes").setup({ scenario = scenario, result_dir = result_dir })
+  local before = test:run({ hash = comparison })
   before:write_replay_script()
 
-  local after = test:run({hash = nil})
+  local after = test:run({ hash = nil })
   after:write_replay_script()
 
   before:diff(after):write_replay_script()

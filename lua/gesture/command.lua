@@ -6,7 +6,7 @@ local Command = {}
 M.Command = Command
 
 function Command.new(name, ...)
-  local args = {...}
+  local args = { ... }
   local f = function()
     return Command[name](unpack(args))
   end
@@ -53,7 +53,7 @@ function Command.finish()
 end
 
 function Command.cancel(window_id)
-  vim.validate({window_id = {window_id, "number", true}})
+  vim.validate({ window_id = { window_id, "number", true } })
   local state = State.get(window_id)
   if not state then
     return

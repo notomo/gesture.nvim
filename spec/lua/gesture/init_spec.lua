@@ -2,12 +2,11 @@ local helper = require("gesture.lib.testlib.helper")
 local gesture = helper.require("gesture")
 
 describe("gesture.register()", function()
-
   before_each(helper.before_each)
   after_each(helper.after_each)
 
   it("can register a global gesture", function()
-    gesture.register({inputs = {gesture.down(), gesture.up()}, action = "normal! gg"})
+    gesture.register({ inputs = { gesture.down(), gesture.up() }, action = "normal! gg" })
 
     helper.set_lines([[
 hoge
@@ -29,11 +28,11 @@ foo]])
 
   it("can register a buffer local gesture", function()
     gesture.register({
-      inputs = {gesture.right(), gesture.left()},
+      inputs = { gesture.right(), gesture.left() },
       action = "normal! $",
       buffer = "%",
     })
-    gesture.register({inputs = {gesture.right(), gesture.left()}, action = "normal! 0"})
+    gesture.register({ inputs = { gesture.right(), gesture.left() }, action = "normal! 0" })
 
     helper.set_lines([[
 hoge         foo
@@ -52,7 +51,7 @@ hoge         foo
 
   it("can use function as action", function()
     gesture.register({
-      inputs = {gesture.down(), gesture.up()},
+      inputs = { gesture.down(), gesture.up() },
       action = function()
         vim.cmd("normal! gg")
       end,
@@ -84,7 +83,7 @@ foo]])
       end,
     })
 
-    gesture.register({inputs = {gesture.down(), gesture.up()}, action = action})
+    gesture.register({ inputs = { gesture.down(), gesture.up() }, action = action })
 
     gesture.draw()
     vim.cmd("normal! 10j")
@@ -100,7 +99,7 @@ foo]])
   it("can use action context", function()
     local ctx
     gesture.register({
-      inputs = {gesture.right(), gesture.down()},
+      inputs = { gesture.right(), gesture.down() },
       action = function(param)
         ctx = param
       end,
@@ -119,11 +118,11 @@ foo]])
 
   it("can register a global and buffer local gesture", function()
     gesture.register({
-      inputs = {gesture.right({min_length = 10})},
+      inputs = { gesture.right({ min_length = 10 }) },
       action = "normal! $",
       buffer = "%",
     })
-    gesture.register({inputs = {gesture.right()}, action = "normal! G"})
+    gesture.register({ inputs = { gesture.right() }, action = "normal! G" })
 
     helper.set_lines([[
 hoge         foo
@@ -139,10 +138,10 @@ bar]])
   end)
 
   it("can register a nowait buffer local gesture", function()
-    gesture.register({inputs = {gesture.right()}, action = "normal! $", nowait = true, buffer = "%"})
-    gesture.register({inputs = {gesture.right()}, action = "normal! 0", nowait = true})
+    gesture.register({ inputs = { gesture.right() }, action = "normal! $", nowait = true, buffer = "%" })
+    gesture.register({ inputs = { gesture.right() }, action = "normal! 0", nowait = true })
     gesture.register({
-      inputs = {gesture.right(), gesture.left()},
+      inputs = { gesture.right(), gesture.left() },
       action = "normal! 0",
       buffer = "%",
     })
@@ -160,7 +159,7 @@ hoge         foo
   end)
 
   it("can register a gesture with max length", function()
-    gesture.register({inputs = {gesture.right({max_length = 10})}, action = "normal! $"})
+    gesture.register({ inputs = { gesture.right({ max_length = 10 }) }, action = "normal! $" })
 
     helper.set_lines([[
 hoge         foo
@@ -176,7 +175,7 @@ hoge         foo
   end)
 
   it("can register a gesture with min length", function()
-    gesture.register({inputs = {gesture.right({min_length = 10})}, action = "normal! $"})
+    gesture.register({ inputs = { gesture.right({ min_length = 10 }) }, action = "normal! $" })
 
     helper.set_lines([[
 hoge         foo
@@ -192,8 +191,8 @@ hoge         foo
   end)
 
   it("overwrites the same gesture", function()
-    gesture.register({inputs = {gesture.right(), gesture.left()}, action = "normal! w"})
-    gesture.register({inputs = {gesture.right(), gesture.left()}, action = "normal! 2w"})
+    gesture.register({ inputs = { gesture.right(), gesture.left() }, action = "normal! w" })
+    gesture.register({ inputs = { gesture.right(), gesture.left() }, action = "normal! 2w" })
 
     helper.set_lines([[hoge foo bar]])
 
@@ -209,11 +208,11 @@ hoge         foo
 
   it("does not overwrite gesture has the different attribute", function()
     gesture.register({
-      inputs = {gesture.right({max_length = 20}), gesture.left()},
+      inputs = { gesture.right({ max_length = 20 }), gesture.left() },
       action = "normal! w",
     })
     gesture.register({
-      inputs = {gesture.right({min_length = 20}), gesture.left()},
+      inputs = { gesture.right({ min_length = 20 }), gesture.left() },
       action = "normal! 2w",
     })
 
@@ -228,11 +227,9 @@ hoge         foo
 
     assert.current_word("foo")
   end)
-
 end)
 
 describe("gesture.draw()", function()
-
   before_each(helper.before_each)
   after_each(helper.after_each)
 
@@ -254,10 +251,10 @@ describe("gesture.draw()", function()
   end)
 
   it("shows matched gesture name", function()
-    gesture.register({name = "to bottom", inputs = {gesture.down()}, action = "normal! G"})
+    gesture.register({ name = "to bottom", inputs = { gesture.down() }, action = "normal! G" })
     gesture.register({
       name = "to top",
-      inputs = {gesture.down(), gesture.up()},
+      inputs = { gesture.down(), gesture.up() },
       action = "normal! gg",
     })
 
@@ -276,7 +273,7 @@ describe("gesture.draw()", function()
   end)
 
   it("executes a nowait gesture if it is matched", function()
-    gesture.register({inputs = {gesture.right()}, action = "normal! $", nowait = true})
+    gesture.register({ inputs = { gesture.right() }, action = "normal! $", nowait = true })
 
     helper.set_lines([[
 hoge         foo
@@ -321,16 +318,14 @@ hoge         foo
 
     assert.window_count(1)
   end)
-
 end)
 
 describe("gesture.finish()", function()
-
   before_each(helper.before_each)
   after_each(helper.after_each)
 
   it("does nothing for non matched gesture", function()
-    gesture.register({inputs = {gesture.down(), gesture.up()}, action = "normal! G"})
+    gesture.register({ inputs = { gesture.down(), gesture.up() }, action = "normal! G" })
 
     helper.set_lines([[
 hoge
@@ -348,7 +343,7 @@ foo]])
   end)
 
   it("shows raw error", function()
-    gesture.register({inputs = {gesture.down()}, action = "invalid_command"})
+    gesture.register({ inputs = { gesture.down() }, action = "invalid_command" })
 
     gesture.draw()
     vim.cmd("normal! 10j")
@@ -357,16 +352,14 @@ foo]])
 
     assert.exists_message("%[gesture%] Vim:E492: Not an editor command: invalid_command")
   end)
-
 end)
 
 describe("gesture.cancel()", function()
-
   before_each(helper.before_each)
   after_each(helper.after_each)
 
   it("can cancel gesture", function()
-    gesture.register({inputs = {gesture.down(), gesture.up()}, action = "normal! gg"})
+    gesture.register({ inputs = { gesture.down(), gesture.up() }, action = "normal! gg" })
 
     helper.set_lines([[
 hoge
@@ -385,16 +378,14 @@ foo]])
     assert.window_count(1)
     assert.current_line("foo")
   end)
-
 end)
 
 describe("gesture.clear()", function()
-
   before_each(helper.before_each)
   after_each(helper.after_each)
 
   it("can clear gestures", function()
-    gesture.register({inputs = {gesture.down(), gesture.up()}, action = "normal! gg"})
+    gesture.register({ inputs = { gesture.down(), gesture.up() }, action = "normal! gg" })
     gesture.clear()
 
     helper.set_lines([[
@@ -413,5 +404,4 @@ foo]])
 
     assert.current_line("foo")
   end)
-
 end)

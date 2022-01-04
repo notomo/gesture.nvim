@@ -17,7 +17,8 @@ require("genvdoc").generate("gesture.nvim", {
     {
       name = "PARAMETERS",
       body = function(ctx)
-        return util.help_tagged(ctx, "Gesture info", "gesture.nvim-gesture-info") .. [[
+        return util.help_tagged(ctx, "Gesture info", "gesture.nvim-gesture-info")
+          .. [[
 
 - {name} (string | nil): a displayed name
 - {inputs} (table): inputs definition
@@ -26,12 +27,16 @@ require("genvdoc").generate("gesture.nvim", {
 - {nowait} (boolean | nil): to define nowait gesture
 - {buffer} (string | number | nil): to define the buffer local gesture
 
-]] .. util.help_tagged(ctx, "Action context", "gesture.nvim-action-context") .. [[
+]]
+          .. util.help_tagged(ctx, "Action context", "gesture.nvim-action-context")
+          .. [[
 
 - {ctx} (table): gesture context
   - {last_position} (table): tha last position drawn by gesture
 
-]] .. util.help_tagged(ctx, "Input options", "gesture.nvim-input-opts") .. [[
+]]
+          .. util.help_tagged(ctx, "Input options", "gesture.nvim-input-opts")
+          .. [[
 
 - {max_length} (number | nil) max length of the input line
 - {min_length} (number | nil) min length of the input line]]
@@ -56,7 +61,10 @@ used for action label
         }
         local sections = {}
         for _, hl_group in ipairs(require("gesture.view").hl_groups) do
-          table.insert(sections, util.help_tagged(ctx, hl_group, "hl-" .. hl_group) .. util.indent(descriptions[hl_group], 2))
+          table.insert(
+            sections,
+            util.help_tagged(ctx, hl_group, "hl-" .. hl_group) .. util.indent(descriptions[hl_group], 2)
+          )
         end
         return vim.trim(table.concat(sections, "\n"))
       end,

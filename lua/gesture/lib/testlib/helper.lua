@@ -4,8 +4,7 @@ local M = require("vusted.helper")
 M.root = M.find_plugin_root(plugin_name)
 
 function M.before_each()
-  require("gesture.view").click = function()
-  end
+  require("gesture.view").click = function() end
 end
 
 function M.after_each()
@@ -31,7 +30,7 @@ function M.set_lines(lines)
 end
 
 function M.cursor()
-  return {vim.fn.line("."), vim.fn.col(".")}
+  return { vim.fn.line("."), vim.fn.col(".") }
 end
 
 local asserts = require("vusted.assert").asserts
