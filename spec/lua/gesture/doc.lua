@@ -1,7 +1,11 @@
-local usage_path = "./spec/lua/gesture/usage.vim"
 local util = require("genvdoc.util")
+local plugin_name = vim.env.PLUGIN_NAME
+local full_plugin_name = plugin_name .. ".nvim"
 
-require("genvdoc").generate("gesture.nvim", {
+local example_path = ("./spec/lua/%s/example.lua"):format(plugin_name)
+dofile(example_path)
+
+require("genvdoc").generate(full_plugin_name, {
   chapters = {
     {
       name = function(group)
@@ -70,17 +74,16 @@ used for action label
       end,
     },
     {
-      name = "USAGE",
+      name = "EXAMPLE",
       body = function()
-        local usage = util.help_code_block_from_file(usage_path)
-        return usage
+        return util.help_code_block_from_file(example_path)
       end,
     },
   },
 })
 
 local gen_readme = function()
-  local f = io.open(usage_path, "r")
+  local f = io.open(example_path, "r")
   local usage = f:read("*a")
   f:close()
 
@@ -93,9 +96,9 @@ gesture.nvim is a mouse gesture plugin for Neovim (nightly).
 
 <img src="https://raw.github.com/wiki/notomo/gesture.nvim/images/gesture.gif" width="1280">
 
-## Usage
+## Example
 
-```vim
+```lua
 %s```
 ]]):format(usage)
 

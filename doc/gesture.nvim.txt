@@ -83,30 +83,29 @@ GestureActionLabel                                     *hl-GestureActionLabel*
   used for action label
 
 ==============================================================================
-USAGE                                                     *gesture.nvim-USAGE*
+EXAMPLE                                                 *gesture.nvim-EXAMPLE*
 
 >
-  set mouse=a
+  vim.opt.mouse = "a"
 
-  nnoremap <silent> <LeftDrag> <Cmd>lua require("gesture").draw()<CR>
-  nnoremap <silent> <LeftRelease> <Cmd>lua require("gesture").finish()<CR>
+  vim.keymap.set("n", "<LeftDrag>", [[<Cmd>lua require("gesture").draw()<CR>]], { silent = true })
+  vim.keymap.set("n", "<LeftRelease>", [[<Cmd>lua require("gesture").finish()<CR>]], { silent = true })
 
-  " or if you would like to use right click
-  nnoremap <RightMouse> <Nop>
-  nnoremap <silent> <RightDrag> <Cmd>lua require("gesture").draw()<CR>
-  nnoremap <silent> <RightRelease> <Cmd>lua require("gesture").finish()<CR>
+  -- or if you would like to use right click
+  vim.keymap.set("n", "<RightMouse>", [[<Nop>]])
+  vim.keymap.set("n", "<RightDrag>", [[<Cmd>lua require("gesture").draw()<CR>]], { silent = true })
+  vim.keymap.set("n", "<RightRelease>", [[<Cmd>lua require("gesture").finish()<CR>]], { silent = true })
 
-  lua << EOF
-  local gesture = require('gesture')
+  local gesture = require("gesture")
   gesture.register({
     name = "scroll to bottom",
     inputs = { gesture.up(), gesture.down() },
-    action = "normal! G"
+    action = "normal! G",
   })
   gesture.register({
     name = "next tab",
     inputs = { gesture.right() },
-    action = "tabnext"
+    action = "tabnext",
   })
   gesture.register({
     name = "previous tab",
@@ -119,9 +118,8 @@ USAGE                                                     *gesture.nvim-USAGE*
     name = "go back",
     inputs = { gesture.right(), gesture.left() },
     -- map to `<C-o>` keycode
-    action = [[lua vim.api.nvim_feedkeys(vim.api.nvim_replace_termcodes("<C-o>", true, false, true), "n", true)]]
+    action = [[lua vim.api.nvim_feedkeys(vim.api.nvim_replace_termcodes("<C-o>", true, false, true), "n", true)]],
   })
-  EOF
 <
 
 ==============================================================================

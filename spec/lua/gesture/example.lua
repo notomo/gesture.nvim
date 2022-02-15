@@ -1,14 +1,3 @@
-# gesture.nvim
-
-[![ci](https://github.com/notomo/gesture.nvim/workflows/ci/badge.svg?branch=master)](https://github.com/notomo/gesture.nvim/actions/workflows/ci.yml?query=branch%3Amaster)
-
-gesture.nvim is a mouse gesture plugin for Neovim (nightly).
-
-<img src="https://raw.github.com/wiki/notomo/gesture.nvim/images/gesture.gif" width="1280">
-
-## Example
-
-```lua
 vim.opt.mouse = "a"
 
 vim.keymap.set("n", "<LeftDrag>", [[<Cmd>lua require("gesture").draw()<CR>]], { silent = true })
@@ -43,4 +32,3 @@ gesture.register({
   -- map to `<C-o>` keycode
   action = [[lua vim.api.nvim_feedkeys(vim.api.nvim_replace_termcodes("<C-o>", true, false, true), "n", true)]],
 })
-```
