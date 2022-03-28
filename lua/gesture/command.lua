@@ -1,26 +1,9 @@
-local messagelib = require("gesture.lib.message")
+local ShowError = require("gesture.vendor.misclib.error_handler").for_show_error()
+local ShowAsUserError = require("gesture.vendor.misclib.error_handler").for_show_as_user_error()
+
 local State = require("gesture.state").State
 
-local M = {}
-local Command = {}
-M.Command = Command
-
-function Command.new(name, ...)
-  local args = { ... }
-  local f = function()
-    return Command[name](unpack(args))
-  end
-
-  local ok, result, err = xpcall(f, debug.traceback)
-  if not ok then
-    return messagelib.error(result)
-  elseif err then
-    return messagelib.user_error(err)
-  end
-  return result
-end
-
-function Command.draw()
+function ShowAsUserError.draw()
   local state = State.get_or_create()
   local valid = state:update()
   if not valid then
@@ -39,7 +22,7 @@ function Command.draw()
   state.view:render_input(inputs, gesture, has_forward_match)
 end
 
-function Command.finish()
+function ShowAsUserError.finish()
   local state = State.get()
   if not state then
     return
@@ -52,7 +35,7 @@ function Command.finish()
   end
 end
 
-function Command.cancel(window_id)
+function ShowError.cancel(window_id)
   vim.validate({ window_id = { window_id, "number", true } })
   local state = State.get(window_id)
   if not state then
@@ -61,12 +44,12 @@ function Command.cancel(window_id)
   state:close()
 end
 
-function Command.register(info)
+function ShowError.register(info)
   require("gesture.model.setting").register(info)
 end
 
-function Command.clear()
+function ShowError.clear()
   require("gesture.model.setting").clear()
 end
 
-return M
+return vim.tbl_extend("force", ShowAsUserError:methods(), ShowError:methods())

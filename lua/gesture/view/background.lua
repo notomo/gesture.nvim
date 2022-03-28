@@ -35,7 +35,7 @@ function Background.open(click)
 
   local before_window_id = windowlib.by_pattern("^gesture://")
   if before_window_id then
-    require("gesture.command").Command.new("cancel", before_window_id)
+    require("gesture.command").cancel(before_window_id)
   end
   vim.api.nvim_buf_set_name(bufnr, ("gesture://%d/GESTURE"):format(bufnr))
 
@@ -44,7 +44,7 @@ function Background.open(click)
   click()
 
   vim.cmd(
-    ([[autocmd WinLeave,TabLeave,BufLeave <buffer=%s> ++once lua require('gesture.command').Command.new("cancel", %s)]]):format(
+    ([[autocmd WinLeave,TabLeave,BufLeave <buffer=%s> ++once lua require('gesture.command').cancel(%s)]]):format(
       bufnr,
       window_id
     )

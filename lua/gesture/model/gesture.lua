@@ -64,9 +64,9 @@ end
 function Gesture.execute(self, param)
   local ok, result = pcall(self._action, param)
   if not ok then
-    return nil, result
+    return result
   end
-  return result, nil
+  return nil
 end
 
 function Gesture.match(self, inputs, nowait)
