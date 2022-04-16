@@ -43,12 +43,13 @@ function Background.open(click)
   vim.cmd("redraw")
   click()
 
-  vim.cmd(
-    ([[autocmd WinLeave,TabLeave,BufLeave <buffer=%s> ++once lua require('gesture.command').cancel(%s)]]):format(
-      bufnr,
-      window_id
-    )
-  )
+  vim.api.nvim_create_autocmd({ "WinLeave", "TabLeave", "BufLeave" }, {
+    buffer = bufnr,
+    once = true,
+    callback = function()
+      require("gesture.command").cancel(window_id)
+    end,
+  })
 
   local ns = vim.api.nvim_create_namespace("gesture")
   local tbl = { _window_id = window_id, _ns = ns, _canvas = Canvas.new(bufnr, ns) }
