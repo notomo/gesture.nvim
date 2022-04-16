@@ -1,8 +1,9 @@
-local repository = require("gesture.lib.repository").Repository.new("state")
 local View = require("gesture.view").View
 local Matcher = require("gesture.model.matcher").Matcher
 local Inputs = require("gesture.model.input").Inputs
 local Input = require("gesture.model.input").Input
+
+local _states = {}
 
 local M = {}
 
@@ -26,13 +27,13 @@ function State.get_or_create()
   }
   local self = setmetatable(tbl, State)
 
-  repository:set(self.view.window_id, self)
+  _states[self.view.window_id] = self
 
   return self
 end
 
 function State.get(window_id)
-  return repository:get(window_id or vim.api.nvim_get_current_win())
+  return _states[window_id or vim.api.nvim_get_current_win()]
 end
 
 function State.update(self)
@@ -55,7 +56,7 @@ end
 function State.close(self)
   local param = self:_action_param()
 
-  repository:delete(self.view.window_id)
+  _states[self.view.window_id] = nil
   self.view:close()
 
   return param
