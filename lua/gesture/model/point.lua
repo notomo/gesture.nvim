@@ -1,11 +1,8 @@
 local Line = require("gesture.model.line").Line
 local listlib = require("gesture.lib.list")
 
-local M = {}
-
 local Point = {}
 Point.__index = Point
-M.Point = Point
 
 function Point.line_to(self, point)
   local diff_x = point.x - self.x
@@ -99,4 +96,4 @@ function Point.new(x, y)
   return setmetatable(tbl, Point)
 end
 
-return M
+return Point

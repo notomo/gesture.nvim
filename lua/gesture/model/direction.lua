@@ -1,8 +1,5 @@
-local M = {}
-
 local Direction = {}
 Direction.__index = Direction
-M.Direction = Direction
 
 local types = { UP = "UP", DOWN = "DOWN", RIGHT = "RIGHT", LEFT = "LEFT" }
 
@@ -52,4 +49,4 @@ function Direction.__eq(a, b)
   return a.kind == b.kind and a.value == b.value and a.max_length == b.max_length and a.min_length == b.min_length
 end
 
-return M
+return Direction

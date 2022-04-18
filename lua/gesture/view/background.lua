@@ -1,11 +1,8 @@
 local Canvas = require("gesture.view.canvas").Canvas
 local windowlib = require("gesture.lib.window")
 
-local M = {}
-
 local Background = {}
 Background.__index = Background
-M.Background = Background
 
 function Background.open(click)
   vim.validate({ click = { click, "function" } })
@@ -80,4 +77,4 @@ function Background.draw(self, board, new_points)
   self._canvas:draw(board, new_points)
 end
 
-return M
+return Background

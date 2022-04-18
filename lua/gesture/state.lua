@@ -1,15 +1,12 @@
 local View = require("gesture.view").View
-local Matcher = require("gesture.model.matcher").Matcher
+local Matcher = require("gesture.model.matcher")
 local Inputs = require("gesture.model.input").Inputs
 local Input = require("gesture.model.input").Input
 
 local _states = {}
 
-local M = {}
-
 local State = {}
 State.__index = State
-M.State = State
 
 function State.get_or_create()
   local current = State.get()
@@ -67,4 +64,4 @@ function State._action_param(self)
   return { last_position = { point.y, point.x } }
 end
 
-return M
+return State

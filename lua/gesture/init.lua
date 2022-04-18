@@ -29,25 +29,25 @@ end
 --- Up input
 --- @param opts table|nil: |gesture.nvim-input-opts|
 function M.up(opts)
-  return require("gesture.model.direction").Direction.up(opts)
+  return require("gesture.model.direction").up(opts)
 end
 
 --- Down input
 --- @param opts table|nil: |gesture.nvim-input-opts|
 function M.down(opts)
-  return require("gesture.model.direction").Direction.down(opts)
+  return require("gesture.model.direction").down(opts)
 end
 
 --- Right input
 --- @param opts table|nil: |gesture.nvim-input-opts|
 function M.right(opts)
-  return require("gesture.model.direction").Direction.right(opts)
+  return require("gesture.model.direction").right(opts)
 end
 
 --- Left input
 --- @param opts table|nil: |gesture.nvim-input-opts|
 function M.left(opts)
-  return require("gesture.model.direction").Direction.left(opts)
+  return require("gesture.model.direction").left(opts)
 end
 
 return M

@@ -1,7 +1,7 @@
 local ShowError = require("gesture.vendor.misclib.error_handler").for_show_error()
 local ShowAsUserError = require("gesture.vendor.misclib.error_handler").for_show_as_user_error()
 
-local State = require("gesture.state").State
+local State = require("gesture.state")
 
 function ShowAsUserError.draw()
   local state = State.get_or_create()

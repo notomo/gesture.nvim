@@ -1,5 +1,5 @@
-local Point = require("gesture.model.point").Point
-local Background = require("gesture.view.background").Background
+local Point = require("gesture.model.point")
+local Background = require("gesture.view.background")
 local GestureBoard = require("gesture.view.board").GestureBoard
 
 local vim = vim
