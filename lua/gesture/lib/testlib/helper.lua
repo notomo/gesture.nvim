@@ -1,35 +1,31 @@
 local plugin_name = vim.split((...):gsub("%.", "/"), "/", true)[1]
-local M = require("vusted.helper")
+local helper = require("vusted.helper")
 
-M.root = M.find_plugin_root(plugin_name)
+helper.root = helper.find_plugin_root(plugin_name)
 
-function M.before_each()
+function helper.before_each()
   require("gesture.view").click = function() end
 end
 
-function M.after_each()
-  vim.cmd("tabedit")
-  vim.cmd("tabonly!")
-  vim.cmd("silent! %bwipeout!")
+function helper.after_each()
+  vim.api.nvim_set_current_dir(helper.root)
+  helper.cleanup()
+  helper.cleanup_loaded_modules(plugin_name)
   print(" ")
-
-  vim.api.nvim_set_current_dir(M.root)
-
-  M.cleanup_loaded_modules(plugin_name)
 end
 
-function M.buffer_log()
+function helper.buffer_log()
   local lines = vim.fn.getbufline("%", 1, "$")
   for _, line in ipairs(lines) do
     print(line)
   end
 end
 
-function M.set_lines(lines)
+function helper.set_lines(lines)
   vim.api.nvim_buf_set_lines(0, 0, -1, false, vim.split(lines, "\n"))
 end
 
-function M.cursor()
+function helper.cursor()
   return { vim.fn.line("."), vim.fn.col(".") }
 end
 
@@ -89,4 +85,4 @@ asserts.create("exists_message"):register(function(self)
   end
 end)
 
-return M
+return helper
