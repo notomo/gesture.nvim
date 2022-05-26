@@ -2,24 +2,5 @@ name: ci
 on: [push, pull_request]
 
 jobs:
-  test:
-    name: Test
-    runs-on: ${{ matrix.os }}
-    strategy:
-      matrix:
-        os: [ubuntu-latest, macos-latest, windows-latest]
-
-    steps:
-      - uses: actions/checkout@v2
-      - uses: notomo/action-setup-nvim-lua@v1
-      - run: luarocks install vusted
-
-      - uses: rhysd/action-setup-vim@v1
-        id: vim
-        with:
-          neovim: true
-          version: nightly
-
-      - run: make test
-        env:
-          VUSTED_NVIM: ${{ steps.vim.outputs.executable }}
+  ci:
+    uses: notomo/workflow/.github/workflows/neovim-plugin-ci.yml@main
