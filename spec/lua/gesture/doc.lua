@@ -94,7 +94,7 @@ local gen_readme = function()
 
 gesture.nvim is a mouse gesture plugin for Neovim (nightly).
 
-<img src="https://raw.github.com/wiki/notomo/gesture.nvim/images/gesture.gif" width="1280">
+<img src="https://raw.github.com/wiki/notomo/gesture.nvim/images/gesture.gif">
 
 ## Example
 
