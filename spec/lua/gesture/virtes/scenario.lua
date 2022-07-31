@@ -34,6 +34,8 @@ local scenario = function(ctx)
 end
 
 local main = function(comparison, result_dir)
+  local deploy_lua_dir = vim.fn.trim(vim.fn.system("luarocks --lua-version=5.1 config deploy_lua_dir"))
+  package.path = package.path .. ";" .. deploy_lua_dir .. "/?.lua;" .. deploy_lua_dir .. "/?/init.lua"
   vim.o.runtimepath = vim.fn.getcwd() .. "," .. vim.o.runtimepath
   vim.cmd("runtime! plugin/*.vim")
 
