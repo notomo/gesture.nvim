@@ -24,6 +24,19 @@ function M.for_return_value()
   end)
 end
 
+function M.for_return_value_and_error()
+  return M.new(function(f)
+    local ok, result, err = xpcall(f, debug.traceback)
+    if not ok then
+      messagelib.error(result)
+      return nil
+    elseif err then
+      return nil, messagelib.wrap(err)
+    end
+    return result
+  end)
+end
+
 function M.for_return_packed_value()
   return M.new(function(f)
     local ok, result, err = xpcall(f, debug.traceback)

@@ -23,7 +23,7 @@ gesture.register({
   name = "previous tab",
   inputs = { gesture.left() },
   action = function(ctx) -- also can use callable
-    vim.cmd("tabprevious")
+    vim.cmd.tabprevious()
   end,
 })
 gesture.register({

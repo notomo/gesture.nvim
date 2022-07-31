@@ -13,12 +13,12 @@ hoge
 
 
 foo]])
-    vim.cmd("normal! G")
+    vim.cmd.normal({ args = { "G" }, bang = true })
 
     gesture.draw()
-    vim.cmd("normal! 10j")
+    vim.cmd.normal({ args = { "10j" }, bang = true })
     gesture.draw()
-    vim.cmd("normal! 10k")
+    vim.cmd.normal({ args = { "10k" }, bang = true })
     gesture.draw()
     gesture.finish()
 
@@ -39,9 +39,9 @@ hoge         foo
 ]])
 
     gesture.draw()
-    vim.cmd("normal! 10l")
+    vim.cmd.normal({ args = { "10l" }, bang = true })
     gesture.draw()
-    vim.cmd("normal! 10h")
+    vim.cmd.normal({ args = { "10h" }, bang = true })
     gesture.draw()
     gesture.finish()
 
@@ -53,7 +53,7 @@ hoge         foo
     gesture.register({
       inputs = { gesture.down(), gesture.up() },
       action = function()
-        vim.cmd("normal! gg")
+        vim.cmd.normal({ args = { "gg" }, bang = true })
       end,
     })
 
@@ -62,12 +62,12 @@ hoge
 
 
 foo]])
-    vim.cmd("normal! G")
+    vim.cmd.normal({ args = { "G" }, bang = true })
 
     gesture.draw()
-    vim.cmd("normal! 10j")
+    vim.cmd.normal({ args = { "10j" }, bang = true })
     gesture.draw()
-    vim.cmd("normal! 10k")
+    vim.cmd.normal({ args = { "10k" }, bang = true })
     gesture.draw()
     gesture.finish()
 
@@ -86,9 +86,9 @@ foo]])
     gesture.register({ inputs = { gesture.down(), gesture.up() }, action = action })
 
     gesture.draw()
-    vim.cmd("normal! 10j")
+    vim.cmd.normal({ args = { "10j" }, bang = true })
     gesture.draw()
-    vim.cmd("normal! 10k")
+    vim.cmd.normal({ args = { "10k" }, bang = true })
     gesture.draw()
     gesture.finish()
 
@@ -107,9 +107,9 @@ foo]])
     })
 
     gesture.draw()
-    vim.cmd("normal! 20l")
+    vim.cmd.normal({ args = { "20l" }, bang = true })
     gesture.draw()
-    vim.cmd("normal! 10j")
+    vim.cmd.normal({ args = { "10j" }, bang = true })
     gesture.draw()
 
     assert.equals(ctx.last_position[1], 11)
@@ -129,7 +129,7 @@ hoge         foo
 bar]])
 
     gesture.draw()
-    vim.cmd("normal! 8l")
+    vim.cmd.normal({ args = { "8l" }, bang = true })
     gesture.draw()
     gesture.finish()
 
@@ -151,7 +151,7 @@ hoge         foo
 ]])
 
     gesture.draw()
-    vim.cmd("normal! 10l")
+    vim.cmd.normal({ args = { "10l" }, bang = true })
     gesture.draw()
 
     assert.window_count(1)
@@ -166,7 +166,7 @@ hoge         foo
 ]])
 
     gesture.draw()
-    vim.cmd("normal! 11l")
+    vim.cmd.normal({ args = { "11l" }, bang = true })
     gesture.draw()
     gesture.finish()
 
@@ -182,7 +182,7 @@ hoge         foo
 ]])
 
     gesture.draw()
-    vim.cmd("normal! 9l")
+    vim.cmd.normal({ args = { "9l" }, bang = true })
     gesture.draw()
     gesture.finish()
 
@@ -197,9 +197,9 @@ hoge         foo
     helper.set_lines([[hoge foo bar]])
 
     gesture.draw()
-    vim.cmd("normal! 10l")
+    vim.cmd.normal({ args = { "10l" }, bang = true })
     gesture.draw()
-    vim.cmd("normal! 10h")
+    vim.cmd.normal({ args = { "10h" }, bang = true })
     gesture.draw()
     gesture.finish()
 
@@ -219,9 +219,9 @@ hoge         foo
     helper.set_lines([[hoge foo bar]])
 
     gesture.draw()
-    vim.cmd("normal! 10l")
+    vim.cmd.normal({ args = { "10l" }, bang = true })
     gesture.draw()
-    vim.cmd("normal! 10h")
+    vim.cmd.normal({ args = { "10h" }, bang = true })
     gesture.draw()
     gesture.finish()
 
@@ -235,13 +235,13 @@ describe("gesture.draw()", function()
 
   it("shows input gestures", function()
     gesture.draw()
-    vim.cmd("normal! 10l")
+    vim.cmd.normal({ args = { "10l" }, bang = true })
     gesture.draw()
-    vim.cmd("normal! 10j")
+    vim.cmd.normal({ args = { "10j" }, bang = true })
     gesture.draw()
-    vim.cmd("normal! 10h")
+    vim.cmd.normal({ args = { "10h" }, bang = true })
     gesture.draw()
-    vim.cmd("normal! 10k")
+    vim.cmd.normal({ args = { "10k" }, bang = true })
     gesture.draw()
 
     assert.shown_in_view("RIGHT")
@@ -259,13 +259,13 @@ describe("gesture.draw()", function()
     })
 
     gesture.draw()
-    vim.cmd("normal! 10j")
+    vim.cmd.normal({ args = { "10j" }, bang = true })
     gesture.draw()
 
     assert.shown_in_view("DOWN")
     assert.shown_in_view("to bottom")
 
-    vim.cmd("normal! 10k")
+    vim.cmd.normal({ args = { "10k" }, bang = true })
     gesture.draw()
 
     assert.shown_in_view("UP")
@@ -280,7 +280,7 @@ hoge         foo
 ]])
 
     gesture.draw()
-    vim.cmd("normal! 10l")
+    vim.cmd.normal({ args = { "10l" }, bang = true })
     gesture.draw()
 
     assert.window_count(1)
@@ -289,11 +289,11 @@ hoge         foo
 
   it("resets scroll on scrolled", function()
     gesture.draw()
-    vim.cmd("normal! G")
-    vim.cmd("normal! zz")
+    vim.cmd.normal({ args = { "G" }, bang = true })
+    vim.cmd.normal({ args = { "zz" }, bang = true })
 
     -- NOTE: zz may not fire callback in headless mode.
-    vim.cmd("redraw")
+    vim.cmd.redraw()
 
     assert.window_first_row(1)
   end)
@@ -301,20 +301,20 @@ hoge         foo
   it("raises no error with many gestures", function()
     for _ = 0, 100, 1 do
       gesture.draw()
-      vim.cmd("normal! 10j")
+      vim.cmd.normal({ args = { "10j" }, bang = true })
       gesture.draw()
-      vim.cmd("normal! 10k")
+      vim.cmd.normal({ args = { "10k" }, bang = true })
     end
     assert.shown_in_view("UP")
   end)
 
   it("does not create multiple gesture state", function()
-    vim.cmd("tabedit")
+    vim.cmd.tabedit()
     gesture.draw()
-    vim.cmd("noautocmd tabprevious")
+    vim.cmd.tabprevious({ mods = { noautocmd = true } })
 
     gesture.draw()
-    vim.cmd("tabnext")
+    vim.cmd.tabnext()
 
     assert.window_count(1)
   end)
@@ -334,7 +334,7 @@ hoge
 foo]])
 
     gesture.draw()
-    vim.cmd("normal! 10j")
+    vim.cmd.normal({ args = { "10j" }, bang = true })
     gesture.draw()
     gesture.finish()
 
@@ -346,7 +346,7 @@ foo]])
     gesture.register({ inputs = { gesture.down() }, action = "invalid_command" })
 
     gesture.draw()
-    vim.cmd("normal! 10j")
+    vim.cmd.normal({ args = { "10j" }, bang = true })
     gesture.draw()
     gesture.finish()
 
@@ -366,12 +366,12 @@ hoge
 
 
 foo]])
-    vim.cmd("normal! G")
+    vim.cmd.normal({ args = { "G" }, bang = true })
 
     gesture.draw()
-    vim.cmd("normal! 10j")
+    vim.cmd.normal({ args = { "10j" }, bang = true })
     gesture.draw()
-    vim.cmd("normal! 10k")
+    vim.cmd.normal({ args = { "10k" }, bang = true })
     gesture.draw()
     gesture.cancel()
 
@@ -393,12 +393,12 @@ hoge
 
 
 foo]])
-    vim.cmd("normal! G")
+    vim.cmd.normal({ args = { "G" }, bang = true })
 
     gesture.draw()
-    vim.cmd("normal! 10j")
+    vim.cmd.normal({ args = { "10j" }, bang = true })
     gesture.draw()
-    vim.cmd("normal! 10k")
+    vim.cmd.normal({ args = { "10k" }, bang = true })
     gesture.draw()
     gesture.finish()
 
