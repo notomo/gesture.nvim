@@ -1,5 +1,4 @@
 local listlib = require("gesture.lib.list")
-local highlightlib = require("gesture.lib.highlight")
 local vim = vim
 
 local M = {}
@@ -41,14 +40,14 @@ function GestureBoard.create(inputs, gesture, has_forward_match)
   local start_col = math.max(0, center - half_width)
   local end_col = math.min(center + half_width, editor_width)
 
-  local hl_group = M._GestureInput()
+  local hl_group = "GestureInput"
   if not has_forward_match then
-    hl_group = M._GestureInputNotMatched()
+    hl_group = "GestureInputNotMatched"
   end
 
   local height = vim.api.nvim_win_get_height(0)
   local range_map = {}
-  local action_label_hl_group = M._GestureActionLabel()
+  local action_label_hl_group = "GestureActionLabel"
   for i, line in ipairs(lines) do
     local y = row + i
     if y > height then
@@ -76,39 +75,5 @@ function GestureBoard.create(inputs, gesture, has_forward_match)
 
   return GestureBoard._new(range_map)
 end
-
-local blend = 0
-
-M._GestureInput = highlightlib.Ensured.new("GestureInput", function(hl_group)
-  return highlightlib.default(hl_group, {
-    ctermfg = { "NormalFloat", 230 },
-    guifg = { "NormalFloat", "#fffeeb" },
-    ctermbg = { "NormalFloat", 235 },
-    guibg = { "NormalFloat", "#3a4b5c" },
-    blend = blend,
-    gui = "bold",
-  })
-end)
-
-M._GestureInputNotMatched = highlightlib.Ensured.new("GestureInputNotMatched", function(hl_group)
-  return highlightlib.default(hl_group, {
-    ctermfg = { "Comment", 103 },
-    guifg = { "Comment", "#8d9eb2" },
-    ctermbg = { "NormalFloat", 235 },
-    guibg = { "NormalFloat", "#3a4b5c" },
-    blend = blend,
-  })
-end)
-
-M._GestureActionLabel = highlightlib.Ensured.new("GestureActionLabel", function(hl_group)
-  return highlightlib.default(hl_group, {
-    gui = "bold",
-    ctermfg = { "Statement", 153 },
-    guifg = { "Statement", "#a8d2eb" },
-    blend = blend,
-  })
-end)
-
-M.hl_groups = { M._GestureInput(), M._GestureInputNotMatched(), M._GestureActionLabel() }
 
 return M

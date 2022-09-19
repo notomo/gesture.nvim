@@ -18,7 +18,7 @@ function Canvas.draw(self, board, points)
   for y, ranges in pairs(board.range_map) do
     self:_draw_board(y, ranges)
   end
-  local hl_group = M._GestureLine()
+  local hl_group = "GestureLine"
   for _, p in ipairs(points) do
     self:_draw_point(p, hl_group)
   end
@@ -63,15 +63,5 @@ function Canvas._draw_point(self, p, hl_group)
   })
   self._rows[p.y] = { col_map = col_map, id = id }
 end
-
-local highlightlib = require("gesture.lib.highlight")
-M._GestureLine = highlightlib.Ensured.new("GestureLine", function(hl_group)
-  return highlightlib.default(hl_group, {
-    ctermbg = { "Statement", 153 },
-    guibg = { "Statement", "#a8d2eb" },
-    blend = 25,
-  })
-end)
-M.hl_groups = { M._GestureLine() }
 
 return M

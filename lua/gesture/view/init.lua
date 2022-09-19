@@ -51,8 +51,47 @@ function M.click()
   vim.cmd("normal! " .. mouse)
 end
 
-M.hl_groups = {}
-vim.list_extend(M.hl_groups, require("gesture.view.canvas").hl_groups)
-vim.list_extend(M.hl_groups, require("gesture.view.board").hl_groups)
+local highlightlib = require("gesture.lib.highlight")
+
+local setup_highlight_groups = function()
+  local blend = 0
+  return {
+    highlightlib.default("GestureLine", {
+      ctermbg = { "Statement", 153 },
+      guibg = { "Statement", "#a8d2eb" },
+      blend = 25,
+    }),
+    highlightlib.default("GestureInput", {
+      ctermfg = { "NormalFloat", 230 },
+      guifg = { "NormalFloat", "#fffeeb" },
+      ctermbg = { "NormalFloat", 235 },
+      guibg = { "NormalFloat", "#3a4b5c" },
+      blend = blend,
+      gui = "bold",
+    }),
+    highlightlib.default("GestureInputNotMatched", {
+      ctermfg = { "Comment", 103 },
+      guifg = { "Comment", "#8d9eb2" },
+      ctermbg = { "NormalFloat", 235 },
+      guibg = { "NormalFloat", "#3a4b5c" },
+      blend = blend,
+    }),
+    highlightlib.default("GestureActionLabel", {
+      gui = "bold",
+      ctermfg = { "Statement", 153 },
+      guifg = { "Statement", "#a8d2eb" },
+      blend = blend,
+    }),
+  }
+end
+
+local group = vim.api.nvim_create_augroup("gesture", {})
+vim.api.nvim_create_autocmd({ "ColorScheme" }, {
+  group = group,
+  pattern = { "*" },
+  callback = setup_highlight_groups,
+})
+
+M.hl_groups = setup_highlight_groups()
 
 return M

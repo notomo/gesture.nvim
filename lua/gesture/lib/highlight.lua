@@ -31,23 +31,4 @@ function M.default(name, attributes)
   return name
 end
 
-local Ensured = {}
-Ensured.__index = Ensured
-M.Ensured = Ensured
-
-function Ensured.new(hl_group, define_hl)
-  local tbl = { _hl_group = hl_group, _define_hl = define_hl }
-  return setmetatable(tbl, Ensured)
-end
-
--- NOTE: returns valid hl_group even cleared
-function Ensured.__call(self)
-  local name = vim.fn.getcompletion(self._hl_group, "highlight")[1]
-  if name then
-    return self._hl_group
-  end
-  self._define_hl(self._hl_group)
-  return self._hl_group
-end
-
 return M
