@@ -51,36 +51,29 @@ function M.click()
   vim.cmd("normal! " .. mouse)
 end
 
-local highlightlib = require("gesture.lib.highlight")
-
 local setup_highlight_groups = function()
+  local highlightlib = require("gesture.vendor.misclib.highlight")
   local blend = 0
   return {
-    highlightlib.default("GestureLine", {
-      ctermbg = { "Statement", 153 },
-      guibg = { "Statement", "#a8d2eb" },
+    highlightlib.define("GestureLine", {
+      bg = vim.api.nvim_get_hl_by_name("Statement", true).foreground or "#a8d2eb",
       blend = 25,
     }),
-    highlightlib.default("GestureInput", {
-      ctermfg = { "NormalFloat", 230 },
-      guifg = { "NormalFloat", "#fffeeb" },
-      ctermbg = { "NormalFloat", 235 },
-      guibg = { "NormalFloat", "#3a4b5c" },
+    highlightlib.define("GestureInput", {
+      fg = vim.api.nvim_get_hl_by_name("NormalFloat", true).foreground or "#fffeeb",
+      bg = vim.api.nvim_get_hl_by_name("NormalFloat", true).background or "#3a4b5c",
       blend = blend,
-      gui = "bold",
+      bold = true,
     }),
-    highlightlib.default("GestureInputNotMatched", {
-      ctermfg = { "Comment", 103 },
-      guifg = { "Comment", "#8d9eb2" },
-      ctermbg = { "NormalFloat", 235 },
-      guibg = { "NormalFloat", "#3a4b5c" },
+    highlightlib.define("GestureInputNotMatched", {
+      fg = vim.api.nvim_get_hl_by_name("Comment", true).foreground or "#8d9eb2",
+      bg = vim.api.nvim_get_hl_by_name("NormalFloat", true).background or "#3a4b5c",
       blend = blend,
     }),
-    highlightlib.default("GestureActionLabel", {
-      gui = "bold",
-      ctermfg = { "Statement", 153 },
-      guifg = { "Statement", "#a8d2eb" },
+    highlightlib.define("GestureActionLabel", {
+      fg = vim.api.nvim_get_hl_by_name("Statement", true).foreground or "#a8d2eb",
       blend = blend,
+      bold = true,
     }),
   }
 end
