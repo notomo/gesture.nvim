@@ -46,7 +46,7 @@ hoge         foo
     gesture.finish()
 
     assert.window_count(1)
-    assert.current_word("foo")
+    assert.cursor_word("foo")
   end)
 
   it("can use function as action", function()
@@ -134,7 +134,7 @@ bar]])
     gesture.finish()
 
     assert.window_count(1)
-    assert.current_word("bar")
+    assert.cursor_word("bar")
   end)
 
   it("can register a nowait buffer local gesture", function()
@@ -155,7 +155,7 @@ hoge         foo
     gesture.draw()
 
     assert.window_count(1)
-    assert.current_word("foo")
+    assert.cursor_word("foo")
   end)
 
   it("can register a gesture with max length", function()
@@ -171,7 +171,7 @@ hoge         foo
     gesture.finish()
 
     assert.window_count(1)
-    assert.current_word("hoge")
+    assert.cursor_word("hoge")
   end)
 
   it("can register a gesture with min length", function()
@@ -187,7 +187,7 @@ hoge         foo
     gesture.finish()
 
     assert.window_count(1)
-    assert.current_word("hoge")
+    assert.cursor_word("hoge")
   end)
 
   it("overwrites the same gesture", function()
@@ -203,7 +203,7 @@ hoge         foo
     gesture.draw()
     gesture.finish()
 
-    assert.current_word("bar")
+    assert.cursor_word("bar")
   end)
 
   it("does not overwrite gesture has the different attribute", function()
@@ -225,7 +225,7 @@ hoge         foo
     gesture.draw()
     gesture.finish()
 
-    assert.current_word("foo")
+    assert.cursor_word("foo")
   end)
 end)
 
@@ -284,7 +284,7 @@ hoge         foo
     gesture.draw()
 
     assert.window_count(1)
-    assert.current_word("foo")
+    assert.cursor_word("foo")
   end)
 
   it("resets scroll on scrolled", function()

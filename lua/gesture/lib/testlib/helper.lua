@@ -30,18 +30,8 @@ function helper.cursor()
 end
 
 local asserts = require("vusted.assert").asserts
-
-asserts.create("current_line"):register_eq(function()
-  return vim.fn.getline(".")
-end)
-
-asserts.create("current_word"):register_eq(function()
-  return vim.fn.expand("<cword>")
-end)
-
-asserts.create("window_count"):register_eq(function()
-  return vim.fn.tabpagewinnr(vim.fn.tabpagenr(), "$")
-end)
+local asserters = require(plugin_name .. ".vendor.assertlib").list()
+require(plugin_name .. ".vendor.misclib.test.assert").register(asserts.create, asserters)
 
 asserts.create("window_first_row"):register_eq(function()
   return vim.fn.line("w0")
@@ -67,21 +57,6 @@ asserts.create("shown_in_view"):register(function(self)
     self:set_positive(("`%s` not found"):format(pattern))
     self:set_negative(("`%s` found"):format(pattern))
     return result ~= 0
-  end
-end)
-
-asserts.create("exists_message"):register(function(self)
-  return function(_, args)
-    local expected = args[1]
-    self:set_positive(("`%s` not found message"):format(expected))
-    self:set_negative(("`%s` found message"):format(expected))
-    local messages = vim.split(vim.api.nvim_exec("messages", true), "\n")
-    for _, msg in ipairs(messages) do
-      if msg:match(expected) then
-        return true
-      end
-    end
-    return false
   end
 end)
 
