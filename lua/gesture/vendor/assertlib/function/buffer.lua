@@ -8,8 +8,13 @@ function M.filetype()
   return vim.bo.filetype
 end
 
-function M.buffer_name()
+function M.buffer_full_name()
   return vim.api.nvim_buf_get_name(0)
+end
+
+function M.buffer_name_tail()
+  local full_name = vim.api.nvim_buf_get_name(0)
+  return vim.fn.fnamemodify(full_name, ":t")
 end
 
 function M.buffer_number()
