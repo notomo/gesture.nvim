@@ -1,6 +1,6 @@
 local M = {}
 
-function M.length(list)
+function M.list_length(list)
   return #list
 end
 
