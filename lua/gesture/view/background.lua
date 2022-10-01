@@ -37,7 +37,7 @@ function Background.open(click)
   vim.api.nvim_buf_set_name(bufnr, ("gesture://%d/GESTURE"):format(bufnr))
 
   -- NOTE: show and move cursor to the window by <LeftDrag>
-  vim.cmd("redraw")
+  vim.cmd.redraw()
   click()
 
   vim.api.nvim_create_autocmd({ "WinLeave", "TabLeave", "BufLeave" }, {

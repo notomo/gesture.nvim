@@ -48,7 +48,7 @@ end
 local mouse = vim.api.nvim_eval('"\\<LeftMouse>"')
 -- replace on testing
 function M.click()
-  vim.cmd("normal! " .. mouse)
+  vim.cmd.normal({ bang = true, args = { mouse } })
 end
 
 local setup_highlight_groups = function()
