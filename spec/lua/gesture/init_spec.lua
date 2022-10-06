@@ -1,4 +1,4 @@
-local helper = require("gesture.lib.testlib.helper")
+local helper = require("gesture.test.helper")
 local gesture = helper.require("gesture")
 
 describe("gesture.register()", function()
