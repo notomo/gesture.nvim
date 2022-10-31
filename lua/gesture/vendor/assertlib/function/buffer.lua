@@ -29,10 +29,18 @@ M.exists_pattern = {
     return vim.fn.search(result.expected, "n") ~= 0
   end,
   positive_message = function(result)
-    return ("`%s` not found"):format(result.expected)
+    local lines = vim.api.nvim_buf_get_lines(0, 0, -1, false)
+    local content = table.concat(lines, "\n")
+    return ([[`%s` not found
+Actual lines:
+%s]]):format(result.expected, content)
   end,
   negative_message = function(result)
-    return ("`%s` found"):format(result.expected)
+    local lines = vim.api.nvim_buf_get_lines(0, 0, -1, false)
+    local content = table.concat(lines, "\n")
+    return ([[`%s` found
+Actual lines:
+%s]]):format(result.expected, content)
   end,
 }
 
