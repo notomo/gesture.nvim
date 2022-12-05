@@ -85,7 +85,7 @@ GestureActionLabel                                     *hl-GestureActionLabel*
 ==============================================================================
 EXAMPLE                                                 *gesture.nvim-EXAMPLE*
 
->
+>lua
   vim.opt.mouse = "a"
 
   vim.keymap.set("n", "<LeftDrag>", [[<Cmd>lua require("gesture").draw()<CR>]], { silent = true })
