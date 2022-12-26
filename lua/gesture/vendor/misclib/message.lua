@@ -1,6 +1,6 @@
 local M = {}
 
-local plugin_name = vim.split((...):gsub("%.", "/"), "/", true)[1]
+local plugin_name = vim.split((...):gsub("%.", "/"), "/", { plain = true })[1]
 local prefix = ("[%s] "):format(plugin_name)
 
 function M.error(err)

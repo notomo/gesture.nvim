@@ -1,6 +1,6 @@
 local M = {}
 
-local dir_parts = vim.split((...):gsub("/", "."), ".", true)
+local dir_parts = vim.split((...):gsub("/", "."), ".", { plain = true })
 function M.list()
   local base_index = vim.fn.index(dir_parts, "assertlib")
   local base_parts = vim.list_slice(dir_parts, 1, base_index + 1)
@@ -10,7 +10,7 @@ function M.list()
   local module_paths = vim.api.nvim_get_runtime_file(function_pattern, true)
   local module_names = vim.tbl_map(function(path)
     path = path:gsub("\\", "/")
-    local splitted = vim.split(path, "/", true)
+    local splitted = vim.split(path, "/", { plain = true })
     local file_name = splitted[#splitted]
     local name = file_name:sub(1, #file_name - 4)
     return name

@@ -1,4 +1,4 @@
-local dir_parts = vim.split((...):gsub("/", "."), ".", true)
+local dir_parts = vim.split((...):gsub("/", "."), ".", { plain = true })
 local dir_module = table.concat({ unpack(dir_parts, 1, #dir_parts - 1) }, ".")
 local messagelib = require(dir_module .. ".message")
 
