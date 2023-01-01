@@ -27,11 +27,17 @@ up({opts})                                                      *gesture.up()*
   Parameters: ~
     {opts} (table|nil) |gesture.nvim-input-opts|
 
+  Return: ~
+    (table) used as an element of |gesture.nvim-gesture-info|'s inputs
+
 down({opts})                                                  *gesture.down()*
   Down input
 
   Parameters: ~
     {opts} (table|nil) |gesture.nvim-input-opts|
+
+  Return: ~
+    (table) used as an element of |gesture.nvim-gesture-info|'s inputs
 
 right({opts})                                                *gesture.right()*
   Right input
@@ -39,11 +45,17 @@ right({opts})                                                *gesture.right()*
   Parameters: ~
     {opts} (table|nil) |gesture.nvim-input-opts|
 
+  Return: ~
+    (table) used as an element of |gesture.nvim-gesture-info|'s inputs
+
 left({opts})                                                  *gesture.left()*
   Left input
 
   Parameters: ~
     {opts} (table|nil) |gesture.nvim-input-opts|
+
+  Return: ~
+    (table) used as an element of |gesture.nvim-gesture-info|'s inputs
 
 ==============================================================================
 PARAMETERS                                           *gesture.nvim-PARAMETERS*

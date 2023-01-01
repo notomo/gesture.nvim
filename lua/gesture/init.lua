@@ -28,24 +28,28 @@ end
 
 --- Up input
 --- @param opts table|nil: |gesture.nvim-input-opts|
+--- @return table: used as an element of |gesture.nvim-gesture-info|'s inputs
 function M.up(opts)
   return require("gesture.model.direction").up(opts)
 end
 
 --- Down input
 --- @param opts table|nil: |gesture.nvim-input-opts|
+--- @return table: used as an element of |gesture.nvim-gesture-info|'s inputs
 function M.down(opts)
   return require("gesture.model.direction").down(opts)
 end
 
 --- Right input
 --- @param opts table|nil: |gesture.nvim-input-opts|
+--- @return table: used as an element of |gesture.nvim-gesture-info|'s inputs
 function M.right(opts)
   return require("gesture.model.direction").right(opts)
 end
 
 --- Left input
 --- @param opts table|nil: |gesture.nvim-input-opts|
+--- @return table: used as an element of |gesture.nvim-gesture-info|'s inputs
 function M.left(opts)
   return require("gesture.model.direction").left(opts)
 end
