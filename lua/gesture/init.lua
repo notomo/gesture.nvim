@@ -2,28 +2,28 @@ local M = {}
 
 --- Draw a gesture line.
 function M.draw()
-  return require("gesture.command").draw()
+  require("gesture.command").draw()
 end
 
 --- Finish the gesture and execute matched action.
 function M.finish()
-  return require("gesture.command").finish()
+  require("gesture.command").finish()
 end
 
 --- Cancel the gesture.
 function M.cancel()
-  return require("gesture.command").cancel()
+  require("gesture.command").cancel()
 end
 
 --- Register a gesture.
 --- @param info table: |gesture.nvim-gesture-info|
 function M.register(info)
-  return require("gesture.command").register(info)
+  require("gesture.command").register(info)
 end
 
 --- Clear the registered gestures.
 function M.clear()
-  return require("gesture.command").clear()
+  require("gesture.command").clear()
 end
 
 --- Up input

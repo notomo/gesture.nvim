@@ -4,7 +4,7 @@ local plugin_name = vim.split((...):gsub("%.", "/"), "/", { plain = true })[1]
 local prefix = ("[%s] "):format(plugin_name)
 
 function M.error(err)
-  error(M.wrap(err))
+  error(M.wrap(err), 0)
 end
 
 function M.warn(msg)

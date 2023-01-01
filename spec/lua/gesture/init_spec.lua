@@ -342,15 +342,18 @@ foo]])
     assert.current_line("hoge")
   end)
 
-  it("shows raw error", function()
+  it("raises error if action raises error", function()
     gesture.register({ inputs = { gesture.down() }, action = "invalid_command" })
 
     gesture.draw()
     vim.cmd.normal({ args = { "10j" }, bang = true })
     gesture.draw()
-    gesture.finish()
 
-    assert.exists_message("%[gesture%] Vim:E492: Not an editor command: invalid_command")
+    local ok, err = pcall(function()
+      gesture.finish()
+    end)
+    assert.is_false(ok)
+    assert.match("%[gesture%] Vim:E492: Not an editor command: invalid_command", err)
   end)
 end)
 
