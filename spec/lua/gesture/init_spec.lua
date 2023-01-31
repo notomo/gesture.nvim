@@ -353,7 +353,7 @@ foo]])
       gesture.finish()
     end)
     assert.is_false(ok)
-    assert.match("%[gesture%] Vim:E492: Not an editor command: invalid_command", err)
+    assert.match("Vim:E492: Not an editor command: invalid_command", err)
   end)
 end)
 
