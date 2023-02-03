@@ -11,7 +11,6 @@ function helper.after_each()
   vim.api.nvim_set_current_dir(helper.root)
   helper.cleanup()
   helper.cleanup_loaded_modules(plugin_name)
-  print(" ")
 end
 
 function helper.set_lines(lines)
