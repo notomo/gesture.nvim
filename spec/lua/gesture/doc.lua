@@ -12,38 +12,19 @@ require("genvdoc").generate(full_plugin_name, {
         return "Lua module: " .. group
       end,
       group = function(node)
-        if not node.declaration then
+        if node.declaration == nil or node.declaration.type ~= "function" then
           return nil
         end
         return node.declaration.module
       end,
     },
     {
-      name = "PARAMETERS",
-      body = function(ctx)
-        return util.help_tagged(ctx, "Gesture info", "gesture.nvim-gesture-info")
-          .. [[
-
-- {name} (string | nil): a displayed name
-- {inputs} (table): inputs definition
-- {action} (string | callable(ctx)): an action executed on matched.
-    callable can use |gesture.nvim-action-context| as an argument.
-- {nowait} (boolean | nil): to define nowait gesture
-- {buffer} (string | number | nil): to define the buffer local gesture
-
-]]
-          .. util.help_tagged(ctx, "Action context", "gesture.nvim-action-context")
-          .. [[
-
-- {ctx} (table): gesture context
-  - {last_position} (table): tha last position drawn by gesture
-
-]]
-          .. util.help_tagged(ctx, "Input options", "gesture.nvim-input-opts")
-          .. [[
-
-- {max_length} (number | nil) max length of the input line
-- {min_length} (number | nil) min length of the input line]]
+      name = "STRUCTURE",
+      group = function(node)
+        if node.declaration == nil or node.declaration.type ~= "class" then
+          return nil
+        end
+        return "STRUCTURE"
       end,
     },
     {

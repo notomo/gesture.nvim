@@ -16,7 +16,7 @@ register({info})                                          *gesture.register()*
   Register a gesture.
 
   Parameters: ~
-    {info} (table) |gesture.nvim-gesture-info|
+    {info} (GestureInfo) |GestureInfo|
 
 clear()                                                      *gesture.clear()*
   Clear the registered gestures.
@@ -25,59 +25,60 @@ up({opts})                                                      *gesture.up()*
   Up input
 
   Parameters: ~
-    {opts} (table|nil) |gesture.nvim-input-opts|
+    {opts} (GestureInputOption?) |GestureInputOption|
 
   Return: ~
-    (table) used as an element of |gesture.nvim-gesture-info|'s inputs
+    (GestureInput) used as an element of |GestureInfo|'s inputs
 
 down({opts})                                                  *gesture.down()*
   Down input
 
   Parameters: ~
-    {opts} (table|nil) |gesture.nvim-input-opts|
+    {opts} (GestureInputOption?) |GestureInputOption|
 
   Return: ~
-    (table) used as an element of |gesture.nvim-gesture-info|'s inputs
+    (GestureInput) used as an element of |GestureInfo|'s inputs
 
 right({opts})                                                *gesture.right()*
   Right input
 
   Parameters: ~
-    {opts} (table|nil) |gesture.nvim-input-opts|
+    {opts} (GestureInputOption?) |GestureInputOption|
 
   Return: ~
-    (table) used as an element of |gesture.nvim-gesture-info|'s inputs
+    (GestureInput) used as an element of |GestureInfo|'s inputs
 
 left({opts})                                                  *gesture.left()*
   Left input
 
   Parameters: ~
-    {opts} (table|nil) |gesture.nvim-input-opts|
+    {opts} (GestureInputOption?) |GestureInputOption|
 
   Return: ~
-    (table) used as an element of |gesture.nvim-gesture-info|'s inputs
+    (GestureInput) used as an element of |GestureInfo|'s inputs
 
 ==============================================================================
-PARAMETERS                                           *gesture.nvim-PARAMETERS*
+STRUCTURE                                             *gesture.nvim-STRUCTURE*
 
-Gesture info                                       *gesture.nvim-gesture-info*
+GestureInfo                                                      *GestureInfo*
 
-- {name} (string | nil): a displayed name
-- {inputs} (table): inputs definition
-- {action} (string | callable(ctx)): an action executed on matched.
-    callable can use |gesture.nvim-action-context| as an argument.
-- {nowait} (boolean | nil): to define nowait gesture
-- {buffer} (string | number | nil): to define the buffer local gesture
+- {name} (string?) a displayed name
+- {inputs} (GestureInput[]) inputs definition
+- {action} (string|fun(ctx:GestureActionContext)|table) an action executed on matched. can use callable table.
+- {nowait} (boolean?) to define nowait gesture
+- {buffer} ((string|number)?) to define the buffer local gesture
 
-Action context                                   *gesture.nvim-action-context*
+GestureActionContext                                    *GestureActionContext*
 
-- {ctx} (table): gesture context
-  - {last_position} (table): tha last position drawn by gesture
+- {last_position} (integer[]) tha last position drawn by gesture
 
-Input options                                        *gesture.nvim-input-opts*
+GestureInputOption                                        *GestureInputOption*
 
-- {max_length} (number | nil) max length of the input line
-- {min_length} (number | nil) min length of the input line
+- {max_length} (integer?) max length of the input line
+- {min_length} (integer?) min length of the input line
+
+GestureInput                                                    *GestureInput*
+
 
 ==============================================================================
 HIGHLIGHT GROUPS                               *gesture.nvim-HIGHLIGHT-GROUPS*
