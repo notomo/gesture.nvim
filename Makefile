@@ -1,9 +1,7 @@
-PLUGIN_NAME:=$(basename $(notdir $(abspath .)))
-SPEC_DIR:=./spec/lua/${PLUGIN_NAME}
+include spec/.shared/neovim-plugin.mk
 
-test:
-	vusted --shuffle
-.PHONY: test
+spec/.shared/neovim-plugin.mk:
+	git clone https://github.com/notomo/workflow.git --depth 1 spec/.shared
 
 VIRTES_DIR := ${SPEC_DIR}/virtes
 COMPARE_HASH := HEAD^
@@ -13,13 +11,3 @@ diff_screenshot:
 	cat ${RESULT_DIR}/replay.vim
 	test ! -s ${RESULT_DIR}/replay.vim
 .PHONY: diff_screenshot
-
-doc:
-	rm -f ./doc/${PLUGIN_NAME}.nvim.txt ./README.md
-	PLUGIN_NAME=${PLUGIN_NAME} nvim --headless -i NONE -n +"lua dofile('${SPEC_DIR}/doc.lua')" +"quitall!"
-	cat ./doc/${PLUGIN_NAME}.nvim.txt ./README.md
-.PHONY: doc
-
-vendor:
-	nvim --headless -i NONE -n +"lua require('vendorlib').install('${PLUGIN_NAME}', '${SPEC_DIR}/vendorlib.lua')" +"quitall!"
-.PHONY: vendor
