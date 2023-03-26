@@ -56,22 +56,22 @@ local setup_highlight_groups = function()
   local blend = 0
   return {
     highlightlib.define("GestureLine", {
-      bg = vim.api.nvim_get_hl_by_name("Statement", true).foreground or "#a8d2eb",
+      bg = vim.api.nvim_get_hl(0, { name = "Statement" }).foreground or "#a8d2eb",
       blend = 25,
     }),
     highlightlib.define("GestureInput", {
-      fg = vim.api.nvim_get_hl_by_name("NormalFloat", true).foreground or "#fffeeb",
-      bg = vim.api.nvim_get_hl_by_name("NormalFloat", true).background or "#3a4b5c",
+      fg = vim.api.nvim_get_hl(0, { name = "NormalFloat" }).foreground or "#fffeeb",
+      bg = vim.api.nvim_get_hl(0, { name = "NormalFloat" }).background or "#3a4b5c",
       blend = blend,
       bold = true,
     }),
     highlightlib.define("GestureInputNotMatched", {
-      fg = vim.api.nvim_get_hl_by_name("Comment", true).foreground or "#8d9eb2",
-      bg = vim.api.nvim_get_hl_by_name("NormalFloat", true).background or "#3a4b5c",
+      fg = vim.api.nvim_get_hl(0, { name = "Comment" }).foreground or "#8d9eb2",
+      bg = vim.api.nvim_get_hl(0, { name = "NormalFloat" }).background or "#3a4b5c",
       blend = blend,
     }),
     highlightlib.define("GestureActionLabel", {
-      fg = vim.api.nvim_get_hl_by_name("Statement", true).foreground or "#a8d2eb",
+      fg = vim.api.nvim_get_hl(0, { name = "Statement" }).foreground or "#a8d2eb",
       blend = blend,
       bold = true,
     }),
