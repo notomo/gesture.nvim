@@ -9,7 +9,7 @@ end
 
 M.exists_message = {
   get_actual = function()
-    return vim.split(vim.api.nvim_exec("messages", true), "\n", { plain = true })
+    return vim.split(vim.api.nvim_exec2("messages", { output = true }).output, "\n", { plain = true })
   end,
   is_ok = function(result)
     for _, msg in ipairs(result.actual) do
