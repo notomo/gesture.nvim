@@ -16,7 +16,7 @@ function Gesture.new(info)
     action = info.action
   else
     action = function()
-      return vim.api.nvim_exec(info.action, true)
+      vim.cmd(info.action)
     end
   end
 
