@@ -18,8 +18,8 @@ function GestureBoard._new(range_map)
   return setmetatable(tbl, GestureBoard)
 end
 
-function GestureBoard.create(inputs, gesture, has_forward_match)
-  if inputs:is_empty() then
+function GestureBoard.create(inputs, gesture, has_forward_match, show_board)
+  if inputs:is_empty() or not show_board then
     return GestureBoard._new()
   end
 

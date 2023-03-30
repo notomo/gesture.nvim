@@ -318,6 +318,13 @@ hoge         foo
 
     assert.window_count(1)
   end)
+
+  it("can disable board", function()
+    gesture.draw({ show_board = false })
+    vim.cmd.normal({ args = { "10l" }, bang = true })
+
+    assert.no.shown_in_view("RIGHT")
+  end)
 end)
 
 describe("gesture.finish()", function()

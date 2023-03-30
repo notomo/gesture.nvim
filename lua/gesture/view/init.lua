@@ -16,8 +16,8 @@ function View.open()
   return setmetatable(tbl, View)
 end
 
-function View.render_input(self, inputs, gesture, has_forward_match)
-  local board = GestureBoard.create(inputs, gesture, has_forward_match)
+function View.render_input(self, inputs, gesture, has_forward_match, show_board)
+  local board = GestureBoard.create(inputs, gesture, has_forward_match, show_board)
   self._background:draw(board, self._new_points)
 end
 

@@ -1,8 +1,12 @@
 local M = {}
 
+--- @class GestureDrawOption
+--- @field show_board? boolean show inputted directions and matched gesture name (default: true)
+
 --- Draw a gesture line.
-function M.draw()
-  require("gesture.command").draw()
+--- @param opts GestureDrawOption? |GestureDrawOption|
+function M.draw(opts)
+  require("gesture.command").draw(opts)
 end
 
 --- Finish the gesture and execute matched action.
