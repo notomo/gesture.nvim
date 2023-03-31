@@ -30,6 +30,14 @@ function M.draw(raw_opts)
   state.view:render_input(inputs, gesture, has_forward_match, opts.show_board)
 end
 
+function M.suspend()
+  local state = State.get()
+  if not state then
+    return
+  end
+  state:suspend()
+end
+
 function M.finish()
   local state = State.get()
   if not state then

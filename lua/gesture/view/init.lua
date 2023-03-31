@@ -28,8 +28,12 @@ function View.focus(self, last_point)
     return
   end
 
+  if not last_point then
+    self._new_points = {}
+  end
+
   local point = self.current_point()
-  local last = self._new_points[#self._new_points] or last_point
+  local last = self._new_points[#self._new_points] or last_point or point
   self._new_points = last:interpolate(point)
 
   return point

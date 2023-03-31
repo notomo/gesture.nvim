@@ -9,6 +9,11 @@ function M.draw(opts)
   require("gesture.command").draw(opts)
 end
 
+--- Suspend gesture.
+function M.suspend()
+  require("gesture.command").suspend()
+end
+
 --- Finish the gesture and execute matched action.
 function M.finish()
   require("gesture.command").finish()

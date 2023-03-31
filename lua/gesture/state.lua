@@ -34,9 +34,14 @@ function State.get(window_id)
 end
 
 function State.update(self)
+  local suspened = self._last_point == nil
   local point = self.view:focus(self._last_point)
   if not point then
     return false
+  end
+
+  if suspened then
+    self._last_point = point
   end
 
   local line = self._last_point:line_to(point)
@@ -48,6 +53,10 @@ function State.update(self)
   self.inputs:add(Input.direction(line.direction, line.length))
 
   return true
+end
+
+function State.suspend(self)
+  self._last_point = nil
 end
 
 function State.close(self)

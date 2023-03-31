@@ -9,6 +9,9 @@ draw({opts})                                                  *gesture.draw()*
   Parameters: ~
     {opts} (GestureDrawOption?) |GestureDrawOption|
 
+suspend()                                                  *gesture.suspend()*
+  Suspend gesture.
+
 finish()                                                    *gesture.finish()*
   Finish the gesture and execute matched action.
 

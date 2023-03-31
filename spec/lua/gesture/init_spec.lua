@@ -390,6 +390,13 @@ foo]])
   end)
 end)
 
+describe("gesture.suspend()", function()
+  before_each(helper.before_each)
+  after_each(helper.after_each)
+
+  it("TODO", function() end)
+end)
+
 describe("gesture.clear()", function()
   before_each(helper.before_each)
   after_each(helper.after_each)
