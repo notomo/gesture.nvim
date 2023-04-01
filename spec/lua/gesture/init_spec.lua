@@ -318,6 +318,13 @@ hoge         foo
 
     assert.window_count(1)
   end)
+
+  it("can disable board", function()
+    gesture.draw({ show_board = false })
+    vim.cmd.normal({ args = { "10l" }, bang = true })
+
+    assert.no.shown_in_view("RIGHT")
+  end)
 end)
 
 describe("gesture.finish()", function()
@@ -380,6 +387,39 @@ foo]])
 
     assert.window_count(1)
     assert.current_line("foo")
+  end)
+end)
+
+describe("gesture.suspend()", function()
+  before_each(helper.before_each)
+  after_each(helper.after_each)
+
+  it("can suspend gesture", function()
+    gesture.register({ inputs = { gesture.down(), gesture.down() }, action = "normal! gg" })
+
+    helper.set_lines([[
+hoge
+
+
+foo]])
+    vim.cmd.normal({ args = { "G" }, bang = true })
+
+    gesture.draw()
+    vim.cmd.normal({ args = { "5j" }, bang = true })
+
+    gesture.draw()
+    gesture.suspend()
+
+    gesture.draw()
+    vim.cmd.normal({ args = { "5j" }, bang = true })
+
+    gesture.draw()
+    assert.shown_in_view("DOWN DOWN")
+
+    gesture.finish()
+
+    assert.window_count(1)
+    assert.current_line("hoge")
   end)
 end)
 

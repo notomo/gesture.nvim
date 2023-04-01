@@ -2,7 +2,12 @@ local M = {}
 
 local State = require("gesture.state")
 
-function M.draw()
+local draw_options = {
+  show_board = true,
+}
+function M.draw(raw_opts)
+  local opts = vim.tbl_deep_extend("force", draw_options, raw_opts or {})
+
   local state = State.get_or_create()
   local valid = state:update()
   if not valid then
@@ -22,7 +27,15 @@ function M.draw()
 
   local gesture = state.matcher:match(inputs)
   local has_forward_match = state.matcher:has_forward_match(inputs)
-  state.view:render_input(inputs, gesture, has_forward_match)
+  state.view:render_input(inputs, gesture, has_forward_match, opts.show_board)
+end
+
+function M.suspend()
+  local state = State.get()
+  if not state then
+    return
+  end
+  state:suspend()
 end
 
 function M.finish()

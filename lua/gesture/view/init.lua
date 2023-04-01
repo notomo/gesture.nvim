@@ -16,8 +16,8 @@ function View.open()
   return setmetatable(tbl, View)
 end
 
-function View.render_input(self, inputs, gesture, has_forward_match)
-  local board = GestureBoard.create(inputs, gesture, has_forward_match)
+function View.render_input(self, inputs, gesture, has_forward_match, show_board)
+  local board = GestureBoard.create(inputs, gesture, has_forward_match, show_board)
   self._background:draw(board, self._new_points)
 end
 
@@ -28,8 +28,12 @@ function View.focus(self, last_point)
     return
   end
 
+  if not last_point then
+    self._new_points = {}
+  end
+
   local point = self.current_point()
-  local last = self._new_points[#self._new_points] or last_point
+  local last = self._new_points[#self._new_points] or last_point or point
   self._new_points = last:interpolate(point)
 
   return point

@@ -3,8 +3,14 @@
 ==============================================================================
 Lua module: gesture                                     *gesture.nvim-gesture*
 
-draw()                                                        *gesture.draw()*
+draw({opts})                                                  *gesture.draw()*
   Draw a gesture line.
+
+  Parameters: ~
+    {opts} (GestureDrawOption?) |GestureDrawOption|
+
+suspend()                                                  *gesture.suspend()*
+  Suspend gesture.
 
 finish()                                                    *gesture.finish()*
   Finish the gesture and execute matched action.
@@ -59,6 +65,10 @@ left({opts})                                                  *gesture.left()*
 
 ==============================================================================
 STRUCTURE                                             *gesture.nvim-STRUCTURE*
+
+GestureDrawOption                                          *GestureDrawOption*
+
+- {show_board?} (boolean) show inputted directions and matched gesture name (default: true)
 
 GestureInfo                                                      *GestureInfo*
 

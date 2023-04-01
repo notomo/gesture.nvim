@@ -44,7 +44,7 @@ asserts.create("shown_in_view"):register(function(self)
     local result = vim.fn.stridx(content, pattern)
     self:set_positive(("`%s` not found"):format(pattern))
     self:set_negative(("`%s` found"):format(pattern))
-    return result ~= 0
+    return result ~= -1
   end
 end)
 
