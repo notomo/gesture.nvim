@@ -34,13 +34,13 @@ function State.get(window_id)
 end
 
 function State.update(self)
-  local suspened = self._last_point == nil
+  local suspended = self._last_point == nil
   local point = self.view:focus(self._last_point)
   if not point then
     return false
   end
 
-  if suspened then
+  if suspended then
     self._last_point = point
   end
 
@@ -57,6 +57,7 @@ end
 
 function State.suspend(self)
   self._last_point = nil
+  self.inputs:suspend()
 end
 
 function State.close(self)

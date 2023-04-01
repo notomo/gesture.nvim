@@ -23,19 +23,27 @@ M.Inputs = Inputs
 
 function Inputs.new(inputs)
   vim.validate({ inputs = { inputs, "table", true } })
-  local tbl = { _inputs = inputs or {} }
+  local tbl = {
+    _inputs = inputs or {},
+    _suspend = false,
+  }
   return setmetatable(tbl, Inputs)
 end
 
 function Inputs.add(self, input)
   vim.validate({ input = { input, "table" } })
   local last = self._inputs[#self._inputs]
-  if not last or last.value ~= input.value then
+  if not last or last.value ~= input.value or self._suspend then
+    self._suspend = false
     table.insert(self._inputs, input)
     return
   end
 
   last.length = last.length + input.length
+end
+
+function Inputs.suspend(self)
+  self._suspend = true
 end
 
 function Inputs.values(self)
