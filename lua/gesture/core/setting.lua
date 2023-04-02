@@ -1,5 +1,5 @@
-local GestureMap = require("gesture.model.gesture").GestureMap
-local Gesture = require("gesture.model.gesture").Gesture
+local GestureMap = require("gesture.core.gesture").GestureMap
+local Gesture = require("gesture.core.gesture").Gesture
 
 local M = {}
 

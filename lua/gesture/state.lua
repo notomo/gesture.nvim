@@ -1,7 +1,7 @@
 local View = require("gesture.view").View
-local Matcher = require("gesture.model.matcher")
-local Inputs = require("gesture.model.input").Inputs
-local Input = require("gesture.model.input").Input
+local Matcher = require("gesture.core.matcher")
+local Inputs = require("gesture.core.input").Inputs
+local Input = require("gesture.core.input").Input
 
 local _states = {}
 
@@ -14,7 +14,7 @@ function State.get_or_create()
     return current
   end
 
-  local matcher = Matcher.new(require("gesture.model.setting").map, vim.api.nvim_get_current_buf())
+  local matcher = Matcher.new(require("gesture.core.setting").map, vim.api.nvim_get_current_buf())
   local view, window_id = View.open()
   local tbl = {
     _last_point = view.current_point(),

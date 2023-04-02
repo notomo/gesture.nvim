@@ -1,4 +1,4 @@
-local Point = require("gesture.model.point")
+local Point = require("gesture.core.point")
 local Background = require("gesture.view.background")
 local GestureBoard = require("gesture.view.board")
 

@@ -1,4 +1,4 @@
-local Line = require("gesture.model.line").Line
+local Line = require("gesture.core.line").Line
 local listlib = require("gesture.lib.list")
 
 local Point = {}

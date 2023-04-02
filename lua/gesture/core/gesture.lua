@@ -1,4 +1,4 @@
-local Inputs = require("gesture.model.input").Inputs
+local Inputs = require("gesture.core.input").Inputs
 local vim = vim
 
 local M = {}

@@ -65,11 +65,11 @@ function M.cancel(window_id)
 end
 
 function M.register(info)
-  require("gesture.model.setting").register(info)
+  require("gesture.core.setting").register(info)
 end
 
 function M.clear()
-  require("gesture.model.setting").clear()
+  require("gesture.core.setting").clear()
 end
 
 return M
