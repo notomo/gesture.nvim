@@ -1,6 +1,6 @@
 local M = {}
 
-local State = require("gesture.state")
+local State = require("gesture.core.state")
 
 local draw_options = {
   show_board = true,
@@ -8,7 +8,7 @@ local draw_options = {
 function M.draw(raw_opts)
   local opts = vim.tbl_deep_extend("force", draw_options, raw_opts or {})
 
-  local state = State.get_or_create()
+  local state = State.get_or_create(require("gesture.view").View.open)
   local valid = state:update()
   if not valid then
     return
