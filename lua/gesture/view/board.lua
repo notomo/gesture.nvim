@@ -6,20 +6,14 @@ GestureBoard.__index = GestureBoard
 
 local one_padding = 3
 local both_padding = one_padding * 2
+
 local round = function(x)
   return math.floor(x + 0.5)
 end
 
-function GestureBoard._new(range_map)
-  local tbl = {
-    range_map = range_map or {},
-  }
-  return setmetatable(tbl, GestureBoard)
-end
-
 function GestureBoard.create(inputs, gesture, has_forward_match, show_board)
   if inputs:is_empty() or not show_board then
-    return GestureBoard._new()
+    return {}
   end
 
   local editor_width = vim.o.columns
@@ -72,7 +66,7 @@ function GestureBoard.create(inputs, gesture, has_forward_match, show_board)
     range_map[y] = ranges
   end
 
-  return GestureBoard._new(range_map)
+  return range_map
 end
 
 return GestureBoard

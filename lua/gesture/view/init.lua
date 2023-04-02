@@ -11,18 +11,18 @@ View.__index = View
 M.View = View
 
 function View.open()
-  local background, window_id = Background.open(M.click)
+  local background, canvas, window_id = Background.open(M.click)
   local tbl = {
-    window_id = window_id,
     _background = background,
+    _canvas = canvas,
     _new_points = {},
   }
-  return setmetatable(tbl, View)
+  return setmetatable(tbl, View), window_id
 end
 
 function View.render_input(self, inputs, gesture, has_forward_match, show_board)
-  local board = GestureBoard.create(inputs, gesture, has_forward_match, show_board)
-  self._background:draw(board, self._new_points)
+  local board_range_map = GestureBoard.create(inputs, gesture, has_forward_match, show_board)
+  self._canvas:draw(board_range_map, self._new_points)
 end
 
 function View.focus(self, last_point)

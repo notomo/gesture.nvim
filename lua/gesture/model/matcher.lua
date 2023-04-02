@@ -1,13 +1,13 @@
 local Matcher = {}
 Matcher.__index = Matcher
 
-function Matcher.new(gestureMap, bufnr)
+function Matcher.new(gesture_map, bufnr)
   vim.validate({
     bufnr = { bufnr, "number" },
-    gestureMap = { gestureMap, "table" },
+    gesture_map = { gesture_map, "table" },
   })
   local tbl = {
-    _gesture_map = gestureMap,
+    _gesture_map = gesture_map,
     _bufnr = bufnr,
   }
   return setmetatable(tbl, Matcher)

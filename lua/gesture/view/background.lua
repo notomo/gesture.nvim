@@ -52,7 +52,6 @@ function Background.open(click)
   local tbl = {
     _window_id = window_id,
     _ns = ns,
-    _canvas = Canvas.new(bufnr, ns),
   }
   local self = setmetatable(tbl, Background)
 
@@ -65,7 +64,7 @@ function Background.open(click)
     end,
   })
 
-  return self, window_id
+  return self, Canvas.new(bufnr, ns), window_id
 end
 
 function Background.close(self)
@@ -75,10 +74,6 @@ end
 
 function Background.is_valid(self)
   return vim.api.nvim_win_is_valid(self._window_id)
-end
-
-function Background.draw(self, board, new_points)
-  self._canvas:draw(board, new_points)
 end
 
 return Background

@@ -15,16 +15,17 @@ function State.get_or_create()
   end
 
   local matcher = Matcher.new(require("gesture.model.setting").map, vim.api.nvim_get_current_buf())
-  local view = View.open()
+  local view, window_id = View.open()
   local tbl = {
     _last_point = view.current_point(),
+    _window_id = window_id,
     inputs = Inputs.new(),
     view = view,
     matcher = matcher,
   }
   local self = setmetatable(tbl, State)
 
-  _states[self.view.window_id] = self
+  _states[self._window_id] = self
 
   return self
 end
@@ -63,7 +64,7 @@ end
 function State.close(self)
   local param = self:_action_param()
 
-  _states[self.view.window_id] = nil
+  _states[self._window_id] = nil
   self.view:close()
 
   return param

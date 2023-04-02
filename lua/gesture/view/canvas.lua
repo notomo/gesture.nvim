@@ -16,8 +16,8 @@ function Canvas.new(bufnr, ns)
   return setmetatable(tbl, Canvas)
 end
 
-function Canvas.draw(self, board, points)
-  for y, ranges in pairs(board.range_map) do
+function Canvas.draw(self, board_range_map, points)
+  for y, ranges in pairs(board_range_map) do
     self:_draw_board(y, ranges)
   end
   local hl_group = "GestureLine"
