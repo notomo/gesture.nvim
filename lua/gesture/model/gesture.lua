@@ -146,7 +146,10 @@ GestureMap.__index = GestureMap
 M.GestureMap = GestureMap
 
 function GestureMap.new()
-  local tbl = { _global = Gestures.new(), _buffer_local = {} }
+  local tbl = {
+    _global = Gestures.new(),
+    _buffer_local = {},
+  }
   return setmetatable(tbl, GestureMap)
 end
 
@@ -166,7 +169,10 @@ function GestureMap.add(self, gesture)
 end
 
 function GestureMap.match(self, bufnr, inputs, nowait)
-  vim.validate({ bufnr = { bufnr, "number" }, nowait = { nowait, "boolean" } })
+  vim.validate({
+    bufnr = { bufnr, "number" },
+    nowait = { nowait, "boolean" },
+  })
   local gestures = self._buffer_local[bufnr]
   if gestures then
     return gestures:match(inputs, nowait) or self._global:match(inputs, nowait)

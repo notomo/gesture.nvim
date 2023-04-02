@@ -1,6 +1,6 @@
 local Point = require("gesture.model.point")
 local Background = require("gesture.view.background")
-local GestureBoard = require("gesture.view.board").GestureBoard
+local GestureBoard = require("gesture.view.board")
 
 local vim = vim
 
@@ -12,7 +12,11 @@ M.View = View
 
 function View.open()
   local background, window_id = Background.open(M.click)
-  local tbl = { window_id = window_id, _background = background, _new_points = {} }
+  local tbl = {
+    window_id = window_id,
+    _background = background,
+    _new_points = {},
+  }
   return setmetatable(tbl, View)
 end
 

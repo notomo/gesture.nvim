@@ -7,8 +7,15 @@ Input.__index = Input
 M.Input = Input
 
 function Input.direction(direction, length)
-  vim.validate({ direction = { direction, "string" }, length = { length, "number" } })
-  local tbl = { kind = "direction", value = direction, length = length }
+  vim.validate({
+    direction = { direction, "string" },
+    length = { length, "number" },
+  })
+  local tbl = {
+    kind = "direction",
+    value = direction,
+    length = length,
+  }
   return setmetatable(tbl, Input)
 end
 

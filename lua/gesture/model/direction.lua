@@ -1,7 +1,12 @@
 local Direction = {}
 Direction.__index = Direction
 
-local types = { UP = "UP", DOWN = "DOWN", RIGHT = "RIGHT", LEFT = "LEFT" }
+local types = {
+  UP = "UP",
+  DOWN = "DOWN",
+  RIGHT = "RIGHT",
+  LEFT = "LEFT",
+}
 
 function Direction._new(typ, opts)
   vim.validate({

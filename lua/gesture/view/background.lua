@@ -1,4 +1,4 @@
-local Canvas = require("gesture.view.canvas").Canvas
+local Canvas = require("gesture.view.canvas")
 local windowlib = require("gesture.lib.window")
 
 local Background = {}
@@ -49,7 +49,11 @@ function Background.open(click)
   })
 
   local ns = vim.api.nvim_create_namespace("gesture")
-  local tbl = { _window_id = window_id, _ns = ns, _canvas = Canvas.new(bufnr, ns) }
+  local tbl = {
+    _window_id = window_id,
+    _ns = ns,
+    _canvas = Canvas.new(bufnr, ns),
+  }
   local self = setmetatable(tbl, Background)
 
   vim.api.nvim_set_decoration_provider(self._ns, {

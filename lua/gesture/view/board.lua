@@ -1,11 +1,8 @@
 local listlib = require("gesture.lib.list")
 local vim = vim
 
-local M = {}
-
 local GestureBoard = {}
 GestureBoard.__index = GestureBoard
-M.GestureBoard = GestureBoard
 
 local one_padding = 3
 local both_padding = one_padding * 2
@@ -14,7 +11,9 @@ local round = function(x)
 end
 
 function GestureBoard._new(range_map)
-  local tbl = { range_map = range_map or {} }
+  local tbl = {
+    range_map = range_map or {},
+  }
   return setmetatable(tbl, GestureBoard)
 end
 
@@ -76,4 +75,4 @@ function GestureBoard.create(inputs, gesture, has_forward_match, show_board)
   return GestureBoard._new(range_map)
 end
 
-return M
+return GestureBoard

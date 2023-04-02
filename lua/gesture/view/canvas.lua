@@ -1,16 +1,18 @@
 local converter = require("gesture.view.converter")
 
-local M = {}
-
 local Canvas = {}
 Canvas.__index = Canvas
-M.Canvas = Canvas
 
 local vim = vim
 local set_extmark = vim.api.nvim_buf_set_extmark
 
 function Canvas.new(bufnr, ns)
-  local tbl = { _rows = {}, _board_rows = {}, _bufnr = bufnr, _ns = ns }
+  local tbl = {
+    _rows = {},
+    _board_rows = {},
+    _bufnr = bufnr,
+    _ns = ns,
+  }
   return setmetatable(tbl, Canvas)
 end
 
@@ -64,4 +66,4 @@ function Canvas._draw_point(self, p, hl_group)
   self._rows[p.y] = { col_map = col_map, id = id }
 end
 
-return M
+return Canvas
