@@ -1,5 +1,11 @@
-local Line = require("gesture.core.line").Line
+local Line = require("gesture.core.line")
 local listlib = require("gesture.lib.list")
+
+local Direction = require("gesture.core.direction")
+local UP = Direction.up().value
+local DOWN = Direction.down().value
+local RIGHT = Direction.right().value
+local LEFT = Direction.left().value
 
 local Point = {}
 Point.__index = Point
@@ -13,10 +19,10 @@ function Point.line_to(self, point)
 
   local direction, length
   if length_x > length_y then
-    direction = diff_x > 0 and "RIGHT" or "LEFT"
+    direction = diff_x > 0 and RIGHT or LEFT
     length = length_x
   elseif length_y >= length_x and length_y > 0 then
-    direction = diff_y > 0 and "DOWN" or "UP"
+    direction = diff_y > 0 and DOWN or UP
     length = length_y
   else
     return nil

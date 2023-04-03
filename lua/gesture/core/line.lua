@@ -1,11 +1,5 @@
-local M = {}
-
-M.x_length_threshold = 5
-M.y_length_threshold = 5
-
 local Line = {}
 Line.__index = Line
-M.Line = Line
 
 function Line.new(direction, length)
   vim.validate({
@@ -19,11 +13,15 @@ function Line.new(direction, length)
   return setmetatable(tbl, Line)
 end
 
-function Line.is_short(self)
-  if self.direction == "UP" or self.direction == "DOWN" then
-    return self.length < M.y_length_threshold
+local Direction = require("gesture.core.direction")
+local UP = Direction.up().value
+local DOWN = Direction.down().value
+
+function Line.is_short(self, length_thresholds)
+  if self.direction == UP or self.direction == DOWN then
+    return self.length < length_thresholds.y
   end
-  return self.length < M.x_length_threshold
+  return self.length < length_thresholds.x
 end
 
-return M
+return Line

@@ -33,7 +33,7 @@ function State.get(window_id)
   return _states[window_id or vim.api.nvim_get_current_win()]
 end
 
-function State.update(self)
+function State.update(self, length_thresholds)
   local suspended = self._last_point == nil
   local point = self.view:focus(self._last_point)
   if not point then
@@ -45,7 +45,7 @@ function State.update(self)
   end
 
   local line = self._last_point:line_to(point)
-  if not line or line:is_short() then
+  if not line or line:is_short(length_thresholds) then
     return true
   end
 

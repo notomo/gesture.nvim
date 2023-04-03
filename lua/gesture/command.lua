@@ -4,12 +4,16 @@ local State = require("gesture.core.state")
 
 local draw_options = {
   show_board = true,
+  length_thresholds = {
+    x = 5,
+    y = 5,
+  },
 }
 function M.draw(raw_opts)
   local opts = vim.tbl_deep_extend("force", draw_options, raw_opts or {})
 
   local state = State.get_or_create(require("gesture.view").View.open)
-  local valid = state:update()
+  local valid = state:update(opts.length_thresholds)
   if not valid then
     return
   end
