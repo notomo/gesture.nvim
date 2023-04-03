@@ -6,6 +6,8 @@ Canvas.__index = Canvas
 local vim = vim
 local set_extmark = vim.api.nvim_buf_set_extmark
 
+local hl_groups = require("gesture.view.highlight_group")
+
 function Canvas.new(bufnr, ns)
   local tbl = {
     _rows = {},
@@ -20,7 +22,7 @@ function Canvas.draw(self, board_range_map, points)
   for y, ranges in pairs(board_range_map) do
     self:_draw_board(y, ranges)
   end
-  local hl_group = "GestureLine"
+  local hl_group = hl_groups.GestureLine
   for _, p in ipairs(points) do
     self:_draw_point(p, hl_group)
   end

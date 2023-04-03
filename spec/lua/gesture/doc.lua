@@ -45,7 +45,11 @@ used for action label
 ]],
         }
         local sections = {}
-        for _, hl_group in ipairs(require("gesture.view").hl_groups) do
+        local hl_groups = vim.tbl_keys(require("gesture.view.highlight_group"))
+        table.sort(hl_groups, function(a, b)
+          return a > b
+        end)
+        for _, hl_group in ipairs(hl_groups) do
           table.insert(
             sections,
             util.help_tagged(ctx, hl_group, "hl-" .. hl_group) .. util.indent(descriptions[hl_group], 2)

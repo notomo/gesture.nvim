@@ -96,11 +96,11 @@ HIGHLIGHT GROUPS                               *gesture.nvim-HIGHLIGHT-GROUPS*
 GestureLine                                                   *hl-GestureLine*
   used for drawing gesture line
 
-GestureInput                                                 *hl-GestureInput*
-  used for input
-
 GestureInputNotMatched                             *hl-GestureInputNotMatched*
   used for input if no matched gesture exists 
+
+GestureInput                                                 *hl-GestureInput*
+  used for input
 
 GestureActionLabel                                     *hl-GestureActionLabel*
   used for action label

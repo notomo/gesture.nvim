@@ -11,6 +11,8 @@ local round = function(x)
   return math.floor(x + 0.5)
 end
 
+local hl_groups = require("gesture.view.highlight_group")
+
 function GestureBoard.create(inputs, gesture, has_forward_match, show_board)
   if inputs:is_empty() or not show_board then
     return {}
@@ -33,14 +35,14 @@ function GestureBoard.create(inputs, gesture, has_forward_match, show_board)
   local start_col = math.max(0, center - half_width)
   local end_col = math.min(center + half_width, editor_width)
 
-  local hl_group = "GestureInput"
+  local hl_group = hl_groups.GestureInput
   if not has_forward_match then
-    hl_group = "GestureInputNotMatched"
+    hl_group = hl_groups.GestureInputNotMatched
   end
 
   local height = vim.api.nvim_win_get_height(0)
   local range_map = {}
-  local action_label_hl_group = "GestureActionLabel"
+  local action_label_hl_group = hl_groups.GestureActionLabel
   for i, line in ipairs(lines) do
     local y = row + i
     if y > height then
