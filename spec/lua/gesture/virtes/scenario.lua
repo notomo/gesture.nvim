@@ -1,7 +1,7 @@
 local scenario = function(ctx)
   vim.o.termguicolors = true
   vim.o.background = "dark"
-  require("gesture.view").click = function()
+  require("gesture.view.mouse").click = function()
     vim.cmd.redraw({ bang = true })
   end
 

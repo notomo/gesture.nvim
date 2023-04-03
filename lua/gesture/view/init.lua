@@ -1,17 +1,15 @@
 local Point = require("gesture.core.point")
 local Background = require("gesture.view.background")
 local GestureBoard = require("gesture.view.board")
+local mouse = require("gesture.view.mouse")
 
 local vim = vim
 
-local M = {}
-
 local View = {}
 View.__index = View
-M.View = View
 
 function View.open()
-  local background, canvas, window_id = Background.open(M.click)
+  local background, canvas, window_id = Background.open()
   local tbl = {
     _background = background,
     _canvas = canvas,
@@ -26,7 +24,7 @@ function View.render_input(self, inputs, gesture, has_forward_match, show_board)
 end
 
 function View.focus(self, last_point)
-  M.click()
+  mouse.click()
 
   if not self._background:is_valid() then
     return
@@ -53,10 +51,4 @@ function View.close(self)
   self._background:close()
 end
 
-local mouse = vim.api.nvim_eval('"\\<LeftMouse>"')
--- replace on testing
-function M.click()
-  vim.cmd.normal({ bang = true, args = { mouse } })
-end
-
-return M
+return View

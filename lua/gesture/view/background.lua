@@ -1,12 +1,11 @@
 local Canvas = require("gesture.view.canvas")
 local windowlib = require("gesture.lib.window")
+local mouse = require("gesture.view.mouse")
 
 local Background = {}
 Background.__index = Background
 
-function Background.open(click)
-  vim.validate({ click = { click, "function" } })
-
+function Background.open()
   local width = vim.o.columns
   local height = vim.o.lines - vim.o.cmdheight
 
@@ -38,7 +37,7 @@ function Background.open(click)
 
   -- NOTE: show and move cursor to the window by <LeftDrag>
   vim.cmd.redraw()
-  click()
+  mouse.click()
 
   vim.api.nvim_create_autocmd({ "WinLeave", "TabLeave", "BufLeave" }, {
     buffer = bufnr,
