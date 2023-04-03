@@ -12,7 +12,6 @@ function Input.direction(direction, length)
     length = { length, "number" },
   })
   local tbl = {
-    kind = "direction",
     value = direction,
     length = length,
   }

@@ -26,7 +26,6 @@ function Direction._new(typ, opts)
   })
 
   local tbl = {
-    kind = "direction",
     value = typ,
     max_length = opts.max_length,
     min_length = opts.min_length,
@@ -51,7 +50,7 @@ function Direction.left(opts)
 end
 
 function Direction.__eq(a, b)
-  return a.kind == b.kind and a.value == b.value and a.max_length == b.max_length and a.min_length == b.min_length
+  return a.value == b.value and a.max_length == b.max_length and a.min_length == b.min_length
 end
 
 return Direction
