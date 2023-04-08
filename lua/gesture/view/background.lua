@@ -8,7 +8,7 @@ Background.__index = Background
 
 function Background.open(winblend)
   local width = vim.o.columns
-  local height = vim.o.lines - vim.o.cmdheight
+  local height = vim.o.lines
 
   local bufnr = vim.api.nvim_create_buf(false, true)
   local window_id = vim.api.nvim_open_win(bufnr, true, {
@@ -19,6 +19,7 @@ function Background.open(winblend)
     col = 0,
     external = false,
     style = "minimal",
+    zindex = 201,
   })
   vim.wo[window_id].winblend = winblend
   vim.wo[window_id].winhighlight = "Normal:" .. hl_groups.GestureBackground
