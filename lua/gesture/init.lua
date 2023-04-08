@@ -1,7 +1,13 @@
 local M = {}
 
+--- @class GestureLengthThresholds
+--- @field x integer? x axis length threshold
+--- @field y integer? y axis length threshold
+
 --- @class GestureDrawOption
 --- @field show_board? boolean show inputted directions and matched gesture name (default: true)
+--- @field winblend? integer background window's 'winblend' (default: 100)
+--- @field length_thresholds? GestureLengthThresholds recognize as input if its length is greater than threshold. |GestureLengthThresholds|
 
 --- Draw a gesture line.
 --- @param opts GestureDrawOption? |GestureDrawOption|
