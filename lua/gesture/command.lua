@@ -8,11 +8,14 @@ local draw_options = {
     x = 5,
     y = 5,
   },
+  winblend = 100,
 }
 function M.draw(raw_opts)
   local opts = vim.tbl_deep_extend("force", draw_options, raw_opts or {})
 
-  local state = State.get_or_create(require("gesture.view").open)
+  local state = State.get_or_create(function()
+    return require("gesture.view").open(opts.winblend)
+  end)
   local valid = state:update(opts.length_thresholds)
   if not valid then
     return

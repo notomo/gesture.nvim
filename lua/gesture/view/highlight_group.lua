@@ -19,8 +19,12 @@ local setup_highlight_groups = function()
     }),
     GestureActionLabel = highlightlib.define("GestureActionLabel", {
       fg = vim.api.nvim_get_hl(0, { name = "Statement" }).fg or "#a8d2eb",
+      bg = vim.api.nvim_get_hl(0, { name = "NormalFloat" }).bg or "#3a4b5c",
       blend = blend,
       bold = true,
+    }),
+    GestureBackground = highlightlib.define("GestureBackground", {
+      fg = vim.api.nvim_get_hl(0, { name = "Normal" }).bg or "#271457",
     }),
   }
 end

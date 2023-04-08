@@ -8,8 +8,8 @@ local vim = vim
 local View = {}
 View.__index = View
 
-function View.open()
-  local background, canvas, window_id = Background.open()
+function View.open(winblend)
+  local background, canvas, window_id = Background.open(winblend)
   local tbl = {
     _background = background,
     _canvas = canvas,

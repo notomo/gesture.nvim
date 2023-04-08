@@ -1,11 +1,12 @@
 local Canvas = require("gesture.view.canvas")
 local windowlib = require("gesture.lib.window")
 local mouse = require("gesture.view.mouse")
+local hl_groups = require("gesture.view.highlight_group")
 
 local Background = {}
 Background.__index = Background
 
-function Background.open()
+function Background.open(winblend)
   local width = vim.o.columns
   local height = vim.o.lines - vim.o.cmdheight
 
@@ -19,7 +20,8 @@ function Background.open()
     external = false,
     style = "minimal",
   })
-  vim.wo[window_id].winblend = 100
+  vim.wo[window_id].winblend = winblend
+  vim.wo[window_id].winhighlight = "Normal:" .. hl_groups.GestureBackground
   vim.wo[window_id].scrolloff = 0
   vim.wo[window_id].sidescrolloff = 0
 

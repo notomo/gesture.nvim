@@ -102,6 +102,9 @@ GestureInputNotMatched                             *hl-GestureInputNotMatched*
 GestureInput                                                 *hl-GestureInput*
   used for input
 
+GestureBackground                                       *hl-GestureBackground*
+  used for background window
+
 GestureActionLabel                                     *hl-GestureActionLabel*
   used for action label
 

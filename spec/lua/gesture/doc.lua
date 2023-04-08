@@ -43,6 +43,9 @@ used for input if no matched gesture exists
           GestureActionLabel = [[
 used for action label
 ]],
+          GestureBackground = [[
+used for background window
+]],
         }
         local sections = {}
         local hl_groups = vim.tbl_keys(require("gesture.view.highlight_group"))
