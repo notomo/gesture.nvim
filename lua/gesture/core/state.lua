@@ -14,6 +14,7 @@ function State.get_or_create(open_view)
   local tbl = {
     _last_point = view.current_point(),
     _window_id = window_id,
+    _suspended = false,
     inputs = require("gesture.core.inputs").new(),
     view = view,
     matcher = matcher,
@@ -30,13 +31,12 @@ function State.get(window_id)
 end
 
 function State.update(self, length_thresholds)
-  local suspended = self._last_point == nil
   local point = self.view:focus(self._last_point)
   if not point then
     return false
   end
 
-  if suspended then
+  if self._last_point == nil then
     self._last_point = point
   end
 
@@ -46,14 +46,15 @@ function State.update(self, length_thresholds)
   end
 
   self._last_point = point
-  self.inputs:add_direction(line.direction, line.length)
+  self.inputs:add_direction(line.direction, line.length, self._suspended)
+  self._suspended = false
 
   return true
 end
 
 function State.suspend(self)
   self._last_point = nil
-  self.inputs:suspend()
+  self._suspended = true
 end
 
 function State.close(self)
