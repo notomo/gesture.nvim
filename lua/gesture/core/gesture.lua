@@ -1,4 +1,3 @@
-local Inputs = require("gesture.core.input").Inputs
 local vim = vim
 
 local M = {}
@@ -52,7 +51,7 @@ function Gesture.new(info)
 
   local tbl = {
     name = info.name or "",
-    inputs = Inputs.new(info.inputs),
+    input_defs = require("gesture.core.input_definitions").new(info.inputs),
     nowait = info.nowait or false,
     buffer = bufnr,
     _action = action,
@@ -68,31 +67,6 @@ function Gesture.execute(self, param)
   return nil
 end
 
-function Gesture.has_forward_match(self, inputs)
-  local i = 1
-  for _, def in self.inputs:iter() do
-    local input = inputs[i]
-    if not input then
-      return true
-    end
-    if not def:match(input) then
-      return false
-    end
-  end
-  return true
-end
-
-function Gesture.match(self, inputs)
-  local i = 1
-  for _, def in self.inputs:iter() do
-    local input = inputs[i]
-    if not def:match(input) then
-      return false
-    end
-  end
-  return true
-end
-
 local Gestures = {}
 Gestures.__index = Gestures
 
@@ -103,7 +77,7 @@ end
 
 function Gestures.add(self, gesture)
   for i, g in ipairs(self._gestures) do
-    if gesture.inputs == g.inputs then
+    if gesture.input_defs:equals(g.input_defs) then
       self._gestures[i] = gesture
       return
     end
@@ -113,7 +87,7 @@ end
 
 function Gestures.has_forward_match(self, inputs)
   for _, gesture in ipairs(self._gestures) do
-    if gesture:has_forward_match(inputs) then
+    if gesture.input_defs:has_forward_match(inputs) then
       return true
     end
   end
@@ -122,7 +96,7 @@ end
 
 function Gestures.match(self, inputs)
   for _, gesture in ipairs(self._gestures) do
-    if gesture:match(inputs) then
+    if gesture.input_defs:match(inputs) then
       return gesture
     end
   end
@@ -139,18 +113,18 @@ function GestureMap.new()
   return setmetatable(tbl, GestureMap)
 end
 
-local make_key = function(bufnr, nowait, inputs)
+local make_key = function(bufnr, nowait, input_values)
   local elements = {
     tostring(bufnr),
     tostring(nowait),
-    inputs:identify(),
+    table.concat(input_values, "-"),
   }
   return table.concat(elements, "\t")
 end
 
 function GestureMap.add(self, gesture)
   vim.validate({ gesture = { gesture, "table" } })
-  local key = make_key(gesture.buffer, gesture.nowait, gesture.inputs)
+  local key = make_key(gesture.buffer, gesture.nowait, gesture.input_defs:values())
   local gestures = self._map[key] or Gestures.new()
   gestures:add(gesture)
   self._map[key] = gestures
@@ -161,8 +135,9 @@ function GestureMap.match(self, bufnr, inputs, nowait)
     bufnr = { bufnr, "number" },
     nowait = { nowait, "boolean" },
   })
+  local input_values = inputs:values()
 
-  local buffer_key = make_key(bufnr, nowait, inputs)
+  local buffer_key = make_key(bufnr, nowait, input_values)
   local buffer_gestures = self._map[buffer_key]
   if buffer_gestures then
     local gesture = buffer_gestures:match(inputs)
@@ -171,7 +146,7 @@ function GestureMap.match(self, bufnr, inputs, nowait)
     end
   end
 
-  local global_key = make_key(nil, nowait, inputs)
+  local global_key = make_key(nil, nowait, input_values)
   local global_gestures = self._map[global_key]
   if global_gestures then
     return global_gestures:match(inputs)
@@ -181,9 +156,10 @@ end
 
 function GestureMap.has_forward_match(self, bufnr, inputs)
   vim.validate({ bufnr = { bufnr, "number" } })
+  local input_values = inputs:values()
 
-  local buffer_nowait_key = make_key(bufnr, true, inputs)
-  local buffer_key = make_key(bufnr, false, inputs)
+  local buffer_nowait_key = make_key(bufnr, true, input_values)
+  local buffer_key = make_key(bufnr, false, input_values)
   for key, gestures in pairs(self._map) do
     local key_matched = vim.startswith(key, buffer_nowait_key) or vim.startswith(key, buffer_key)
     if key_matched and gestures:has_forward_match(inputs) then
@@ -191,8 +167,8 @@ function GestureMap.has_forward_match(self, bufnr, inputs)
     end
   end
 
-  local nowait_key = make_key(nil, true, inputs)
-  local global_key = make_key(nil, false, inputs)
+  local nowait_key = make_key(nil, true, input_values)
+  local global_key = make_key(nil, false, input_values)
   for key, gestures in pairs(self._map) do
     local key_matched = vim.startswith(key, nowait_key) or vim.startswith(key, global_key)
     if key_matched and gestures:has_forward_match(inputs) then

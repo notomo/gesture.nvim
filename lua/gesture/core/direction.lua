@@ -1,25 +1,27 @@
 local Direction = {}
 Direction.__index = Direction
 
-local types = {
+local Directions = {
   UP = "UP",
   DOWN = "DOWN",
   RIGHT = "RIGHT",
   LEFT = "LEFT",
 }
 
-function Direction._new(typ, opts)
+local new = function(typ, opts)
   vim.validate({
     typ = {
       typ,
       function(t)
-        return types[t]
+        return Directions[t]
       end,
-      vim.inspect(types),
+      vim.inspect(Directions),
     },
     opts = { opts, "table", true },
   })
+
   opts = opts or {}
+
   vim.validate({
     max_length = { opts.max_length, "number", true },
     min_length = { opts.min_length, "number", true },
@@ -44,23 +46,25 @@ function Direction.match(self, input)
 end
 
 function Direction.up(opts)
-  return Direction._new(types.UP, opts)
+  return new(Directions.UP, opts)
 end
 
 function Direction.down(opts)
-  return Direction._new(types.DOWN, opts)
+  return new(Directions.DOWN, opts)
 end
 
 function Direction.right(opts)
-  return Direction._new(types.RIGHT, opts)
+  return new(Directions.RIGHT, opts)
 end
 
 function Direction.left(opts)
-  return Direction._new(types.LEFT, opts)
+  return new(Directions.LEFT, opts)
 end
 
-function Direction.__eq(a, b)
-  return a.value == b.value and a.max_length == b.max_length and a.min_length == b.min_length
+function Direction.equals(self, direction)
+  return self.value == direction.value
+    and self.max_length == direction.max_length
+    and self.min_length == direction.min_length
 end
 
 return Direction
