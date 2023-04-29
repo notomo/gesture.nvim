@@ -5,7 +5,6 @@ local M = {}
 
 local Gesture = {}
 Gesture.__index = Gesture
-M.Gesture = Gesture
 
 function Gesture.new(info)
   vim.validate({ info = { info, "table" } })
@@ -132,7 +131,6 @@ end
 
 local GestureMap = {}
 GestureMap.__index = GestureMap
-M.GestureMap = GestureMap
 
 function GestureMap.new()
   local tbl = {
@@ -203,6 +201,16 @@ function GestureMap.has_forward_match(self, bufnr, inputs)
   end
 
   return false
+end
+
+M.map = GestureMap.new()
+
+function M.clear()
+  M.map = GestureMap.new()
+end
+
+function M.register(info)
+  M.map:add(Gesture.new(info))
 end
 
 return M
