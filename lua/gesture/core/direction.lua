@@ -33,6 +33,16 @@ function Direction._new(typ, opts)
   return setmetatable(tbl, Direction)
 end
 
+function Direction.match(self, input)
+  if self.max_length and self.max_length < input.length then
+    return false
+  end
+  if self.min_length and self.min_length > input.length then
+    return false
+  end
+  return true
+end
+
 function Direction.up(opts)
   return Direction._new(types.UP, opts)
 end
