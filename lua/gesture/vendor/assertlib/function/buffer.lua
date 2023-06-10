@@ -22,21 +22,29 @@ function M.buffer_number()
 end
 
 M.exists_pattern = {
+  get_expected_args = function(args)
+    return args
+  end,
   get_expected = function(pattern)
     return pattern:gsub("\n", "\\n")
   end,
   is_ok = function(result)
-    return vim.fn.search(result.expected, "n") ~= 0
+    local bufnr = result.expected_args[2] or 0
+    return vim.api.nvim_buf_call(bufnr, function()
+      return vim.fn.search(result.expected, "n") ~= 0
+    end)
   end,
   positive_message = function(result)
-    local lines = vim.api.nvim_buf_get_lines(0, 0, -1, false)
+    local bufnr = result.expected_args[2] or 0
+    local lines = vim.api.nvim_buf_get_lines(bufnr, 0, -1, false)
     local content = table.concat(lines, "\n")
     return ([[`%s` not found
 Actual lines:
 %s]]):format(result.expected, content)
   end,
   negative_message = function(result)
-    local lines = vim.api.nvim_buf_get_lines(0, 0, -1, false)
+    local bufnr = result.expected_args[2] or 0
+    local lines = vim.api.nvim_buf_get_lines(bufnr, 0, -1, false)
     local content = table.concat(lines, "\n")
     return ([[`%s` found
 Actual lines:

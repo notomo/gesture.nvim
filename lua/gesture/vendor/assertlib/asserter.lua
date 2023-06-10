@@ -6,18 +6,29 @@ function M.new(name, attributes)
     attributes = { attributes, "table" },
   })
   attributes.get_actual = attributes.get_actual or function() end
+  attributes.get_actual_args = attributes.get_actual_args
+    or function(args)
+      return { unpack(args, 1, #args - 1) }
+    end
   attributes.get_expected = attributes.get_expected or function(...)
     return ...
+  end
+  attributes.get_expected_args = attributes.get_expected_args or function(args)
+    return { args[#args] }
   end
   return {
     name = name,
     get_result = function(args)
-      local expected = attributes.get_expected(args[#args])
-      local actual = attributes.get_actual(unpack(args, 1, #args - 1))
+      local expected_args = attributes.get_expected_args(args)
+      local expected = attributes.get_expected(unpack(expected_args))
+      local actual_args = attributes.get_actual_args(args)
+      local actual = attributes.get_actual(unpack(actual_args))
       return {
         name = name,
         expected = expected,
+        expected_args = expected_args,
         actual = actual,
+        actual_args = actual_args,
       }
     end,
     is_ok = attributes.is_ok or function(result)
