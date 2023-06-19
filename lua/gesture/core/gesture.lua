@@ -19,13 +19,7 @@ function Gesture.new(info)
   end
 
   vim.validate({
-    action = {
-      info.action,
-      function(x)
-        return type(x) == "string" or is_callable
-      end,
-      "string or callable",
-    },
+    action = { info.action, { "string", "callable" } },
     inputs = {
       info.inputs,
       function(inputs)
@@ -34,14 +28,7 @@ function Gesture.new(info)
       "not empty",
     },
     nowait = { info.nowait, "boolean", true },
-    buffer = {
-      info.buffer,
-      function(buffer)
-        local typ = type(buffer)
-        return typ == "nil" or typ == "string" or typ == "number"
-      end,
-      "nil or string or number",
-    },
+    buffer = { info.buffer, { "string", "number" }, true },
   })
 
   local bufnr = nil
