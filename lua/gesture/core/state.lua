@@ -60,15 +60,11 @@ function State.suspend(self)
 end
 
 function State.close(self)
-  local ctx = self:_action_context()
-
   _states[self._window_id] = nil
   self.view:close()
-
-  return ctx
 end
 
-function State._action_context(self)
+function State.action_context(self)
   local point = self.view.current_point()
   local last_position = { point.y, point.x }
   return {
