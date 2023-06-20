@@ -9,11 +9,13 @@ function State.get_or_create(open_view)
     return current
   end
 
+  local first_window_id = vim.api.nvim_get_current_win()
   local matcher = require("gesture.core.matcher").new(vim.api.nvim_get_current_buf())
   local view, window_id = open_view()
   local tbl = {
     _last_point = view.current_point(),
     _window_id = window_id,
+    _first_window_id = first_window_id,
     _suspended = false,
     inputs = require("gesture.core.inputs").new(),
     view = view,
@@ -58,17 +60,24 @@ function State.suspend(self)
 end
 
 function State.close(self)
-  local param = self:_action_param()
+  local ctx = self:_action_context()
 
   _states[self._window_id] = nil
   self.view:close()
 
-  return param
+  return ctx
 end
 
-function State._action_param(self)
+function State._action_context(self)
   local point = self.view.current_point()
-  return { last_position = { point.y, point.x } }
+  local last_position = { point.y, point.x }
+  return {
+    last_position = last_position,
+    window_id = self._first_window_id,
+    last_window_id = function()
+      return require("gesture.lib.window").from_global_position(0, last_position)
+    end,
+  }
 end
 
 return State

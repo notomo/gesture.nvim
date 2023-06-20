@@ -24,8 +24,8 @@ function M.draw(raw_opts)
   local inputs = state.inputs
   local nowait_gesture = state.matcher:nowait_match(inputs)
   if nowait_gesture then
-    local param = state:close()
-    local err = nowait_gesture:execute(param)
+    local ctx = state:close()
+    local err = nowait_gesture:execute(ctx)
     if err then
       require("gesture.vendor.misclib.message").error(err)
     end
@@ -51,10 +51,10 @@ function M.finish()
     return
   end
 
-  local param = state:close()
+  local ctx = state:close()
   local gesture = state.matcher:match(state.inputs)
   if gesture then
-    local err = gesture:execute(param)
+    local err = gesture:execute(ctx)
     if err then
       require("gesture.vendor.misclib.message").error(err)
     end
