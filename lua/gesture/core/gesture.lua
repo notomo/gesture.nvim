@@ -154,8 +154,8 @@ function GestureMap.match(self, bufnr, ctx, nowait)
 
   local keys = {
     make_key(bufnr, nowait, for_match_strs),
-    make_key(nil, nowait, for_match_strs),
     make_key(bufnr, nowait, input_strs),
+    make_key(nil, nowait, for_match_strs),
     make_key(nil, nowait, input_strs),
   }
   for _, key in ipairs(keys) do
@@ -186,12 +186,12 @@ function GestureMap.has_forward_match(self, bufnr, ctx)
       make_key(bufnr, false, for_match_strs),
     },
     {
-      make_key(nil, true, for_match_strs),
-      make_key(nil, false, for_match_strs),
-    },
-    {
       make_key(bufnr, true, input_strs),
       make_key(bufnr, false, input_strs),
+    },
+    {
+      make_key(nil, true, for_match_strs),
+      make_key(nil, false, for_match_strs),
     },
     {
       make_key(nil, true, input_strs),
