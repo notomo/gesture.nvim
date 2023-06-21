@@ -1,5 +1,7 @@
 local _states = {}
 
+local Inputs = require("gesture.core.inputs")
+
 local State = {}
 State.__index = State
 
@@ -17,7 +19,7 @@ function State.get_or_create(open_view)
     _window_id = window_id,
     _first_window_id = first_window_id,
     _suspended = false,
-    inputs = require("gesture.core.inputs").new(),
+    _inputs = {},
     view = view,
     matcher = matcher,
   }
@@ -48,7 +50,7 @@ function State.update(self, length_thresholds)
   end
 
   self._last_point = point
-  self.inputs:add_direction(line.direction, line.length, self._suspended)
+  Inputs.add_direction(self._inputs, line.direction, line.length, self._suspended)
   self._suspended = false
 
   return true
@@ -68,6 +70,9 @@ function State.action_context(self)
   local point = self.view.current_point()
   local last_position = { point.y, point.x }
   return {
+    inputs = vim.tbl_map(function(input)
+      return input
+    end, self._inputs),
     last_position = last_position,
     window_id = self._first_window_id,
     last_window_id = function()

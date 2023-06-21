@@ -4,14 +4,14 @@ InputDefinitions.__index = InputDefinitions
 function InputDefinitions.new(defs)
   vim.validate({ defs = { defs, "table" } })
   local tbl = {
-    _defs = defs or {},
+    _defs = defs,
   }
   return setmetatable(tbl, InputDefinitions)
 end
 
 function InputDefinitions.match(self, inputs)
   for i, def in ipairs(self._defs) do
-    local input = inputs:index(i)
+    local input = inputs[i]
     if not input then
       return false
     end
@@ -24,7 +24,7 @@ end
 
 function InputDefinitions.has_forward_match(self, inputs)
   for i, def in ipairs(self._defs) do
-    local input = inputs:index(i)
+    local input = inputs[i]
     if not input then
       return true
     end
@@ -35,7 +35,7 @@ function InputDefinitions.has_forward_match(self, inputs)
   return true
 end
 
-function InputDefinitions.values(self)
+function InputDefinitions.strings(self)
   return vim.tbl_map(function(def)
     return def.value
   end, self._defs)

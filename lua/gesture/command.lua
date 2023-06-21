@@ -21,9 +21,8 @@ function M.draw(raw_opts)
     return
   end
 
-  local inputs = state.inputs
   local ctx = state:action_context()
-  local nowait_gesture = state.matcher:nowait_match(ctx, inputs)
+  local nowait_gesture = state.matcher:nowait_match(ctx)
   if nowait_gesture then
     state:close()
     local err = nowait_gesture:execute(ctx)
@@ -33,9 +32,9 @@ function M.draw(raw_opts)
     return
   end
 
-  local gesture = state.matcher:match(ctx, inputs)
-  local has_forward_match = state.matcher:has_forward_match(inputs)
-  state.view:render_input(inputs, gesture, has_forward_match, opts.show_board)
+  local gesture = state.matcher:match(ctx)
+  local has_forward_match = state.matcher:has_forward_match(ctx)
+  state.view:render_input(ctx.inputs, gesture, has_forward_match, opts.show_board)
 end
 
 function M.suspend()
@@ -54,7 +53,7 @@ function M.finish()
 
   local ctx = state:action_context()
   state:close()
-  local gesture = state.matcher:match(ctx, state.inputs)
+  local gesture = state.matcher:match(ctx)
   if gesture then
     local err = gesture:execute(ctx)
     if err then
