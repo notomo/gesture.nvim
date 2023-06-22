@@ -34,7 +34,7 @@ end
 --- - Prefers `can_match` over `inputs`.
 --- @class GestureInfo
 --- @field name string? a displayed name
---- @field inputs GestureInputDefinition[]? |GestureInputDefinition|
+--- @field inputs GestureInputDefinition[]? ref: |GestureInputDefinition|
 --- @field match (fun(ctx:GestureActionContext):boolean)? This is called on every |gesture.draw()| and |gesture.finish()|. If returns true, it means the gesture matches current context.
 --- @field can_match (fun(ctx:GestureActionContext):boolean)? This is called on every |gesture.draw()|. If returns false, it means the gesture can not match anymore.
 --- @field action string|fun(ctx:GestureActionContext)|table an action executed on matched. can use callable table.
@@ -44,7 +44,7 @@ end
 --- @class GestureActionContext
 --- @field last_position integer[] the last position drawn by gesture
 --- @field window_ids integer[] window ids that gesture traces
---- @field inputs GestureInput[] |GestureInput|
+--- @field inputs GestureInput[] ref: |GestureInput|
 
 --- Register a gesture.
 --- @param info GestureInfo: |GestureInfo|

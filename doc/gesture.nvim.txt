@@ -82,7 +82,7 @@ GestureInfo                                                      *GestureInfo*
   - Prefers `can_match` over `inputs`.
 
 - {name} (string?) a displayed name
-- {inputs} (GestureInputDefinition[]?) |GestureInputDefinition|
+- {inputs} (GestureInputDefinition[]?) ref: |GestureInputDefinition|
 - {match} ((fun(ctx:GestureActionContext):boolean)?) This is called on every |gesture.draw()| and |gesture.finish()|. If returns true, it means the gesture matches current context.
 - {can_match} ((fun(ctx:GestureActionContext):boolean)?) This is called on every |gesture.draw()|. If returns false, it means the gesture can not match anymore.
 - {action} (string|fun(ctx:GestureActionContext)|table) an action executed on matched. can use callable table.
@@ -93,7 +93,7 @@ GestureActionContext                                    *GestureActionContext*
 
 - {last_position} (integer[]) the last position drawn by gesture
 - {window_ids} (integer[]) window ids that gesture traces
-- {inputs} (GestureInput[]) |GestureInput|
+- {inputs} (GestureInput[]) ref: |GestureInput|
 
 GestureInputOption                                        *GestureInputOption*
 
