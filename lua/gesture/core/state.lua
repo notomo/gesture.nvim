@@ -1,6 +1,7 @@
 local _states = {}
 
 local Inputs = require("gesture.core.inputs")
+local windowlib = require("gesture.lib.window")
 
 local State = {}
 State.__index = State
@@ -12,7 +13,6 @@ function State.get_or_create(open_view)
   end
 
   local first_window_id = vim.api.nvim_get_current_win()
-  local tabpage = vim.api.nvim_get_current_tabpage()
   local matcher = require("gesture.core.matcher").new(vim.api.nvim_get_current_buf())
   local view, window_id = open_view()
   local point = view.current_point()
@@ -22,9 +22,8 @@ function State.get_or_create(open_view)
     _inputs = {},
     _window_id = window_id,
 
-    _tabpage = tabpage,
     _first_position = { point.y, point.x },
-    _first_window_id = first_window_id,
+    _window_ids = { first_window_id },
 
     view = view,
     matcher = matcher,
@@ -48,6 +47,12 @@ function State.update(self, length_thresholds)
 
   if self._last_point == nil then
     self._last_point = point
+  end
+
+  local window_id = windowlib.from_global_position(0, { point.y, point.x })
+  local last_window_id = self._window_ids[#self._window_ids]
+  if window_id ~= last_window_id then
+    table.insert(self._window_ids, window_id)
   end
 
   local line = self._last_point:line_to(point)
@@ -76,17 +81,15 @@ function State.action_context(self)
   local point = self.view.current_point()
   local last_position = { point.y, point.x }
   return {
+    last_position = last_position,
+
     inputs = vim.tbl_map(function(input)
       return input
     end, self._inputs),
 
-    first_position = self._first_position,
-    last_position = last_position,
-
-    first_window_id = self._first_window_id,
-    last_window_id = function()
-      return require("gesture.lib.window").from_global_position(self._tabpage, last_position)
-    end,
+    window_ids = vim.tbl_map(function(window_id)
+      return window_id
+    end, self._window_ids),
   }
 end
 
