@@ -34,7 +34,7 @@ up({opts})                                                      *gesture.up()*
     {opts} (GestureInputOption?) |GestureInputOption|
 
   Return: ~
-    (GestureInput) used as an element of |GestureInfo|'s inputs
+    (GestureInputDefinition) used as an element of |GestureInfo|'s inputs
 
 down({opts})                                                  *gesture.down()*
   Down input
@@ -43,7 +43,7 @@ down({opts})                                                  *gesture.down()*
     {opts} (GestureInputOption?) |GestureInputOption|
 
   Return: ~
-    (GestureInput) used as an element of |GestureInfo|'s inputs
+    (GestureInputDefinition) used as an element of |GestureInfo|'s inputs
 
 right({opts})                                                *gesture.right()*
   Right input
@@ -52,7 +52,7 @@ right({opts})                                                *gesture.right()*
     {opts} (GestureInputOption?) |GestureInputOption|
 
   Return: ~
-    (GestureInput) used as an element of |GestureInfo|'s inputs
+    (GestureInputDefinition) used as an element of |GestureInfo|'s inputs
 
 left({opts})                                                  *gesture.left()*
   Left input
@@ -61,7 +61,7 @@ left({opts})                                                  *gesture.left()*
     {opts} (GestureInputOption?) |GestureInputOption|
 
   Return: ~
-    (GestureInput) used as an element of |GestureInfo|'s inputs
+    (GestureInputDefinition) used as an element of |GestureInfo|'s inputs
 
 ==============================================================================
 STRUCTURE                                             *gesture.nvim-STRUCTURE*
@@ -78,16 +78,24 @@ GestureDrawOption                                          *GestureDrawOption*
 - {length_thresholds?} (GestureLengthThresholds) recognize as input if its length is greater than threshold. |GestureLengthThresholds|
 
 GestureInfo                                                      *GestureInfo*
+  - Prefers `match` over `inputs`.
+  - Prefers `can_match` over `inputs`.
 
 - {name} (string?) a displayed name
-- {inputs} (GestureInput[]) inputs definition
+- {inputs} (GestureInputDefinition[]?) |GestureInputDefinition|
+- {match} ((fun(ctx:GestureActionContext):boolean)?) This is called on every |gesture.draw()| and |gesture.finish()|. If returns true, it means the gesture matches current context.
+- {can_match} ((fun(ctx:GestureActionContext):boolean)?) This is called on every |gesture.draw()|. If returns false, it means the gesture can not match anymore.
 - {action} (string|fun(ctx:GestureActionContext)|table) an action executed on matched. can use callable table.
 - {nowait} (boolean?) to define nowait gesture
-- {buffer} ((string|number)?) to define the buffer local gesture
+- {buffer} ((string|integer)?) to define the buffer local gesture
 
 GestureActionContext                                    *GestureActionContext*
 
-- {last_position} (integer[]) tha last position drawn by gesture
+- {first_position} (integer[]) the first position drawn by gesture
+- {last_position} (integer[]) the last position drawn by gesture
+- {first_window_id} (integer) the first position's window id
+- {last_window_id} (function()) returns the last position's window id
+- {inputs} (GestureInput[]) |GestureInput|
 
 GestureInputOption                                        *GestureInputOption*
 
@@ -95,6 +103,11 @@ GestureInputOption                                        *GestureInputOption*
 - {min_length} (integer?) min length of the input line
 
 GestureInput                                                    *GestureInput*
+
+- {direction} ("UP"|"DOWN"|"LEFT"|"RIGHT")
+- {length} (integer)
+
+GestureInputDefinition                                *GestureInputDefinition*
 
 
 ==============================================================================

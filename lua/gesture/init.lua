@@ -30,15 +30,23 @@ function M.cancel()
   require("gesture.command").cancel()
 end
 
+--- - Prefers `match` over `inputs`.
+--- - Prefers `can_match` over `inputs`.
 --- @class GestureInfo
 --- @field name string? a displayed name
---- @field inputs GestureInput[] inputs definition
+--- @field inputs GestureInputDefinition[]? |GestureInputDefinition|
+--- @field match (fun(ctx:GestureActionContext):boolean)? This is called on every |gesture.draw()| and |gesture.finish()|. If returns true, it means the gesture matches current context.
+--- @field can_match (fun(ctx:GestureActionContext):boolean)? This is called on every |gesture.draw()|. If returns false, it means the gesture can not match anymore.
 --- @field action string|fun(ctx:GestureActionContext)|table an action executed on matched. can use callable table.
 --- @field nowait boolean? to define nowait gesture
---- @field buffer (string|number)? to define the buffer local gesture
+--- @field buffer (string|integer)? to define the buffer local gesture
 
 --- @class GestureActionContext
---- @field last_position integer[] tha last position drawn by gesture
+--- @field first_position integer[] the first position drawn by gesture
+--- @field last_position integer[] the last position drawn by gesture
+--- @field first_window_id integer the first position's window id
+--- @field last_window_id function() returns the last position's window id
+--- @field inputs GestureInput[] |GestureInput|
 
 --- Register a gesture.
 --- @param info GestureInfo: |GestureInfo|
@@ -56,31 +64,35 @@ end
 --- @field min_length integer? min length of the input line
 
 --- @class GestureInput
+--- @field direction "UP"|"DOWN"|"LEFT"|"RIGHT"
+--- @field length integer
+
+--- @class GestureInputDefinition
 
 --- Up input
 --- @param opts GestureInputOption?: |GestureInputOption|
---- @return GestureInput # used as an element of |GestureInfo|'s inputs
+--- @return GestureInputDefinition # used as an element of |GestureInfo|'s inputs
 function M.up(opts)
   return require("gesture.core.direction").up(opts)
 end
 
 --- Down input
 --- @param opts GestureInputOption?: |GestureInputOption|
---- @return GestureInput # used as an element of |GestureInfo|'s inputs
+--- @return GestureInputDefinition # used as an element of |GestureInfo|'s inputs
 function M.down(opts)
   return require("gesture.core.direction").down(opts)
 end
 
 --- Right input
 --- @param opts GestureInputOption?: |GestureInputOption|
---- @return GestureInput # used as an element of |GestureInfo|'s inputs
+--- @return GestureInputDefinition # used as an element of |GestureInfo|'s inputs
 function M.right(opts)
   return require("gesture.core.direction").right(opts)
 end
 
 --- Left input
 --- @param opts GestureInputOption?: |GestureInputOption|
---- @return GestureInput # used as an element of |GestureInfo|'s inputs
+--- @return GestureInputDefinition # used as an element of |GestureInfo|'s inputs
 function M.left(opts)
   return require("gesture.core.direction").left(opts)
 end
