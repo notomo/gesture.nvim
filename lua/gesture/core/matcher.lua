@@ -20,8 +20,8 @@ function Matcher.match(self, ctx)
   return self._gesture_map:match(self._bufnr, ctx, false)
 end
 
-function Matcher.has_forward_match(self, ctx)
-  return self._gesture_map:has_forward_match(self._bufnr, ctx)
+function Matcher.can_match(self, ctx)
+  return self._gesture_map:can_match(self._bufnr, ctx)
 end
 
 return Matcher

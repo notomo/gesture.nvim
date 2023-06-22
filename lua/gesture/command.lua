@@ -33,8 +33,8 @@ function M.draw(raw_opts)
   end
 
   local gesture = state.matcher:match(ctx)
-  local has_forward_match = state.matcher:has_forward_match(ctx)
-  state.view:render_input(ctx.inputs, gesture, has_forward_match, opts.show_board)
+  local can_match = state.matcher:can_match(ctx)
+  state.view:render_input(ctx.inputs, gesture, can_match, opts.show_board)
 end
 
 function M.suspend()

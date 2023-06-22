@@ -23,6 +23,7 @@ function Gesture.new(info)
     action = { info.action, { "string", "callable" } },
     inputs = { info.inputs, "table", true },
     match = { info.match, "function", true },
+    can_match = { info.can_match, "function", true },
     nowait = { info.nowait, "boolean", true },
     buffer = { info.buffer, { "string", "number" }, true },
   })
@@ -37,10 +38,24 @@ function Gesture.new(info)
     input_defs = require("gesture.core.input_definitions").new(info.inputs or {})
   end
 
+  local can_match
+  if info.can_match then
+    can_match = info.can_match
+  elseif info.match then
+    can_match = function(_)
+      return true
+    end
+  elseif input_defs then
+    can_match = function(ctx)
+      return input_defs:has_forward_match(ctx.inputs)
+    end
+  end
+
   local tbl = {
     name = info.name or "",
     input_defs = input_defs,
     _match = info.match,
+    can_match = can_match,
     nowait = info.nowait or false,
     buffer = bufnr,
     _action = action,
@@ -53,13 +68,6 @@ function Gesture.match(self, ctx)
     return self.input_defs:match(ctx.inputs)
   end
   return self._match(ctx)
-end
-
-function Gesture.has_forward_match(self, ctx)
-  if not self._match then
-    return self.input_defs:has_forward_match(ctx.inputs)
-  end
-  return true
 end
 
 function Gesture.execute(self, ctx)
@@ -92,9 +100,9 @@ function Gestures.add(self, gesture)
   table.insert(self._gestures, gesture)
 end
 
-function Gestures.has_forward_match(self, inputs)
+function Gestures.can_match(self, ctx)
   for _, gesture in ipairs(self._gestures) do
-    if gesture:has_forward_match(inputs) then
+    if gesture.can_match(ctx) then
       return true
     end
   end
@@ -176,7 +184,7 @@ function GestureMap._match(self, key, ctx)
   return gestures:match(ctx)
 end
 
-function GestureMap.has_forward_match(self, bufnr, ctx)
+function GestureMap.can_match(self, bufnr, ctx)
   vim.validate({ bufnr = { bufnr, "number" } })
   local input_strs = require("gesture.core.inputs").strings(ctx.inputs)
 
@@ -199,7 +207,7 @@ function GestureMap.has_forward_match(self, bufnr, ctx)
     },
   }
   for _, key_pair in ipairs(key_pairs) do
-    local matched = self:_has_forward_match(key_pair[1], key_pair[2], ctx)
+    local matched = self:_can_match(key_pair[1], key_pair[2], ctx)
     if matched then
       return matched
     end
@@ -208,10 +216,10 @@ function GestureMap.has_forward_match(self, bufnr, ctx)
   return false
 end
 
-function GestureMap._has_forward_match(self, nowait_key, key, ctx)
+function GestureMap._can_match(self, nowait_key, key, ctx)
   for k, gestures in pairs(self._map) do
     local key_matched = vim.startswith(key, nowait_key) or vim.startswith(k, key)
-    if key_matched and gestures:has_forward_match(ctx) then
+    if key_matched and gestures:can_match(ctx) then
       return true
     end
   end

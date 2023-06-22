@@ -18,8 +18,8 @@ function View.open(winblend)
   return setmetatable(tbl, View), window_id
 end
 
-function View.render_input(self, inputs, gesture, has_forward_match, show_board)
-  local board_range_map = GestureBoard.create(inputs, gesture, has_forward_match, show_board)
+function View.render_input(self, inputs, gesture, can_match, show_board)
+  local board_range_map = GestureBoard.create(inputs, gesture, can_match, show_board)
   self._canvas:draw(board_range_map, self._new_points)
 end
 

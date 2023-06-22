@@ -13,7 +13,7 @@ end
 
 local hl_groups = require("gesture.view.highlight_group")
 
-function GestureBoard.create(inputs, gesture, has_forward_match, show_board)
+function GestureBoard.create(inputs, gesture, can_match, show_board)
   if #inputs == 0 or not show_board then
     return {}
   end
@@ -38,7 +38,7 @@ function GestureBoard.create(inputs, gesture, has_forward_match, show_board)
   local end_col = math.min(center + half_width, editor_width)
 
   local hl_group = hl_groups.GestureInput
-  if not has_forward_match then
+  if not can_match then
     hl_group = hl_groups.GestureInputNotMatched
   end
 
