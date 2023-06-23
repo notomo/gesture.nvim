@@ -96,14 +96,13 @@ foo]])
     assert.is_true(called)
   end)
 
-  it("can use action context", function()
-    local ctx
+  it("can use action context last_position", function()
+    local got
     gesture.register({
       inputs = { gesture.right(), gesture.down() },
-      action = function(param)
-        ctx = param
+      action = function(ctx)
+        got = ctx
       end,
-      nowait = true,
     })
 
     gesture.draw()
@@ -111,9 +110,74 @@ foo]])
     gesture.draw()
     vim.cmd.normal({ args = { "10j" }, bang = true })
     gesture.draw()
+    gesture.finish()
 
-    assert.equals(ctx.last_position[1], 11)
-    assert.equals(ctx.last_position[2], 21)
+    assert.is_same(got.last_position, { 11, 21 })
+  end)
+
+  it("can use action context inputs", function()
+    local got
+    gesture.register({
+      inputs = { gesture.right(), gesture.down() },
+      action = function(ctx)
+        got = ctx
+      end,
+    })
+
+    gesture.draw()
+    vim.cmd.normal({ args = { "20l" }, bang = true })
+    gesture.draw()
+    vim.cmd.normal({ args = { "10j" }, bang = true })
+    gesture.draw()
+    gesture.finish()
+
+    assert.is_same(got.inputs, {
+      {
+        direction = "RIGHT",
+        length = 20,
+      },
+      {
+        direction = "DOWN",
+        length = 10,
+      },
+    })
+  end)
+
+  it("can use action context window_ids", function()
+    local got
+    gesture.register({
+      inputs = { gesture.right(), gesture.down() },
+      action = function(ctx)
+        got = ctx
+      end,
+    })
+
+    local window_id1 = vim.api.nvim_get_current_win()
+    vim.cmd.vsplit()
+    vim.cmd.split()
+    local window_id3 = vim.api.nvim_get_current_win()
+
+    local floating_window_id = vim.api.nvim_open_win(0, false, {
+      width = 10,
+      height = 10,
+      relative = "editor",
+      row = 0,
+      col = 20,
+      focusable = true,
+      external = false,
+      style = "minimal",
+    })
+
+    gesture.draw()
+    vim.cmd.normal({ args = { "25l" }, bang = true })
+    gesture.draw()
+    vim.cmd.normal({ args = { "55l" }, bang = true })
+    gesture.draw()
+    vim.cmd.normal({ args = { "10j" }, bang = true })
+    gesture.draw()
+    gesture.finish()
+
+    assert.is_same(got.window_ids, { window_id3, floating_window_id, window_id1 })
   end)
 
   it("can register a global and buffer local gesture", function()
