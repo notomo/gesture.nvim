@@ -122,7 +122,7 @@ end
 
 function Gestures.match(self, ctx)
   for _, gesture in ipairs(self._gestures) do
-    if gesture.match(ctx) then
+    if gesture.can_match(ctx) and gesture.match(ctx) then
       return gesture
     end
   end
@@ -221,7 +221,7 @@ end
 
 function GestureMap._can_match(self, nowait_key, key, ctx)
   for k, gestures in pairs(self._map) do
-    local key_matched = vim.startswith(key, nowait_key) or vim.startswith(k, key)
+    local key_matched = vim.startswith(k, nowait_key) or vim.startswith(k, key)
     if key_matched and gestures:can_match(ctx) then
       return true
     end

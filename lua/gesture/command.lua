@@ -23,7 +23,7 @@ function M.draw(raw_opts)
 
   local ctx = state:action_context()
   local can_match = state.matcher:can_match(ctx)
-  local nowait_gesture = state.matcher:nowait_match(ctx)
+  local nowait_gesture = can_match and state.matcher:nowait_match(ctx) or nil
   if nowait_gesture then
     state:close()
     local err = nowait_gesture:execute(ctx)
@@ -53,8 +53,7 @@ function M.finish()
 
   local ctx = state:action_context()
   state:close()
-  local can_match = state.matcher:can_match(ctx)
-  local gesture = can_match and state.matcher:match(ctx) or nil
+  local gesture = state.matcher:match(ctx)
   if gesture then
     local err = gesture:execute(ctx)
     if err then
