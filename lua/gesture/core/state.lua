@@ -1,5 +1,8 @@
 local _states = {}
 
+local Inputs = require("gesture.core.inputs")
+local windowlib = require("gesture.lib.window")
+
 local State = {}
 State.__index = State
 
@@ -9,13 +12,19 @@ function State.get_or_create(open_view)
     return current
   end
 
+  local first_window_id = vim.api.nvim_get_current_win()
   local matcher = require("gesture.core.matcher").new(vim.api.nvim_get_current_buf())
   local view, window_id = open_view()
+  local point = view.current_point()
   local tbl = {
-    _last_point = view.current_point(),
-    _window_id = window_id,
+    _last_point = point,
     _suspended = false,
-    inputs = require("gesture.core.inputs").new(),
+    _inputs = {},
+    _window_id = window_id,
+
+    _first_position = { point.y, point.x },
+    _window_ids = { first_window_id },
+
     view = view,
     matcher = matcher,
   }
@@ -40,13 +49,21 @@ function State.update(self, length_thresholds)
     self._last_point = point
   end
 
+  local window_id = windowlib.from_global_position(0, { point.y, point.x }, function(window_id)
+    return window_id ~= self._window_id
+  end)
+  local last_window_id = self._window_ids[#self._window_ids]
+  if window_id ~= last_window_id then
+    table.insert(self._window_ids, window_id)
+  end
+
   local line = self._last_point:line_to(point)
   if not line or line:is_short(length_thresholds) then
     return true
   end
 
   self._last_point = point
-  self.inputs:add_direction(line.direction, line.length, self._suspended)
+  Inputs.add_direction(self._inputs, line.direction, line.length, self._suspended)
   self._suspended = false
 
   return true
@@ -58,17 +75,24 @@ function State.suspend(self)
 end
 
 function State.close(self)
-  local param = self:_action_param()
-
   _states[self._window_id] = nil
   self.view:close()
-
-  return param
 end
 
-function State._action_param(self)
+function State.action_context(self)
   local point = self.view.current_point()
-  return { last_position = { point.y, point.x } }
+  local last_position = { point.y, point.x }
+  return {
+    last_position = last_position,
+
+    inputs = vim.tbl_map(function(input)
+      return input
+    end, self._inputs),
+
+    window_ids = vim.tbl_map(function(window_id)
+      return window_id
+    end, self._window_ids),
+  }
 end
 
 return State

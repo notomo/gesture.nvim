@@ -22,7 +22,7 @@ gesture.register({
 gesture.register({
   name = "previous tab",
   inputs = { gesture.left() },
-  action = function(ctx) -- also can use callable
+  action = function(_) -- also can use callable
     vim.cmd.tabprevious()
   end,
 })
@@ -32,5 +32,24 @@ gesture.register({
   -- map to `<C-o>` keycode
   action = function()
     vim.api.nvim_feedkeys(vim.keycode("<C-o>"), "n", true)
+  end,
+})
+gesture.register({
+  name = "close gesture traced windows",
+  match = function(ctx)
+    local last_input = ctx.inputs[#ctx.inputs]
+    return last_input and last_input.direction == "UP"
+  end,
+  can_match = function(ctx)
+    local first_input = ctx.inputs[1]
+    return first_input and first_input.direction == "RIGHT"
+  end,
+  action = function(ctx)
+    table.sort(ctx.window_ids, function(a, b)
+      return a > b
+    end)
+    for _, window_id in ipairs(vim.fn.uniq(ctx.window_ids)) do
+      vim.api.nvim_win_close(window_id, false)
+    end
   end,
 })

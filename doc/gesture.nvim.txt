@@ -34,7 +34,7 @@ up({opts})                                                      *gesture.up()*
     {opts} (GestureInputOption?) |GestureInputOption|
 
   Return: ~
-    (GestureInput) used as an element of |GestureInfo|'s inputs
+    (GestureInputDefinition) used as an element of |GestureInfo|'s inputs
 
 down({opts})                                                  *gesture.down()*
   Down input
@@ -43,7 +43,7 @@ down({opts})                                                  *gesture.down()*
     {opts} (GestureInputOption?) |GestureInputOption|
 
   Return: ~
-    (GestureInput) used as an element of |GestureInfo|'s inputs
+    (GestureInputDefinition) used as an element of |GestureInfo|'s inputs
 
 right({opts})                                                *gesture.right()*
   Right input
@@ -52,7 +52,7 @@ right({opts})                                                *gesture.right()*
     {opts} (GestureInputOption?) |GestureInputOption|
 
   Return: ~
-    (GestureInput) used as an element of |GestureInfo|'s inputs
+    (GestureInputDefinition) used as an element of |GestureInfo|'s inputs
 
 left({opts})                                                  *gesture.left()*
   Left input
@@ -61,7 +61,7 @@ left({opts})                                                  *gesture.left()*
     {opts} (GestureInputOption?) |GestureInputOption|
 
   Return: ~
-    (GestureInput) used as an element of |GestureInfo|'s inputs
+    (GestureInputDefinition) used as an element of |GestureInfo|'s inputs
 
 ==============================================================================
 STRUCTURE                                             *gesture.nvim-STRUCTURE*
@@ -78,16 +78,22 @@ GestureDrawOption                                          *GestureDrawOption*
 - {length_thresholds?} (GestureLengthThresholds) recognize as input if its length is greater than threshold. |GestureLengthThresholds|
 
 GestureInfo                                                      *GestureInfo*
+  - Prefers `match` over `inputs`.
+  - Prefers `can_match` over `inputs`.
 
 - {name} (string?) a displayed name
-- {inputs} (GestureInput[]) inputs definition
+- {inputs} (GestureInputDefinition[]?) ref: |GestureInputDefinition|
+- {match} ((fun(ctx:GestureActionContext):boolean)?) This is called on every |gesture.draw()| and |gesture.finish()|. If returns true, it means the gesture matches current context.
+- {can_match} ((fun(ctx:GestureActionContext):boolean)?) This is called on every |gesture.draw()|. If returns false, it means the gesture can not match anymore.
 - {action} (string|fun(ctx:GestureActionContext)|table) an action executed on matched. can use callable table.
 - {nowait} (boolean?) to define nowait gesture
-- {buffer} ((string|number)?) to define the buffer local gesture
+- {buffer} ((string|integer)?) to define the buffer local gesture
 
 GestureActionContext                                    *GestureActionContext*
 
-- {last_position} (integer[]) tha last position drawn by gesture
+- {last_position} (integer[]) the last position drawn by gesture
+- {window_ids} (integer[]) window ids that gesture traces
+- {inputs} (GestureInput[]) ref: |GestureInput|
 
 GestureInputOption                                        *GestureInputOption*
 
@@ -95,6 +101,11 @@ GestureInputOption                                        *GestureInputOption*
 - {min_length} (integer?) min length of the input line
 
 GestureInput                                                    *GestureInput*
+
+- {direction} ("UP"|"DOWN"|"LEFT"|"RIGHT")
+- {length} (integer)
+
+GestureInputDefinition                                *GestureInputDefinition*
 
 
 ==============================================================================
@@ -143,7 +154,7 @@ EXAMPLE                                                 *gesture.nvim-EXAMPLE*
   gesture.register({
     name = "previous tab",
     inputs = { gesture.left() },
-    action = function(ctx) -- also can use callable
+    action = function(_) -- also can use callable
       vim.cmd.tabprevious()
     end,
   })
@@ -153,6 +164,25 @@ EXAMPLE                                                 *gesture.nvim-EXAMPLE*
     -- map to `<C-o>` keycode
     action = function()
       vim.api.nvim_feedkeys(vim.keycode("<C-o>"), "n", true)
+    end,
+  })
+  gesture.register({
+    name = "close gesture traced windows",
+    match = function(ctx)
+      local last_input = ctx.inputs[#ctx.inputs]
+      return last_input and last_input.direction == "UP"
+    end,
+    can_match = function(ctx)
+      local first_input = ctx.inputs[1]
+      return first_input and first_input.direction == "RIGHT"
+    end,
+    action = function(ctx)
+      table.sort(ctx.window_ids, function(a, b)
+        return a > b
+      end)
+      for _, window_id in ipairs(vim.fn.uniq(ctx.window_ids)) do
+        vim.api.nvim_win_close(window_id, false)
+      end
     end,
   })
 <

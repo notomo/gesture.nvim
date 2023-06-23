@@ -21,20 +21,20 @@ function M.draw(raw_opts)
     return
   end
 
-  local inputs = state.inputs
-  local nowait_gesture = state.matcher:nowait_match(inputs)
+  local ctx = state:action_context()
+  local can_match = state.matcher:can_match(ctx)
+  local nowait_gesture = can_match and state.matcher:nowait_match(ctx) or nil
   if nowait_gesture then
-    local param = state:close()
-    local err = nowait_gesture:execute(param)
+    state:close()
+    local err = nowait_gesture:execute(ctx)
     if err then
       require("gesture.vendor.misclib.message").error(err)
     end
     return
   end
 
-  local gesture = state.matcher:match(inputs)
-  local has_forward_match = state.matcher:has_forward_match(inputs)
-  state.view:render_input(inputs, gesture, has_forward_match, opts.show_board)
+  local gesture = can_match and state.matcher:match(ctx) or nil
+  state.view:render_input(ctx.inputs, gesture, can_match, opts.show_board)
 end
 
 function M.suspend()
@@ -51,10 +51,11 @@ function M.finish()
     return
   end
 
-  local param = state:close()
-  local gesture = state.matcher:match(state.inputs)
+  local ctx = state:action_context()
+  state:close()
+  local gesture = state.matcher:match(ctx)
   if gesture then
-    local err = gesture:execute(param)
+    local err = gesture:execute(ctx)
     if err then
       require("gesture.vendor.misclib.message").error(err)
     end
