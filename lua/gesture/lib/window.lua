@@ -34,13 +34,38 @@ local is_in_window = function(window_id, global_position)
   return min_col <= col and col <= max_col
 end
 
-function M.from_global_position(tabpage, global_position)
-  local window_ids = vim.api.nvim_tabpage_list_wins(tabpage)
+function M.from_global_position(tabpage, global_position, filter)
+  local window_ids = vim.tbl_filter(filter, vim.api.nvim_tabpage_list_wins(tabpage))
+
+  local configs = {}
   for _, window_id in ipairs(window_ids) do
+    configs[window_id] = vim.api.nvim_win_get_config(window_id)
+  end
+
+  local normal_window_ids = vim.tbl_filter(function(window_id)
+    return configs[window_id].relative == ""
+  end, window_ids)
+  local floating_window_ids = vim.tbl_filter(function(window_id)
+    return configs[window_id].relative ~= ""
+  end, window_ids)
+
+  local result_window_id
+  for _, window_id in ipairs(normal_window_ids) do
     if is_in_window(window_id, global_position) then
-      return window_id
+      result_window_id = window_id
+      break
     end
   end
+
+  local result_zindex = -1
+  for _, window_id in ipairs(floating_window_ids) do
+    local zindex = configs[window_id].zindex
+    if result_zindex < zindex and is_in_window(window_id, global_position) then
+      result_window_id = window_id
+    end
+  end
+
+  return result_window_id
 end
 
 return M

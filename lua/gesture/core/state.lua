@@ -49,7 +49,9 @@ function State.update(self, length_thresholds)
     self._last_point = point
   end
 
-  local window_id = windowlib.from_global_position(0, { point.y, point.x })
+  local window_id = windowlib.from_global_position(0, { point.y, point.x }, function(window_id)
+    return window_id ~= self._window_id
+  end)
   local last_window_id = self._window_ids[#self._window_ids]
   if window_id ~= last_window_id then
     table.insert(self._window_ids, window_id)
