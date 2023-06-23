@@ -22,7 +22,6 @@ function State.get_or_create(open_view)
     _inputs = {},
     _window_id = window_id,
 
-    _first_position = { point.y, point.x },
     _window_ids = { first_window_id },
 
     view = view,
@@ -81,9 +80,8 @@ end
 
 function State.action_context(self)
   local point = self.view.current_point()
-  local last_position = { point.y, point.x }
   return {
-    last_position = last_position,
+    last_position = { point.y, point.x },
 
     inputs = vim.tbl_map(function(input)
       return input

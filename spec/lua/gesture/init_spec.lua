@@ -6,14 +6,13 @@ describe("gesture.register()", function()
   after_each(helper.after_each)
 
   it("can register a global gesture with inputs", function()
-    gesture.register({ inputs = { gesture.down(), gesture.up() }, action = "normal! gg" })
-
-    helper.set_lines([[
-hoge
-
-
-foo]])
-    vim.cmd.normal({ args = { "G" }, bang = true })
+    local called = false
+    gesture.register({
+      inputs = { gesture.down(), gesture.up() },
+      action = function()
+        called = true
+      end,
+    })
 
     gesture.draw()
     vim.cmd.normal({ args = { "10j" }, bang = true })
@@ -22,21 +21,22 @@ foo]])
     gesture.draw()
     gesture.finish()
 
-    assert.window_count(1)
-    assert.current_line("hoge")
+    assert.is_true(called)
   end)
 
   it("can register a buffer local gesture with inputs", function()
+    local called = false
     gesture.register({
       inputs = { gesture.right(), gesture.left() },
-      action = "normal! $",
+      action = function()
+        called = true
+      end,
       buffer = "%",
     })
-    gesture.register({ inputs = { gesture.right(), gesture.left() }, action = "normal! 0" })
-
-    helper.set_lines([[
-hoge         foo
-]])
+    gesture.register({
+      inputs = { gesture.right(), gesture.left() },
+      action = "normal! 0",
+    })
 
     gesture.draw()
     vim.cmd.normal({ args = { "10l" }, bang = true })
@@ -45,25 +45,20 @@ hoge         foo
     gesture.draw()
     gesture.finish()
 
-    assert.window_count(1)
-    assert.cursor_word("foo")
+    assert.is_true(called)
   end)
 
   it("can register a global gesture with match", function()
+    local called = false
     gesture.register({
       match = function(ctx)
         local last_input = ctx.inputs[#ctx.inputs]
         return last_input and last_input.direction == "DOWN"
       end,
-      action = "normal! gg",
+      action = function()
+        called = true
+      end,
     })
-
-    helper.set_lines([[
-hoge
-
-
-foo]])
-    vim.cmd.normal({ args = { "G" }, bang = true })
 
     gesture.draw()
     vim.cmd.normal({ args = { "10l" }, bang = true })
@@ -73,7 +68,7 @@ foo]])
     gesture.finish()
 
     assert.window_count(1)
-    assert.current_line("hoge")
+    assert.is_true(called)
   end)
 
   it("can register a buffer local gesture with match", function()
@@ -106,6 +101,24 @@ foo]])
     vim.cmd.normal({ args = { "10h" }, bang = true })
     gesture.draw()
     gesture.finish()
+
+    assert.window_count(1)
+    assert.is_true(called)
+  end)
+
+  it("can register a nowait gesture with inputs", function()
+    local called = false
+    gesture.register({
+      inputs = { gesture.right() },
+      action = function()
+        called = true
+      end,
+      nowait = true,
+    })
+
+    gesture.draw()
+    vim.cmd.normal({ args = { "10l" }, bang = true })
+    gesture.draw()
 
     assert.window_count(1)
     assert.is_true(called)
@@ -162,12 +175,10 @@ foo]])
     assert.is_true(called)
   end)
 
-  it("can use function as action", function()
+  it("can use string command as action", function()
     gesture.register({
       inputs = { gesture.down(), gesture.up() },
-      action = function()
-        vim.cmd.normal({ args = { "gg" }, bang = true })
-      end,
+      action = "normal! gg",
     })
 
     helper.set_lines([[
@@ -184,8 +195,26 @@ foo]])
     gesture.draw()
     gesture.finish()
 
-    assert.window_count(1)
     assert.current_line("hoge")
+  end)
+
+  it("can use function as action", function()
+    local called = false
+    gesture.register({
+      inputs = { gesture.down(), gesture.up() },
+      action = function()
+        called = true
+      end,
+    })
+
+    gesture.draw()
+    vim.cmd.normal({ args = { "10j" }, bang = true })
+    gesture.draw()
+    vim.cmd.normal({ args = { "10k" }, bang = true })
+    gesture.draw()
+    gesture.finish()
+
+    assert.is_true(called)
   end)
 
   it("can use callable as action", function()
@@ -196,7 +225,10 @@ foo]])
       end,
     })
 
-    gesture.register({ inputs = { gesture.down(), gesture.up() }, action = action })
+    gesture.register({
+      inputs = { gesture.down(), gesture.up() },
+      action = action,
+    })
 
     gesture.draw()
     vim.cmd.normal({ args = { "10j" }, bang = true })
@@ -296,82 +328,107 @@ foo]])
   it("can register a global and buffer local gesture", function()
     gesture.register({
       inputs = { gesture.right({ min_length = 10 }) },
-      action = "normal! $",
+      action = function()
+        error("should not be called")
+      end,
       buffer = "%",
     })
-    gesture.register({ inputs = { gesture.right() }, action = "normal! G" })
-
-    helper.set_lines([[
-hoge         foo
-bar]])
+    local called = false
+    gesture.register({
+      inputs = { gesture.right() },
+      action = function()
+        called = true
+      end,
+    })
 
     gesture.draw()
     vim.cmd.normal({ args = { "8l" }, bang = true })
     gesture.draw()
     gesture.finish()
 
-    assert.window_count(1)
-    assert.cursor_word("bar")
+    assert.is_true(called)
   end)
 
   it("can register a nowait buffer local gesture", function()
-    gesture.register({ inputs = { gesture.right() }, action = "normal! $", nowait = true, buffer = "%" })
-    gesture.register({ inputs = { gesture.right() }, action = "normal! 0", nowait = true })
+    local called = false
     gesture.register({
-      inputs = { gesture.right(), gesture.left() },
-      action = "normal! 0",
+      inputs = { gesture.right() },
+      action = function()
+        called = true
+      end,
+      nowait = true,
       buffer = "%",
     })
-
-    helper.set_lines([[
-hoge         foo
-]])
+    gesture.register({
+      inputs = { gesture.right() },
+      action = function()
+        error("should not be called")
+      end,
+      nowait = true,
+    })
+    gesture.register({
+      inputs = { gesture.right(), gesture.left() },
+      action = function()
+        error("should not be called")
+      end,
+      buffer = "%",
+    })
 
     gesture.draw()
     vim.cmd.normal({ args = { "10l" }, bang = true })
     gesture.draw()
 
-    assert.window_count(1)
-    assert.cursor_word("foo")
+    assert.is_true(called)
   end)
 
   it("can register a gesture with max length", function()
-    gesture.register({ inputs = { gesture.right({ max_length = 10 }) }, action = "normal! $" })
-
-    helper.set_lines([[
-hoge         foo
-]])
+    local called = false
+    gesture.register({
+      inputs = { gesture.right({ max_length = 10 }) },
+      action = function()
+        called = true
+      end,
+    })
 
     gesture.draw()
     vim.cmd.normal({ args = { "11l" }, bang = true })
     gesture.draw()
     gesture.finish()
 
-    assert.window_count(1)
-    assert.cursor_word("hoge")
+    assert.is_false(called)
   end)
 
   it("can register a gesture with min length", function()
-    gesture.register({ inputs = { gesture.right({ min_length = 10 }) }, action = "normal! $" })
-
-    helper.set_lines([[
-hoge         foo
-]])
+    local called = false
+    gesture.register({
+      inputs = { gesture.right({ min_length = 10 }) },
+      action = function()
+        called = true
+      end,
+    })
 
     gesture.draw()
     vim.cmd.normal({ args = { "9l" }, bang = true })
     gesture.draw()
     gesture.finish()
 
-    assert.window_count(1)
-    assert.cursor_word("hoge")
+    assert.is_false(called)
   end)
 
   it("overwrites the same gesture", function()
-    gesture.register({ inputs = { gesture.right(), gesture.left() }, action = "normal! w" })
-    gesture.register({ inputs = { gesture.right(), gesture.left() }, action = "normal! 2w" })
-
-    helper.set_lines([[hoge foo bar]])
+    gesture.register({
+      inputs = { gesture.right(), gesture.left() },
+      action = function()
+        error("should not be called")
+      end,
+    })
+    local called = false
+    gesture.register({
+      inputs = { gesture.right(), gesture.left() },
+      action = function()
+        called = true
+      end,
+    })
 
     gesture.draw()
     vim.cmd.normal({ args = { "10l" }, bang = true })
@@ -380,20 +437,23 @@ hoge         foo
     gesture.draw()
     gesture.finish()
 
-    assert.cursor_word("bar")
+    assert.is_true(called)
   end)
 
   it("does not overwrite gesture has the different attribute", function()
+    local called = false
     gesture.register({
       inputs = { gesture.right({ max_length = 20 }), gesture.left() },
-      action = "normal! w",
+      action = function()
+        called = true
+      end,
     })
     gesture.register({
       inputs = { gesture.right({ min_length = 20 }), gesture.left() },
-      action = "normal! 2w",
+      action = function()
+        error("should not be called")
+      end,
     })
-
-    helper.set_lines([[hoge foo bar]])
 
     gesture.draw()
     vim.cmd.normal({ args = { "10l" }, bang = true })
@@ -402,7 +462,7 @@ hoge         foo
     gesture.draw()
     gesture.finish()
 
-    assert.cursor_word("foo")
+    assert.is_true(called)
   end)
 end)
 
@@ -428,7 +488,11 @@ describe("gesture.draw()", function()
   end)
 
   it("shows matched gesture name", function()
-    gesture.register({ name = "to bottom", inputs = { gesture.down() }, action = "normal! G" })
+    gesture.register({
+      name = "to bottom",
+      inputs = { gesture.down() },
+      action = "normal! G",
+    })
     gesture.register({
       name = "to top",
       inputs = { gesture.down(), gesture.up() },
@@ -447,21 +511,6 @@ describe("gesture.draw()", function()
 
     assert.shown_in_view("UP")
     assert.shown_in_view("to top")
-  end)
-
-  it("executes a nowait gesture if it is matched", function()
-    gesture.register({ inputs = { gesture.right() }, action = "normal! $", nowait = true })
-
-    helper.set_lines([[
-hoge         foo
-]])
-
-    gesture.draw()
-    vim.cmd.normal({ args = { "10l" }, bang = true })
-    gesture.draw()
-
-    assert.window_count(1)
-    assert.cursor_word("foo")
   end)
 
   it("resets scroll on scrolled", function()
@@ -509,13 +558,13 @@ describe("gesture.finish()", function()
   after_each(helper.after_each)
 
   it("does nothing for non matched gesture", function()
-    gesture.register({ inputs = { gesture.down(), gesture.up() }, action = "normal! G" })
-
-    helper.set_lines([[
-hoge
-
-
-foo]])
+    local called = false
+    gesture.register({
+      inputs = { gesture.down(), gesture.up() },
+      action = function()
+        called = true
+      end,
+    })
 
     gesture.draw()
     vim.cmd.normal({ args = { "10j" }, bang = true })
@@ -523,11 +572,14 @@ foo]])
     gesture.finish()
 
     assert.window_count(1)
-    assert.current_line("hoge")
+    assert.is_false(called)
   end)
 
   it("raises error if action raises error", function()
-    gesture.register({ inputs = { gesture.down() }, action = "invalid_command" })
+    gesture.register({
+      inputs = { gesture.down() },
+      action = "invalid_command",
+    })
 
     gesture.draw()
     vim.cmd.normal({ args = { "10j" }, bang = true })
@@ -546,14 +598,13 @@ describe("gesture.cancel()", function()
   after_each(helper.after_each)
 
   it("can cancel gesture", function()
-    gesture.register({ inputs = { gesture.down(), gesture.up() }, action = "normal! gg" })
-
-    helper.set_lines([[
-hoge
-
-
-foo]])
-    vim.cmd.normal({ args = { "G" }, bang = true })
+    local called = false
+    gesture.register({
+      inputs = { gesture.down(), gesture.up() },
+      action = function()
+        called = true
+      end,
+    })
 
     gesture.draw()
     vim.cmd.normal({ args = { "10j" }, bang = true })
@@ -563,7 +614,7 @@ foo]])
     gesture.cancel()
 
     assert.window_count(1)
-    assert.current_line("foo")
+    assert.is_false(called)
   end)
 end)
 
@@ -572,14 +623,13 @@ describe("gesture.suspend()", function()
   after_each(helper.after_each)
 
   it("can suspend gesture", function()
-    gesture.register({ inputs = { gesture.down(), gesture.down() }, action = "normal! gg" })
-
-    helper.set_lines([[
-hoge
-
-
-foo]])
-    vim.cmd.normal({ args = { "G" }, bang = true })
+    local called = false
+    gesture.register({
+      inputs = { gesture.down(), gesture.down() },
+      action = function()
+        called = true
+      end,
+    })
 
     gesture.draw()
     vim.cmd.normal({ args = { "5j" }, bang = true })
@@ -596,7 +646,7 @@ foo]])
     gesture.finish()
 
     assert.window_count(1)
-    assert.current_line("hoge")
+    assert.is_true(called)
   end)
 end)
 
@@ -605,15 +655,14 @@ describe("gesture.clear()", function()
   after_each(helper.after_each)
 
   it("can clear gestures", function()
-    gesture.register({ inputs = { gesture.down(), gesture.up() }, action = "normal! gg" })
+    local called = false
+    gesture.register({
+      inputs = { gesture.down(), gesture.up() },
+      action = function()
+        called = true
+      end,
+    })
     gesture.clear()
-
-    helper.set_lines([[
-hoge
-
-
-foo]])
-    vim.cmd.normal({ args = { "G" }, bang = true })
 
     gesture.draw()
     vim.cmd.normal({ args = { "10j" }, bang = true })
@@ -622,6 +671,6 @@ foo]])
     gesture.draw()
     gesture.finish()
 
-    assert.current_line("foo")
+    assert.is_false(called)
   end)
 end)
