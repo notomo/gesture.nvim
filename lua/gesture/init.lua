@@ -42,7 +42,7 @@ end
 --- @field buffer (string|integer)? to define the buffer local gesture
 
 --- @class GestureActionContext
---- @field last_position integer[] the last position drawn by gesture
+--- @field last_position {[1]:integer,[2]:integer} the last position drawn by gesture
 --- @field window_ids integer[] window ids that gesture traces
 --- @field inputs GestureInput[] ref: |GestureInput|
 

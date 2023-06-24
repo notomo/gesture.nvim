@@ -91,7 +91,7 @@ GestureInfo                                                      *GestureInfo*
 
 GestureActionContext                                    *GestureActionContext*
 
-- {last_position} (integer[]) the last position drawn by gesture
+- {last_position} ({[1]:integer,[2]:integer}) the last position drawn by gesture
 - {window_ids} (integer[]) window ids that gesture traces
 - {inputs} (GestureInput[]) ref: |GestureInput|
 
