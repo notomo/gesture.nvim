@@ -1,6 +1,7 @@
 local _states = {}
 
 local Inputs = require("gesture.core.inputs")
+local DirectionInput = require("gesture.core.direction_input")
 local windowlib = require("gesture.lib.window")
 
 local State = {}
@@ -56,13 +57,13 @@ function State.update(self, length_thresholds)
     table.insert(self._window_ids, window_id)
   end
 
-  local line = self._last_point:line_to(point)
-  if not line or line:is_short(length_thresholds) then
+  local input = DirectionInput.from_points(self._last_point, point)
+  if not input or DirectionInput.is_short(input, length_thresholds) then
     return true
   end
 
   self._last_point = point
-  Inputs.add_direction(self._inputs, line.direction, line.length, self._suspended)
+  Inputs.add_direction(self._inputs, input, self._suspended)
   self._suspended = false
 
   return true

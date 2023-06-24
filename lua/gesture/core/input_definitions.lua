@@ -1,21 +1,21 @@
 local InputDefinitions = {}
 InputDefinitions.__index = InputDefinitions
 
-function InputDefinitions.new(defs)
-  vim.validate({ defs = { defs, "table" } })
+function InputDefinitions.new(raw_input_definitions)
+  vim.validate({ raw_input_definitions = { raw_input_definitions, "table" } })
   local tbl = {
-    _defs = defs,
+    _definitions = raw_input_definitions,
   }
   return setmetatable(tbl, InputDefinitions)
 end
 
 function InputDefinitions.match(self, inputs)
-  for i, def in ipairs(self._defs) do
+  for i, input_definition in ipairs(self._definitions) do
     local input = inputs[i]
     if not input then
       return false
     end
-    if not def:match(input) then
+    if not input_definition:match(input) then
       return false
     end
   end
@@ -23,12 +23,12 @@ function InputDefinitions.match(self, inputs)
 end
 
 function InputDefinitions.has_forward_match(self, inputs)
-  for i, def in ipairs(self._defs) do
+  for i, definition in ipairs(self._definitions) do
     local input = inputs[i]
     if not input then
       return true
     end
-    if not def:match(input) then
+    if not definition:match(input) then
       return false
     end
   end
@@ -36,14 +36,14 @@ function InputDefinitions.has_forward_match(self, inputs)
 end
 
 function InputDefinitions.strings(self)
-  return vim.tbl_map(function(def)
-    return def.value
-  end, self._defs)
+  return vim.tbl_map(function(input_definition)
+    return input_definition.value
+  end, self._definitions)
 end
 
-function InputDefinitions.equals(self, input_defs)
-  for i, def in ipairs(self._defs) do
-    if not def:equals(input_defs._defs[i]) then
+function InputDefinitions.equals(self, nonself)
+  for i, definition in ipairs(self._definitions) do
+    if not definition:equals(nonself._definitions[i]) then
       return false
     end
   end

@@ -1,35 +1,7 @@
-local Line = require("gesture.core.line")
 local listlib = require("gesture.lib.list")
-
-local Direction = require("gesture.core.direction")
-local UP = Direction.up().value
-local DOWN = Direction.down().value
-local RIGHT = Direction.right().value
-local LEFT = Direction.left().value
 
 local Point = {}
 Point.__index = Point
-
-function Point.line_to(self, point)
-  local diff_x = point.x - self.x
-  local length_x = math.abs(diff_x)
-
-  local diff_y = point.y - self.y
-  local length_y = math.abs(diff_y)
-
-  local direction, length
-  if length_x > length_y then
-    direction = diff_x > 0 and RIGHT or LEFT
-    length = length_x
-  elseif length_y >= length_x and length_y > 0 then
-    direction = diff_y > 0 and DOWN or UP
-    length = length_y
-  else
-    return nil
-  end
-
-  return Line.new(direction, length)
-end
 
 local Y = function(p1, p2)
   local b = (p1.x * p2.y - p2.x * p1.y) / (p1.x - p2.x)
@@ -98,7 +70,10 @@ function Point.interpolate(self, point)
 end
 
 function Point.new(x, y)
-  local tbl = { x = x, y = y }
+  local tbl = {
+    x = x,
+    y = y,
+  }
   return setmetatable(tbl, Point)
 end
 
