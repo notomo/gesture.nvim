@@ -82,7 +82,10 @@ end
 function State.action_context(self)
   local point = self.view.current_point()
   return {
-    last_position = { point.y, point.x },
+    last_position = {
+      point.y,
+      point.x,
+    },
 
     inputs = vim.tbl_map(function(input)
       return input

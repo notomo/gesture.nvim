@@ -38,7 +38,7 @@ function View.focus(self, last_point)
   else
     last = self._new_points[#self._new_points] or last_point
   end
-  self._new_points = last:interpolate(current_point)
+  self._new_points = Point.interpolate(last, current_point)
 
   return current_point
 end
