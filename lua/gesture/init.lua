@@ -49,12 +49,12 @@ end
 --- Register a gesture.
 --- @param info GestureInfo: |GestureInfo|
 function M.register(info)
-  require("gesture.command").register(info)
+  require("gesture.core.gesture_map").register(info)
 end
 
 --- Clear the registered gestures.
 function M.clear()
-  require("gesture.command").clear()
+  require("gesture.core.gesture_map").clear()
 end
 
 --- @class GestureInputOption

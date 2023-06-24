@@ -72,12 +72,4 @@ function M.cancel(window_id)
   state:close()
 end
 
-function M.register(info)
-  require("gesture.core.gesture").register(info)
-end
-
-function M.clear()
-  require("gesture.core.gesture").clear()
-end
-
 return M

@@ -6,7 +6,7 @@ function Matcher.new(bufnr)
     bufnr = { bufnr, "number" },
   })
   local tbl = {
-    _gesture_map = require("gesture.core.gesture").map,
+    _gesture_map = require("gesture.core.gesture_map").store,
     _bufnr = bufnr,
   }
   return setmetatable(tbl, Matcher)
