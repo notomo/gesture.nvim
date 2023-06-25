@@ -10,6 +10,10 @@ function InputDefinitions.new(raw_input_definitions)
 end
 
 function InputDefinitions.match(self, inputs)
+  if #inputs ~= #self._definitions then
+    return false
+  end
+
   for i, input_definition in ipairs(self._definitions) do
     local input = inputs[i]
     if not input then
@@ -23,6 +27,10 @@ function InputDefinitions.match(self, inputs)
 end
 
 function InputDefinitions.has_forward_match(self, inputs)
+  if #inputs > #self._definitions then
+    return false
+  end
+
   for i, definition in ipairs(self._definitions) do
     local input = inputs[i]
     if not input then
@@ -42,6 +50,10 @@ function InputDefinitions.strings(self)
 end
 
 function InputDefinitions.equals(self, nonself)
+  if #nonself._definitions ~= #self._definitions then
+    return false
+  end
+
   for i, definition in ipairs(self._definitions) do
     if not definition:equals(nonself._definitions[i]) then
       return false
