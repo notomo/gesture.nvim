@@ -47,7 +47,10 @@ function GestureMap.match(self, bufnr, ctx, nowait)
     make_key(nil, nowait, input_strs),
   }
   for _, key in ipairs(keys) do
-    local gesture = self:_match(key, ctx)
+    local gesture, err = self:_match(key, ctx)
+    if err then
+      return nil, err
+    end
     if gesture then
       return gesture
     end
@@ -87,7 +90,10 @@ function GestureMap.can_match(self, bufnr, ctx)
     },
   }
   for _, key_pair in ipairs(key_pairs) do
-    local matched = self:_can_match(key_pair[1], key_pair[2], ctx)
+    local matched, err = self:_can_match(key_pair[1], key_pair[2], ctx)
+    if err then
+      return false, err
+    end
     if matched then
       return matched
     end
@@ -99,8 +105,14 @@ end
 function GestureMap._can_match(self, nowait_key, key, ctx)
   for k, gestures in pairs(self._map) do
     local key_matched = vim.startswith(k, nowait_key) or vim.startswith(k, key)
-    if key_matched and gestures:can_match(ctx) then
-      return true
+    if key_matched then
+      local ok, err = gestures:can_match(ctx)
+      if err then
+        return false, err
+      end
+      if ok then
+        return true
+      end
     end
   end
   return false

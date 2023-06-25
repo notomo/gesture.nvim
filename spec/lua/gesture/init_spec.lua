@@ -551,6 +551,39 @@ describe("gesture.draw()", function()
 
     assert.no.shown_in_view("RIGHT")
   end)
+
+  it("cleanups on match error", function()
+    gesture.register({
+      match = function()
+        error("match error")
+      end,
+      action = "",
+    })
+
+    local ok, err = pcall(function()
+      gesture.draw()
+    end)
+    assert.is_false(ok)
+    assert.match("match error", err)
+    assert.window_count(1)
+  end)
+
+  it("cleanups on can_match error", function()
+    gesture.register({
+      inputs = { gesture.down() },
+      can_match = function()
+        error("can_match error")
+      end,
+      action = "",
+    })
+
+    local ok, err = pcall(function()
+      gesture.draw()
+    end)
+    assert.is_false(ok)
+    assert.match("can_match error", err)
+    assert.window_count(1)
+  end)
 end)
 
 describe("gesture.finish()", function()
@@ -573,6 +606,31 @@ describe("gesture.finish()", function()
 
     assert.window_count(1)
     assert.is_false(called)
+  end)
+
+  it("raises error if match raises error", function()
+    local for_finish = false
+    gesture.register({
+      match = function()
+        if not for_finish then
+          return nil
+        end
+        error("match error")
+      end,
+      can_match = function()
+        return true
+      end,
+      action = "",
+    })
+
+    gesture.draw()
+
+    local ok, err = pcall(function()
+      for_finish = true
+      gesture.finish()
+    end)
+    assert.is_false(ok)
+    assert.match("match error", err)
   end)
 
   it("raises error if action raises error", function()

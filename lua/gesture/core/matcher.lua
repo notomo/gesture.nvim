@@ -12,11 +12,17 @@ function Matcher.new(bufnr)
   return setmetatable(tbl, Matcher)
 end
 
-function Matcher.nowait_match(self, ctx)
+function Matcher.nowait_match(self, ctx, can_match)
+  if not can_match then
+    return nil
+  end
   return self._gesture_map:match(self._bufnr, ctx, true)
 end
 
-function Matcher.match(self, ctx)
+function Matcher.match(self, ctx, can_match)
+  if not can_match then
+    return nil
+  end
   return self._gesture_map:match(self._bufnr, ctx, false)
 end
 

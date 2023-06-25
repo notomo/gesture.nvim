@@ -36,10 +36,13 @@ function GestureInfo.new(info)
   local input_defs
   local strs
   local match
+  local can_match
   local equals
   if info.match then
     strs = nil
-    match = info.match
+    match = function(ctx)
+      return can_match(ctx) and info.match(ctx)
+    end
     equals = function(g)
       return name == g.name
     end
@@ -47,14 +50,13 @@ function GestureInfo.new(info)
     input_defs = require("gesture.core.input_definitions").new(info.inputs or {})
     strs = input_defs:strings()
     match = function(ctx)
-      return input_defs:match(ctx.inputs)
+      return can_match(ctx) and input_defs:match(ctx.inputs)
     end
     equals = function(g)
       return input_defs:equals(g._input_defs)
     end
   end
 
-  local can_match
   if info.can_match then
     can_match = info.can_match
   elseif info.match then
@@ -69,12 +71,12 @@ function GestureInfo.new(info)
 
   local tbl = {
     name = name,
-    match = match,
-    can_match = can_match,
     equals = equals,
     nowait = info.nowait or false,
     buffer = bufnr,
     strs = strs,
+    _match = match,
+    _can_match = can_match,
     _action = action,
     _input_defs = input_defs,
   }
@@ -87,6 +89,22 @@ function GestureInfo.execute(self, ctx)
     return result
   end
   return nil
+end
+
+function GestureInfo.match(self, ctx)
+  local ok, result = pcall(self._match, ctx)
+  if not ok then
+    return false, result
+  end
+  return result, nil
+end
+
+function GestureInfo.can_match(self, ctx)
+  local ok, result = pcall(self._can_match, ctx)
+  if not ok then
+    return false, result
+  end
+  return result, nil
 end
 
 return GestureInfo

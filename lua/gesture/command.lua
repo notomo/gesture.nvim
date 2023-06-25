@@ -22,8 +22,19 @@ function M.draw(raw_opts)
   end
 
   local ctx = state:action_context()
-  local can_match = state.matcher:can_match(ctx)
-  local nowait_gesture = can_match and state.matcher:nowait_match(ctx) or nil
+
+  local can_match, can_match_err = state.matcher:can_match(ctx)
+  if can_match_err then
+    state:close()
+    require("gesture.vendor.misclib.message").error(can_match_err)
+  end
+
+  local nowait_gesture, nowait_err = state.matcher:nowait_match(ctx, can_match)
+  if nowait_err then
+    state:close()
+    require("gesture.vendor.misclib.message").error(nowait_err)
+  end
+
   if nowait_gesture then
     state:close()
     local err = nowait_gesture:execute(ctx)
@@ -33,7 +44,12 @@ function M.draw(raw_opts)
     return
   end
 
-  local gesture = can_match and state.matcher:match(ctx) or nil
+  local gesture, match_err = state.matcher:match(ctx, can_match)
+  if match_err then
+    state:close()
+    require("gesture.vendor.misclib.message").error(match_err)
+  end
+
   state.view:render_input(ctx.inputs, gesture, can_match, opts.show_board)
 end
 
@@ -53,7 +69,12 @@ function M.finish()
 
   local ctx = state:action_context()
   state:close()
-  local gesture = state.matcher:match(ctx)
+
+  local gesture, match_err = state.matcher:match(ctx, true)
+  if match_err then
+    require("gesture.vendor.misclib.message").error(match_err)
+  end
+
   if gesture then
     local err = gesture:execute(ctx)
     if err then

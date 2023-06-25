@@ -18,7 +18,11 @@ end
 
 function Gestures.can_match(self, ctx)
   for _, gesture in ipairs(self._gestures) do
-    if gesture.can_match(ctx) then
+    local ok, err = gesture:can_match(ctx)
+    if err then
+      return false, err
+    end
+    if ok then
       return true
     end
   end
@@ -27,7 +31,11 @@ end
 
 function Gestures.match(self, ctx)
   for _, gesture in ipairs(self._gestures) do
-    if gesture.can_match(ctx) and gesture.match(ctx) then
+    local ok, err = gesture:match(ctx)
+    if err then
+      return nil, err
+    end
+    if ok then
       return gesture
     end
   end
