@@ -16,7 +16,7 @@ function State.get_or_create(open_view)
   local first_window_id = vim.api.nvim_get_current_win()
   local matcher = require("gesture.core.matcher").new(vim.api.nvim_get_current_buf())
   local view, window_id = open_view()
-  local point = view.current_point()
+  local point = view:current_point()
   local tbl = {
     _last_point = point,
     _suspended = false,
@@ -80,7 +80,7 @@ function State.close(self)
 end
 
 function State.action_context(self)
-  local point = self.view.current_point()
+  local point = self.view:current_point()
   return {
     last_position = {
       point.y,

@@ -1,3 +1,4 @@
+local Point = require("gesture.core.point")
 local Canvas = require("gesture.view.canvas")
 local windowlib = require("gesture.lib.window")
 local mouse = require("gesture.view.mouse")
@@ -38,9 +39,26 @@ function Background.open(winblend)
   end
   vim.api.nvim_buf_set_name(bufnr, ("gesture://%d/GESTURE"):format(bufnr))
 
-  -- NOTE: show and move cursor to the window by <LeftDrag>
-  vim.cmd.redraw()
-  mouse.click()
+  local get_position
+  if vim.o.mousemoveevent then
+    get_position = function()
+      local mouse_pos = vim.fn.getmousepos()
+      return Point.new(mouse_pos.screencol - 1, mouse_pos.screenrow)
+    end
+  else
+    -- NOTE: show and move cursor to the window by <LeftDrag>
+    vim.cmd.redraw()
+    mouse.click()
+    get_position = function()
+      mouse.click()
+      if not vim.api.nvim_win_is_valid(window_id) then
+        return nil
+      end
+      local x = vim.fn.wincol()
+      local y = vim.fn.winline()
+      return Point.new(x, y)
+    end
+  end
 
   vim.api.nvim_create_autocmd({ "WinLeave", "TabLeave", "BufLeave" }, {
     buffer = bufnr,
@@ -52,6 +70,7 @@ function Background.open(winblend)
 
   local ns = vim.api.nvim_create_namespace("gesture")
   local tbl = {
+    get_position = get_position,
     _window_id = window_id,
     _ns = ns,
   }
@@ -59,7 +78,7 @@ function Background.open(winblend)
 
   vim.api.nvim_set_decoration_provider(self._ns, {
     on_win = function(_, _, buf, topline)
-      if topline == 0 or buf ~= bufnr or not self:is_valid() then
+      if topline == 0 or buf ~= bufnr or not self:_is_valid() then
         return false
       end
       vim.fn.winrestview({ topline = 0, leftcol = 0 })
@@ -74,7 +93,7 @@ function Background.close(self)
   vim.api.nvim_set_decoration_provider(self._ns, {})
 end
 
-function Background.is_valid(self)
+function Background._is_valid(self)
   return vim.api.nvim_win_is_valid(self._window_id)
 end
 

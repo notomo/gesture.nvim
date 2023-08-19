@@ -1,9 +1,6 @@
 local Point = require("gesture.core.point")
 local Background = require("gesture.view.background")
 local GestureBoard = require("gesture.view.board")
-local mouse = require("gesture.view.mouse")
-
-local vim = vim
 
 local View = {}
 View.__index = View
@@ -24,13 +21,10 @@ function View.render_input(self, inputs, gesture, can_match, show_board)
 end
 
 function View.focus(self, last_point)
-  mouse.click()
-
-  if not self._background:is_valid() then
-    return
+  local current_point = self._background.get_position()
+  if not current_point then
+    return nil
   end
-
-  local current_point = self.current_point()
 
   local last
   if last_point == nil then
@@ -43,10 +37,8 @@ function View.focus(self, last_point)
   return current_point
 end
 
-function View.current_point()
-  local x = vim.fn.wincol()
-  local y = vim.fn.winline()
-  return Point.new(x, y)
+function View.current_point(self)
+  return self._background.get_position()
 end
 
 function View.close(self)

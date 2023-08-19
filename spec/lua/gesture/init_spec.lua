@@ -584,6 +584,22 @@ describe("gesture.draw()", function()
     assert.match("can_match error", err)
     assert.window_count(1)
   end)
+
+  it("can draw by mouse cursor position if mousemoveevent is enabled", function()
+    vim.o.mousemoveevent = true
+
+    gesture.register({
+      name = "to bottom",
+      inputs = { gesture.down() },
+      action = "normal! G",
+    })
+
+    gesture.draw()
+    vim.api.nvim_input_mouse("left", "press", "", 0, vim.o.lines, 0)
+    gesture.draw()
+
+    assert.shown_in_view("DOWN")
+  end)
 end)
 
 describe("gesture.finish()", function()
