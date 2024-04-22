@@ -35,19 +35,26 @@ local is_in_window = function(window_id, global_position)
 end
 
 function M.from_global_position(tabpage, global_position, filter)
-  local window_ids = vim.tbl_filter(filter, vim.api.nvim_tabpage_list_wins(tabpage))
+  local window_ids = vim.iter(vim.api.nvim_tabpage_list_wins(tabpage)):filter(filter):totable()
 
   local configs = {}
   for _, window_id in ipairs(window_ids) do
     configs[window_id] = vim.api.nvim_win_get_config(window_id)
   end
 
-  local normal_window_ids = vim.tbl_filter(function(window_id)
-    return configs[window_id].relative == ""
-  end, window_ids)
-  local floating_window_ids = vim.tbl_filter(function(window_id)
-    return configs[window_id].relative ~= ""
-  end, window_ids)
+  local normal_window_ids = vim
+    .iter(window_ids)
+    :filter(function(window_id)
+      return configs[window_id].relative == ""
+    end)
+    :totable()
+
+  local floating_window_ids = vim
+    .iter(window_ids)
+    :filter(function(window_id)
+      return configs[window_id].relative ~= ""
+    end)
+    :totable()
 
   local result_window_id
   for _, window_id in ipairs(normal_window_ids) do
