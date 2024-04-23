@@ -32,9 +32,12 @@ asserts.create("shown_in_view"):register(function(self)
     })
     local lines = {}
     for _, mark in ipairs(marks) do
-      local texts = vim.tbl_map(function(chunk)
-        return chunk[1]
-      end, mark[4].virt_text or {})
+      local texts = vim
+        .iter(mark[4].virt_text or {})
+        :map(function(chunk)
+          return chunk[1]
+        end)
+        :totable()
       local line = table.concat(texts, "")
       table.insert(lines, line)
     end

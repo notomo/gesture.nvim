@@ -44,9 +44,12 @@ function InputDefinitions.has_forward_match(self, inputs)
 end
 
 function InputDefinitions.strings(self)
-  return vim.tbl_map(function(input_definition)
-    return input_definition.value
-  end, self._definitions)
+  return vim
+    .iter(self._definitions)
+    :map(function(input_definition)
+      return input_definition.value
+    end)
+    :totable()
 end
 
 function InputDefinitions.equals(self, nonself)

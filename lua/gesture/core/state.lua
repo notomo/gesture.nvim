@@ -87,13 +87,19 @@ function State.action_context(self)
       point.x,
     },
 
-    inputs = vim.tbl_map(function(input)
-      return input
-    end, self._inputs),
+    inputs = vim
+      .iter(self._inputs)
+      :map(function(input)
+        return input
+      end)
+      :totable(),
 
-    window_ids = vim.tbl_map(function(window_id)
-      return window_id
-    end, self._window_ids),
+    window_ids = vim
+      .iter(self._window_ids)
+      :map(function(window_id)
+        return window_id
+      end)
+      :totable(),
   }
 end
 

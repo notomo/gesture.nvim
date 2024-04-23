@@ -12,9 +12,12 @@ function M.add_direction(inputs, input, suspended)
 end
 
 function M.strings(inputs)
-  return vim.tbl_map(function(input)
-    return input.direction
-  end, inputs)
+  return vim
+    .iter(inputs)
+    :map(function(input)
+      return input.direction
+    end)
+    :totable()
 end
 
 return M
