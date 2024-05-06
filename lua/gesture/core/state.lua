@@ -86,6 +86,7 @@ function State.close(self)
   self.view:close()
 end
 
+--- @return GestureActionContext
 function State.action_context(self)
   local point = self.view:current_point()
   return {
@@ -94,19 +95,9 @@ function State.action_context(self)
       point.x,
     },
 
-    inputs = vim
-      .iter(self._inputs)
-      :map(function(input)
-        return input
-      end)
-      :totable(),
+    inputs = vim.iter(self._inputs):totable(),
 
-    window_ids = vim
-      .iter(self._window_ids)
-      :map(function(window_id)
-        return window_id
-      end)
-      :totable(),
+    window_ids = vim.iter(self._window_ids):totable(),
   }
 end
 

@@ -36,6 +36,7 @@ function GestureMap.add(self, gesture)
   self._map[key] = gestures
 end
 
+--- @param ctx GestureActionContext
 function GestureMap.match(self, bufnr, ctx, nowait)
   vim.validate({
     bufnr = { bufnr, "number" },
