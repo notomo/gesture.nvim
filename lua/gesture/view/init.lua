@@ -2,6 +2,10 @@ local Point = require("gesture.core.point")
 local Background = require("gesture.view.background")
 local GestureBoard = require("gesture.view.board")
 
+--- @class GestureView
+--- @field private _background GestureBackground
+--- @field private _canvas GestureCanvas
+--- @field private _new_points {x:number,y:number}[]
 local View = {}
 View.__index = View
 

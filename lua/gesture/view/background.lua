@@ -4,6 +4,8 @@ local windowlib = require("gesture.lib.window")
 local mouse = require("gesture.view.mouse")
 local hl_groups = require("gesture.view.highlight_group")
 
+--- @class GestureBackground
+--- @field get_position fun():{x:number,y:number}|nil
 local Background = {}
 Background.__index = Background
 

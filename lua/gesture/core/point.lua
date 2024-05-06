@@ -1,5 +1,8 @@
 local listlib = require("gesture.lib.list")
 
+--- @class GesturePoint
+--- @field x number
+--- @field y number
 local Point = {}
 
 function Point.new(x, y)

@@ -1,8 +1,15 @@
 local vim = vim
 
+--- @class GestureInfo
+--- @field name string
+--- @field nowait boolean
+--- @field buffer number|nil
+--- @field strs string[]
+--- @field equals fun(g:GestureInfo):boolean
 local GestureInfo = {}
 GestureInfo.__index = GestureInfo
 
+--- @param info GestureRawInfo
 function GestureInfo.new(info)
   vim.validate({ info = { info, "table" } })
 

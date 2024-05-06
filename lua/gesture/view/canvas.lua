@@ -1,5 +1,6 @@
 local converter = require("gesture.view.converter")
 
+--- @class GestureCanvas
 local Canvas = {}
 Canvas.__index = Canvas
 

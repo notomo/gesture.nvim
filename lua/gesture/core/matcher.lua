@@ -1,3 +1,5 @@
+--- @class GestureMatcher
+--- @field private _gesture_map GestureMap
 local Matcher = {}
 Matcher.__index = Matcher
 

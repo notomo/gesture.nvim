@@ -32,7 +32,7 @@ end
 
 --- - Prefers `match` over `inputs`.
 --- - Prefers `can_match` over `inputs`.
---- @class GestureInfo
+--- @class GestureRawInfo
 --- @field name string? a displayed name
 --- @field inputs GestureInputDefinition[]? ref: |GestureInputDefinition|
 --- @field match (fun(ctx:GestureActionContext):boolean)? This is called on every |gesture.draw()| and |gesture.finish()|. If returns true, it means the gesture matches current context.
@@ -47,7 +47,7 @@ end
 --- @field inputs GestureInput[] ref: |GestureInput|
 
 --- Register a gesture.
---- @param info GestureInfo: |GestureInfo|
+--- @param info GestureRawInfo: |GestureRawInfo|
 function M.register(info)
   require("gesture.core.gesture_map").register(info)
 end

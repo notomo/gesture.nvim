@@ -1,6 +1,9 @@
+--- @class GestureInputDefinitions
+--- @field _definitions GestureInputDefinition[]
 local InputDefinitions = {}
 InputDefinitions.__index = InputDefinitions
 
+--- @param raw_input_definitions GestureInputDefinition[]
 function InputDefinitions.new(raw_input_definitions)
   vim.validate({ raw_input_definitions = { raw_input_definitions, "table" } })
   local tbl = {
@@ -52,6 +55,7 @@ function InputDefinitions.strings(self)
     :totable()
 end
 
+--- @param nonself GestureInputDefinitions
 function InputDefinitions.equals(self, nonself)
   if #nonself._definitions ~= #self._definitions then
     return false

@@ -5,6 +5,8 @@ local GestureInfo = require("gesture.core.gesture_info")
 
 local FOR_MATCH_STRS = { "_" }
 
+--- @class GestureMap
+--- @field private _map table<string,Gestures>
 local GestureMap = {}
 GestureMap.__index = GestureMap
 
@@ -24,6 +26,7 @@ local make_key = function(bufnr, nowait, input_strs)
   return table.concat(elements, "\t")
 end
 
+--- @param gesture GestureInfo
 function GestureMap.add(self, gesture)
   local key = make_key(gesture.buffer, gesture.nowait, gesture.strs or FOR_MATCH_STRS)
 

@@ -1,12 +1,19 @@
+--- @type table<integer,GestureState>
 local _states = {}
 
 local Inputs = require("gesture.core.inputs")
 local DirectionInput = require("gesture.core.direction_input")
 local windowlib = require("gesture.lib.window")
 
+--- @class GestureState
+--- @field private _suspended boolean
+--- @field private _last_point {x:number,y:number}|nil
+--- @field matcher GestureMatcher
+--- @field view GestureView
 local State = {}
 State.__index = State
 
+--- @param open_view fun():GestureView,integer
 function State.get_or_create(open_view)
   local current = State.get()
   if current then

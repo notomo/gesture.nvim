@@ -1,3 +1,5 @@
+--- @class Gestures
+--- @field private _gestures GestureInfo[]
 local Gestures = {}
 Gestures.__index = Gestures
 
@@ -6,6 +8,7 @@ function Gestures.new()
   return setmetatable(tbl, Gestures)
 end
 
+--- @param gesture GestureInfo
 function Gestures.add(self, gesture)
   for i, g in ipairs(self._gestures) do
     if gesture.equals(g) then

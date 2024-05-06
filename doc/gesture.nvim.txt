@@ -22,7 +22,7 @@ register({info})                                          *gesture.register()*
   Register a gesture.
 
   Parameters: ~
-    {info} (GestureInfo) |GestureInfo|
+    {info} (GestureRawInfo) |GestureRawInfo|
 
 clear()                                                      *gesture.clear()*
   Clear the registered gestures.
@@ -77,7 +77,7 @@ GestureDrawOption                                          *GestureDrawOption*
 - {winblend?} (integer) background window's 'winblend' (default: 100)
 - {length_thresholds?} (GestureLengthThresholds) recognize as input if its length is greater than threshold. |GestureLengthThresholds|
 
-GestureInfo                                                      *GestureInfo*
+GestureRawInfo                                                *GestureRawInfo*
   - Prefers `match` over `inputs`.
   - Prefers `can_match` over `inputs`.
 

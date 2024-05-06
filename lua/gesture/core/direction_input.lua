@@ -38,6 +38,8 @@ function DirectionInput.from_points(p1, p2)
   return DirectionInput.new(direction, length)
 end
 
+--- @param input GestureInput
+--- @param length_thresholds {x:number,y:number}
 function DirectionInput.is_short(input, length_thresholds)
   if input.direction == UP or input.direction == DOWN then
     return input.length < length_thresholds.y
