@@ -50,10 +50,7 @@ function GestureMap.match(self, bufnr, ctx, nowait)
     make_key(nil, nowait, input_strs),
   }
   for _, key in ipairs(keys) do
-    local gesture, err = self:_match(key, ctx)
-    if err then
-      return nil, err
-    end
+    local gesture = self:_match(key, ctx)
     if gesture then
       return gesture
     end
@@ -70,6 +67,7 @@ function GestureMap._match(self, key, ctx)
   return gestures:match(ctx)
 end
 
+--- @return boolean|string
 function GestureMap.can_match(self, bufnr, ctx)
   vim.validate({ bufnr = { bufnr, "number" } })
   local input_strs = require("gesture.core.inputs").strings(ctx.inputs)
@@ -93,28 +91,23 @@ function GestureMap.can_match(self, bufnr, ctx)
     },
   }
   for _, key_pair in ipairs(key_pairs) do
-    local matched, err = self:_can_match(key_pair[1], key_pair[2], ctx)
-    if err then
-      return false, err
-    end
-    if matched then
-      return matched
+    local matched_or_err = self:_can_match(key_pair[1], key_pair[2], ctx)
+    if matched_or_err then
+      return matched_or_err
     end
   end
 
   return false
 end
 
+--- @return boolean|string
 function GestureMap._can_match(self, nowait_key, key, ctx)
   for k, gestures in pairs(self._map) do
     local key_matched = vim.startswith(k, nowait_key) or vim.startswith(k, key)
     if key_matched then
-      local ok, err = gestures:can_match(ctx)
-      if err then
-        return false, err
-      end
-      if ok then
-        return true
+      local matched_or_err = gestures:can_match(ctx)
+      if matched_or_err then
+        return matched_or_err
       end
     end
   end

@@ -99,19 +99,14 @@ function GestureInfo.execute(self, ctx)
 end
 
 function GestureInfo.match(self, ctx)
-  local ok, result = pcall(self._match, ctx)
-  if not ok then
-    return false, result
-  end
-  return result, nil
+  local _, result = pcall(self._match, ctx)
+  return result
 end
 
+--- @return boolean|string
 function GestureInfo.can_match(self, ctx)
-  local ok, result = pcall(self._can_match, ctx)
-  if not ok then
-    return false, result
-  end
-  return result, nil
+  local _, result = pcall(self._can_match, ctx)
+  return result
 end
 
 return GestureInfo

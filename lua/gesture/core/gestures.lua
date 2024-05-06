@@ -19,26 +19,26 @@ function Gestures.add(self, gesture)
   table.insert(self._gestures, gesture)
 end
 
+--- @return boolean|string
 function Gestures.can_match(self, ctx)
   for _, gesture in ipairs(self._gestures) do
-    local ok, err = gesture:can_match(ctx)
-    if err then
-      return false, err
-    end
-    if ok then
-      return true
+    local matched_or_err = gesture:can_match(ctx)
+    if matched_or_err then
+      return matched_or_err
     end
   end
   return false
 end
 
+--- @return GestureInfo|nil|string
 function Gestures.match(self, ctx)
   for _, gesture in ipairs(self._gestures) do
-    local ok, err = gesture:match(ctx)
-    if err then
-      return nil, err
+    local matched = gesture:match(ctx)
+    if type(matched) == "string" then
+      local err = matched
+      return err
     end
-    if ok then
+    if matched then
       return gesture
     end
   end
