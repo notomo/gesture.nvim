@@ -87,7 +87,7 @@ function Background.open(winblend)
     end,
   })
 
-  return self, Canvas.new(bufnr, ns), window_id
+  return self, Canvas.new(bufnr, ns, width, height), window_id
 end
 
 function Background.close(self)

@@ -9,7 +9,20 @@ local set_extmark = vim.api.nvim_buf_set_extmark
 
 local hl_groups = require("gesture.view.highlight_group")
 
-function Canvas.new(bufnr, ns)
+local BACKGROUND_PRIORITY = 1000
+local POINT_PRIORITY = BACKGROUND_PRIORITY + 1
+local BOARD_PRIORITY = POINT_PRIORITY + 1
+
+function Canvas.new(bufnr, ns, width, height)
+  -- to overwrite background decoration by spaces
+  for y = 0, height - 1, 1 do
+    set_extmark(bufnr, ns, y, 0, {
+      virt_text = { { (" "):rep(width) } },
+      virt_text_pos = "overlay",
+      priority = POINT_PRIORITY,
+    })
+  end
+
   local tbl = {
     _rows = {},
     _board_rows = {},
@@ -29,8 +42,6 @@ function Canvas.draw(self, board_range_map, points)
   end
 end
 
-local POINT_PRIORITY = 1000
-local BOARD_PRIORITY = POINT_PRIORITY + 1
 function Canvas._draw_board(self, y, ranges)
   local row = self._board_rows[y] or {}
   local col, virtual_texts = converter.board_to_virtual_texts(ranges)
