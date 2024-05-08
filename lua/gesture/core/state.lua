@@ -89,6 +89,7 @@ end
 --- @return GestureActionContext
 function State.action_context(self)
   local point = self.view:current_point()
+  assert(point ~= nil, "bug: invalid state:action_context call")
   return {
     last_position = {
       point.y,
