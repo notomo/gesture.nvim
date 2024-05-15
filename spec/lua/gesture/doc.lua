@@ -72,9 +72,7 @@ used for background window
 })
 
 local gen_readme = function()
-  local f = io.open(example_path, "r")
-  local usage = f:read("*a")
-  f:close()
+  local usage = util.read_all(example_path)
 
   local content = ([[
 # gesture.nvim
@@ -91,8 +89,6 @@ gesture.nvim is a mouse gesture plugin for Neovim (nightly).
 %s```
 ]]):format(usage)
 
-  local readme = io.open("README.md", "w")
-  readme:write(content)
-  readme:close()
+  util.write("README.md", content)
 end
 gen_readme()
