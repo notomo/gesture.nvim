@@ -6,11 +6,9 @@ local LEFT = Directions.LEFT
 
 local DirectionInput = {}
 
+--- @param direction string
+--- @param length integer
 function DirectionInput.new(direction, length)
-  vim.validate({
-    direction = { direction, "string" },
-    length = { length, "number" },
-  })
   return {
     direction = direction,
     length = length,

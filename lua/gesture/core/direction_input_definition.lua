@@ -1,18 +1,10 @@
 local DirectionInputDefinition = {}
 DirectionInputDefinition.__index = DirectionInputDefinition
 
+--- @param value string
+--- @param opts {max_length:number?,min_length:number?}?
 local new = function(value, opts)
-  vim.validate({
-    typ = { value, "string" },
-    opts = { opts, "table", true },
-  })
-
   opts = opts or {}
-
-  vim.validate({
-    max_length = { opts.max_length, "number", true },
-    min_length = { opts.min_length, "number", true },
-  })
 
   local tbl = {
     value = value,

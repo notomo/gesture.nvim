@@ -5,7 +5,6 @@ InputDefinitions.__index = InputDefinitions
 
 --- @param raw_input_definitions GestureInputDefinition[]
 function InputDefinitions.new(raw_input_definitions)
-  vim.validate({ raw_input_definitions = { raw_input_definitions, "table" } })
   local tbl = {
     _definitions = raw_input_definitions,
   }

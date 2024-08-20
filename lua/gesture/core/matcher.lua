@@ -3,10 +3,8 @@
 local Matcher = {}
 Matcher.__index = Matcher
 
+--- @param bufnr integer
 function Matcher.new(bufnr)
-  vim.validate({
-    bufnr = { bufnr, "number" },
-  })
   local tbl = {
     _gesture_map = require("gesture.core.gesture_map").store,
     _bufnr = bufnr,

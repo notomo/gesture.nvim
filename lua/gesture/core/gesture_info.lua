@@ -11,18 +11,6 @@ GestureInfo.__index = GestureInfo
 
 --- @param info GestureRawInfo
 function GestureInfo.new(info)
-  vim.validate({ info = { info, "table" } })
-
-  vim.validate({
-    name = { info.name, "string", true },
-    action = { info.action, { "string", "callable" } },
-    inputs = { info.inputs, "table", true },
-    match = { info.match, "function", true },
-    can_match = { info.can_match, "function", true },
-    nowait = { info.nowait, "boolean", true },
-    buffer = { info.buffer, { "string", "number" }, true },
-  })
-
   local is_callable = vim.is_callable(info.action)
   local action
   if is_callable then

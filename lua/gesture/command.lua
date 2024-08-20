@@ -91,8 +91,8 @@ function M.finish()
   end
 end
 
+--- @param window_id integer?
 function M.cancel(window_id)
-  vim.validate({ window_id = { window_id, "number", true } })
   local state = State.get(window_id)
   if not state then
     return

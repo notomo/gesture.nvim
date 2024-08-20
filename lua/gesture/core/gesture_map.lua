@@ -36,12 +36,10 @@ function GestureMap.add(self, gesture)
   self._map[key] = gestures
 end
 
+--- @param bufnr integer
 --- @param ctx GestureActionContext
+--- @param nowait boolean
 function GestureMap.match(self, bufnr, ctx, nowait)
-  vim.validate({
-    bufnr = { bufnr, "number" },
-    nowait = { nowait, "boolean" },
-  })
   local input_strs = require("gesture.core.inputs").strings(ctx.inputs)
 
   local keys = {
@@ -68,9 +66,9 @@ function GestureMap._match(self, key, ctx)
   return gestures:match(ctx)
 end
 
+--- @param bufnr integer
 --- @return boolean|string
 function GestureMap.can_match(self, bufnr, ctx)
-  vim.validate({ bufnr = { bufnr, "number" } })
   local input_strs = require("gesture.core.inputs").strings(ctx.inputs)
 
   local key_pairs = {
