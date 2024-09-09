@@ -1,5 +1,6 @@
 local helper = require("gesture.test.helper")
 local gesture = helper.require("gesture")
+local assert = helper.typed_assert(assert)
 
 describe("gesture.register()", function()
   before_each(helper.before_each)
@@ -257,7 +258,7 @@ foo]])
     gesture.draw()
     gesture.finish()
 
-    assert.is_same(got.last_position, { 11, 21 })
+    assert.same(got.last_position, { 11, 21 })
   end)
 
   it("can use action context inputs", function()
@@ -276,7 +277,7 @@ foo]])
     gesture.draw()
     gesture.finish()
 
-    assert.is_same(got.inputs, {
+    assert.same(got.inputs, {
       {
         direction = "RIGHT",
         length = 20,
@@ -322,7 +323,7 @@ foo]])
     gesture.draw()
     gesture.finish()
 
-    assert.is_same(got.window_ids, { window_id3, floating_window_id, window_id1 })
+    assert.same(got.window_ids, { window_id3, floating_window_id, window_id1 })
   end)
 
   it("can register a global and buffer local gesture", function()

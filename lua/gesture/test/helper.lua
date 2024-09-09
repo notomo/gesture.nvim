@@ -6,6 +6,7 @@ vim.opt.packpath:prepend(vim.fs.joinpath(helper.root, "spec/.shared/packages"))
 require("assertlib").register(require("vusted.assert").register)
 
 function helper.before_each()
+  ---@diagnostic disable-next-line: duplicate-set-field
   require("gesture.view.mouse").click = function() end
 end
 
@@ -50,5 +51,12 @@ asserts.create("shown_in_view"):register(function(self)
     return result ~= -1
   end
 end)
+
+function helper.typed_assert(assert)
+  local x = require("assertlib").typed(assert)
+  ---@cast x +{shown_in_view:fun(want), window_first_row:fun(want)}
+  ---@cast x +{no:{shown_in_view:fun(want), window_first_row:fun(want)}}
+  return x
+end
 
 return helper
