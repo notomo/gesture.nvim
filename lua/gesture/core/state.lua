@@ -8,6 +8,9 @@ local windowlib = require("gesture.lib.window")
 --- @class GestureState
 --- @field private _suspended boolean
 --- @field private _last_point {x:number,y:number}|nil
+--- @field private _window_id integer
+--- @field private _window_ids integer[]
+--- @field private _inputs GestureInput[]
 --- @field matcher GestureMatcher
 --- @field view GestureView
 local State = {}
@@ -57,6 +60,7 @@ function State.update(self, length_thresholds)
   end
 
   local window_id = windowlib.from_global_position(0, { point.y, point.x }, function(window_id)
+    ---@diagnostic disable-next-line: invisible
     return window_id ~= self._window_id
   end)
   local last_window_id = self._window_ids[#self._window_ids]

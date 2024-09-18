@@ -1,6 +1,10 @@
 local converter = require("gesture.view.converter")
 
 --- @class GestureCanvas
+--- @field private _board_rows table<integer,{id:integer}>
+--- @field private _rows table<integer,{id:integer,col_map:table<integer,true>}>
+--- @field private _bufnr integer
+--- @field private _ns integer
 local Canvas = {}
 Canvas.__index = Canvas
 

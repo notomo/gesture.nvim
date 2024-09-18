@@ -1,6 +1,7 @@
 local scenario = function(ctx)
   vim.o.termguicolors = true
   vim.o.background = "dark"
+  ---@diagnostic disable-next-line: duplicate-set-field
   require("gesture.view.mouse").click = function()
     vim.cmd.redraw({ bang = true })
   end

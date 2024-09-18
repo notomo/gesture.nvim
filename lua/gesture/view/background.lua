@@ -6,6 +6,8 @@ local hl_groups = require("gesture.view.highlight_group")
 
 --- @class GestureBackground
 --- @field get_position fun():{x:number,y:number}|nil
+--- @field private _window_id integer
+--- @field private _ns integer
 local Background = {}
 Background.__index = Background
 

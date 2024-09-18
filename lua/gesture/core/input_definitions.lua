@@ -21,6 +21,7 @@ function InputDefinitions.match(self, inputs)
     if not input then
       return false
     end
+    ---@diagnostic disable-next-line: invisible
     if not input_definition:match(input) then
       return false
     end
@@ -38,6 +39,7 @@ function InputDefinitions.has_forward_match(self, inputs)
     if not input then
       return true
     end
+    ---@diagnostic disable-next-line: invisible
     if not definition:match(input) then
       return false
     end
@@ -61,6 +63,7 @@ function InputDefinitions.equals(self, nonself)
   end
 
   for i, definition in ipairs(self._definitions) do
+    ---@diagnostic disable-next-line: invisible
     if not definition:equals(nonself._definitions[i]) then
       return false
     end

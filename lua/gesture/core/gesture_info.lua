@@ -6,6 +6,9 @@ local vim = vim
 --- @field buffer number|nil
 --- @field strs string[]
 --- @field equals fun(g:GestureInfo):boolean
+--- @field private _action fun(ctx:GestureActionContext)
+--- @field private _match fun(ctx:GestureActionContext):GestureInfo
+--- @field private _can_match fun(ctx:GestureActionContext):boolean
 local GestureInfo = {}
 GestureInfo.__index = GestureInfo
 

@@ -66,6 +66,8 @@ end
 --- @field length integer
 
 --- @class GestureInputDefinition
+--- @field private match fun(self:GestureInputDefinition,input:GestureInput):boolean
+--- @field private equals fun(self:GestureInputDefinition,input_definition:GestureInputDefinition):boolean
 
 --- Up input
 --- @param opts GestureInputOption?: |GestureInputOption|

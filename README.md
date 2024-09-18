@@ -60,8 +60,10 @@ gesture.register({
     table.sort(ctx.window_ids, function(a, b)
       return a > b
     end)
-    for _, window_id in ipairs(vim.fn.uniq(ctx.window_ids)) do
-      vim.api.nvim_win_close(window_id, false)
+    for _, window_id in ipairs(ctx.window_ids) do
+      if vim.api.nvim_win_is_valid(window_id) then
+        vim.api.nvim_win_close(window_id, false)
+      end
     end
   end,
 })
