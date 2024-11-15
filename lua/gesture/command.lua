@@ -28,7 +28,7 @@ function M.draw(raw_opts)
     state:close()
 
     local err = can_match
-    return require("gesture.vendor.misclib.message").error(err)
+    error("[gesture] " .. err, 0)
   end
 
   local nowait_gesture = state.matcher:nowait_match(ctx, can_match)
@@ -36,7 +36,7 @@ function M.draw(raw_opts)
     state:close()
 
     local err = nowait_gesture
-    return require("gesture.vendor.misclib.message").error(err)
+    error("[gesture] " .. err, 0)
   end
 
   if nowait_gesture then
@@ -44,7 +44,7 @@ function M.draw(raw_opts)
 
     local err = nowait_gesture:execute(ctx)
     if err then
-      require("gesture.vendor.misclib.message").error(err)
+      error("[gesture] " .. err, 0)
     end
     return
   end
@@ -53,7 +53,7 @@ function M.draw(raw_opts)
   if type(gesture) == "string" then
     state:close()
     local err = gesture
-    return require("gesture.vendor.misclib.message").error(err)
+    error("[gesture] " .. err, 0)
   end
 
   state.view:render_input(ctx.inputs, gesture, can_match, opts.show_board)
@@ -79,15 +79,14 @@ function M.finish()
   local gesture = state.matcher:match(ctx, true)
   if type(gesture) == "string" then
     local err = gesture
-    return require("gesture.vendor.misclib.message").error(err)
+    error("[gesture] " .. err, 0)
   end
 
   if gesture then
     local err = gesture:execute(ctx)
     if err then
-      return require("gesture.vendor.misclib.message").error(err)
+      error("[gesture] " .. err, 0)
     end
-    return
   end
 end
 
