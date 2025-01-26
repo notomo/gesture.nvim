@@ -29,7 +29,7 @@ local setup_highlight_groups = function()
   }
 end
 
-local group = vim.api.nvim_create_augroup("gesture", {})
+local group = vim.api.nvim_create_augroup("gesture.highlight_group", {})
 vim.api.nvim_create_autocmd({ "ColorScheme" }, {
   group = group,
   pattern = { "*" },
