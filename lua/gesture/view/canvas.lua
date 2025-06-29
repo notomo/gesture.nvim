@@ -24,6 +24,7 @@ function Canvas.new(bufnr, ns, width, height)
       virt_text = { { (" "):rep(width) } },
       virt_text_pos = "overlay",
       priority = POINT_PRIORITY,
+      strict = false,
     })
   end
 
@@ -54,6 +55,7 @@ function Canvas._draw_board(self, y, ranges)
     virt_text_pos = "overlay",
     id = row.id,
     priority = BOARD_PRIORITY,
+    strict = false,
   })
   self._board_rows[y] = { id = id }
 end
@@ -80,6 +82,7 @@ function Canvas._draw_point(self, p, hl_group)
     virt_text_pos = "overlay",
     id = row.id,
     priority = POINT_PRIORITY,
+    strict = false,
   })
   self._rows[p.y] = { col_map = col_map, id = id }
 end
