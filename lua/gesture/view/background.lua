@@ -26,10 +26,10 @@ function Background.open(winblend)
     style = "minimal",
     zindex = 201,
   })
-  vim.wo[window_id].winblend = winblend
-  vim.wo[window_id].winhighlight = "Normal:" .. hl_groups.GestureBackground
-  vim.wo[window_id].scrolloff = 0
-  vim.wo[window_id].sidescrolloff = 0
+  vim.wo[window_id][0].winblend = winblend
+  vim.wo[window_id][0].winhighlight = "Normal:" .. hl_groups.GestureBackground
+  vim.wo[window_id][0].scrolloff = 0
+  vim.wo[window_id][0].sidescrolloff = 0
 
   local lines = vim.fn["repeat"]({ (" "):rep(width) }, height)
   vim.api.nvim_buf_set_lines(bufnr, 0, -1, false, lines)
