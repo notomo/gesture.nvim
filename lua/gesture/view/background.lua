@@ -65,7 +65,7 @@ function Background.open(winblend)
   end
 
   vim.api.nvim_create_autocmd({ "WinLeave", "TabLeave", "BufLeave" }, {
-    buffer = bufnr,
+    buf = bufnr,
     once = true,
     callback = function()
       require("gesture.command").cancel(window_id)
