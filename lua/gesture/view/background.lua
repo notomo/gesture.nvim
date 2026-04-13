@@ -64,13 +64,15 @@ function Background.open(winblend)
     end
   end
 
-  vim.api.nvim_create_autocmd({ "WinLeave", "TabLeave", "BufLeave" }, {
-    buf = bufnr,
-    once = true,
-    callback = function()
-      require("gesture.command").cancel(window_id)
-    end,
-  })
+  vim.api.nvim_create_autocmd(
+    { "WinLeave", "TabLeave", "BufLeave" },
+    vim.tbl_extend("force", {
+      once = true,
+      callback = function()
+        require("gesture.command").cancel(window_id)
+      end,
+    }, vim.version:le("0.13") and { buffer = bufnr } or { buf = bufnr })
+  )
 
   local ns = vim.api.nvim_create_namespace("gesture")
   local tbl = {
