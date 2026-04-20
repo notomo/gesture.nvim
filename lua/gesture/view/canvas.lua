@@ -77,7 +77,7 @@ function Canvas._draw_point(self, p, hl_group)
   end)
 
   local virtual_texts = converter.to_virtual_texts(cols, hl_group)
-  local id = set_extmark(self._bufnr, self._ns, p.y - 1, 0, {
+  local id = set_extmark(self._bufnr, self._ns, math.floor(p.y) - 1, 0, {
     virt_text = virtual_texts,
     virt_text_pos = "overlay",
     id = row.id,
