@@ -1,6 +1,8 @@
+local ntf = require("ntf")
+local describe, it, before_each, after_each = ntf.describe, ntf.it, ntf.before_each, ntf.after_each
 local helper = require("gesture.test.helper")
-local gesture = helper.require("gesture")
-local assert = helper.typed_assert(assert)
+local gesture = require("gesture")
+local assert = helper.typed_assert(ntf.assert)
 
 describe("gesture.register()", function()
   before_each(helper.before_each)
