@@ -50,8 +50,8 @@ assert.register("shown_in_view", function(self)
   end
 end)
 
-function helper.typed_assert(assert)
-  local x = require("assertlib").typed(assert)
+function helper.typed_assert(raw_assert)
+  local x = require("assertlib").typed(raw_assert)
   ---@cast x +{shown_in_view:fun(want), window_first_row:fun(want)}
   ---@cast x +{no:{shown_in_view:fun(want), window_first_row:fun(want)}}
   return x
