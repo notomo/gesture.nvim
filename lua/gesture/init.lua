@@ -71,28 +71,28 @@ end
 
 --- Up input
 --- @param opts GestureInputOption?: |GestureInputOption|
---- @return GestureInputDefinition # used as an element of |GestureInfo|'s inputs
+--- @return GestureInputDefinition # used as an element of |GestureRawInfo|'s inputs
 function M.up(opts)
   return require("gesture.core.direction_input_definition").up(opts)
 end
 
 --- Down input
 --- @param opts GestureInputOption?: |GestureInputOption|
---- @return GestureInputDefinition # used as an element of |GestureInfo|'s inputs
+--- @return GestureInputDefinition # used as an element of |GestureRawInfo|'s inputs
 function M.down(opts)
   return require("gesture.core.direction_input_definition").down(opts)
 end
 
 --- Right input
 --- @param opts GestureInputOption?: |GestureInputOption|
---- @return GestureInputDefinition # used as an element of |GestureInfo|'s inputs
+--- @return GestureInputDefinition # used as an element of |GestureRawInfo|'s inputs
 function M.right(opts)
   return require("gesture.core.direction_input_definition").right(opts)
 end
 
 --- Left input
 --- @param opts GestureInputOption?: |GestureInputOption|
---- @return GestureInputDefinition # used as an element of |GestureInfo|'s inputs
+--- @return GestureInputDefinition # used as an element of |GestureRawInfo|'s inputs
 function M.left(opts)
   return require("gesture.core.direction_input_definition").left(opts)
 end
