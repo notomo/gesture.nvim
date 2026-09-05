@@ -2,7 +2,7 @@ local M = {}
 
 --- Defines a default highlight group.
 --- @param hl_group string: highlight group name
---- @param attributes table: |nvim_set_hl| val parameter
+--- @param attributes table: |nvim_set_hl()| val parameter
 --- @return string # hl_group
 function M.define(hl_group, attributes)
   local new_attributes = { default = true }
@@ -17,7 +17,7 @@ end
 
 --- Makes a highlight group link.
 --- @param hl_group string: highlight group name
---- @param to string: highlight group name to link |:hl-link|
+--- @param to string: highlight group name to link |:highlight-link|
 --- @return string # hl_group
 function M.link(hl_group, to)
   vim.api.nvim_set_hl(0, hl_group, {
